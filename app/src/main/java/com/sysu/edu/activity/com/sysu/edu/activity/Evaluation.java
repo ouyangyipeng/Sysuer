@@ -1,7 +1,5 @@
 package com.sysu.edu.activity;
 
-import static com.sysu.edu.R.*;
-
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +45,7 @@ public class Evaluation extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                return 5;
+                return 4;
             }
         });
     }
