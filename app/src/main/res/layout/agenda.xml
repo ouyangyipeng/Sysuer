@@ -27,6 +27,7 @@
                 app:icon="?attr/homeAsUpIndicator"/>
             <com.google.android.material.button.MaterialButton
             android:id="@+id/term"
+                android:transitionName="miniapp"
             style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,6 +36,7 @@
             app:icon="@drawable/calendar"/>
             <com.google.android.material.button.MaterialButton
             android:id="@+id/weekTime"
+                android:transitionName="miniapp"
             style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                 android:layout_width="wrap_content"
             android:layout_height="wrap_content"

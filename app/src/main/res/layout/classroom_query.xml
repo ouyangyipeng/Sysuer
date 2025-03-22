@@ -4,20 +4,27 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/classroomquery_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurfaceBright"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_scrollFlags="scroll"
-        app:navigationIcon="?homeAsUpIndicator"
-        app:title="@string/classroom_query"/>
+        android:layout_height="?attr/collapsingToolbarLayoutLargeSize">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            style="?attr/collapsingToolbarLayoutMediumStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/classroomquery_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:transitionName="miniapp"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="?homeAsUpIndicator"
+            app:title="@string/classroom_query"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
 </com.google.android.material.appbar.AppBarLayout>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

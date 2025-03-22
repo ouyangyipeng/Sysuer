@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.FragmentNavigator;
-import androidx.transition.AutoTransition;
+import androidx.transition.TransitionInflater;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.chip.Chip;
@@ -62,8 +61,8 @@ public class TrainingScheduleFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSharedElementEnterTransition(new AutoTransition());
-        setSharedElementReturnTransition(new AutoTransition());
+        setSharedElementReturnTransition(TransitionInflater.from(requireContext())
+                .inflateTransition(android.R.transition.move));
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -75,7 +74,6 @@ public class TrainingScheduleFragment extends Fragment {
         if(view==null){
             binding=FragmentTrainingScheduleBinding.inflate(inflater);
             view=binding.getRoot();
-            ViewCompat.setTransitionName(binding.query,"result");
             binding.college.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -113,7 +111,12 @@ public class TrainingScheduleFragment extends Fragment {
                 public void onClick(View v) {
                     Navigation.findNavController(requireActivity(),R.id.fragment).navigate(R.id.confirmationAction,
                            // new FragmentNavigator.Extras(Map.of(v,"result"))
-                           null,null,new FragmentNavigator.Extras(Map.of(v,"result"))
+                           null,null
+//                            new NavOptions.Builder().setEnterAnim(android.R.anim.fade_in)
+//                                    .setExitAnim(android.R.anim.fade_out)
+//                                    .setPopEnterAnim(android.R.anim.fade_in)
+//                                    .setPopExitAnim(android.R.anim.fade_out).build()
+                            ,new FragmentNavigator.Extras(Map.of(v,"result"))
                     );
                 }
             });

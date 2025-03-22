@@ -5,9 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.transition.AutoTransition;
+import androidx.transition.TransitionInflater;
 
 import com.sysu.edu.R;
 
@@ -53,8 +52,7 @@ public class TrainingResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSharedElementEnterTransition(new AutoTransition());
-        setSharedElementReturnTransition(new AutoTransition());
+        setSharedElementEnterTransition(TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move));
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -68,7 +66,6 @@ public class TrainingResultFragment extends Fragment {
         if(view==null)
         {
             view=inflater.inflate(R.layout.fragment_training_result, container, false);
-            ViewCompat.setTransitionName(view.findViewById(R.id.query),"result");
         }
         return view;
     }

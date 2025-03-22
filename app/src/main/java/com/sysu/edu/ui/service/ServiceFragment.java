@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -153,14 +154,14 @@ null,
     public View.OnClickListener browse(String url){
         return new View.OnClickListener(){
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), BrowseActivity.class).setData(Uri.parse(url)));
+                startActivity(new Intent(view.getContext(), BrowseActivity.class).setData(Uri.parse(url)), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
             }
         };
     }
     public View.OnClickListener newActivity(Class activity_class){
         return new View.OnClickListener(){
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(),activity_class));
+                startActivity(new Intent(view.getContext(),activity_class),ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
             }
         };
     }
