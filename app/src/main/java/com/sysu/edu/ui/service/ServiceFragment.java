@@ -27,6 +27,7 @@ import com.sysu.edu.academic.BrowseActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.Evaluation;
 import com.sysu.edu.academic.TrainingSchedule;
+import com.sysu.edu.news.News;
 
 public class ServiceFragment extends Fragment {
     LinearLayout service_container;
@@ -36,8 +37,9 @@ public class ServiceFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragment=inflater.inflate(R.layout.fragment_service,container,false);
         service_container=fragment.findViewById(R.id.service_container);
-        String[] titles = new String[]{"系统", "官网", "官媒","教务","学习", "出行", "宿舍","查询"};
-        String[][] items = new String[][]{{"学工系统","教务系统","中山大学统一门户","大学服务中心","财务信息系统"},
+        String[] titles = new String[]{"讯息","系统", "官网", "官媒","教务","学习", "出行", "宿舍","查询"};
+        String[][] items = new String[][]{{"资讯门户","学校活动","校园集市"},
+                {"学工系统","教务系统","中山大学统一门户","大学服务中心","财务信息系统"},
                 {"中山大学官网","本科招生","研究生招生","人才招聘","百年校庆","公务电子邮件系统","博物馆","图书馆","校友会"},
                 {"逸仙码","企业微信","中大招生","wps教育版"},
                 {"评教","选课","课程表","考试","校历","自习室","成绩","课程","培养方案"},
@@ -47,6 +49,9 @@ public class ServiceFragment extends Fragment {
                 {"空教室查询"}
         };
         View.OnClickListener[][] actions = new View.OnClickListener[][]{
+                {
+newActivity(News.class),
+        },//
                 {
                         browse("https://xgxt-443.webvpn.sysu.edu.cn/main/#/index"),
                         browse("https://jwxt.sysu.edu.cn/jwxt/yd/index/#/Home"),

@@ -21,31 +21,31 @@
             android:gravity="center">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/last"
-                style="@style/Widget.Material3.Button.IconButton"
+                 style="@style/Widget.Material3.Button.IconButton.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="?attr/homeAsUpIndicator"/>
             <com.google.android.material.button.MaterialButton
-            android:id="@+id/term"
+                android:id="@+id/term"
                 android:transitionName="miniapp"
-            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
             android:text="@string/term"
             app:icon="@drawable/calendar"/>
             <com.google.android.material.button.MaterialButton
-            android:id="@+id/weekTime"
+                android:id="@+id/weekTime"
                 android:transitionName="miniapp"
-            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                 android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-            android:text="@string/week"
-            app:icon="@drawable/time"/>
+                android:text="@string/week"
+                app:icon="@drawable/time"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/next"
-                style="@style/Widget.Material3.Button.IconButton"
+                style="@style/Widget.Material3.Button.IconButton.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:rotation="180"

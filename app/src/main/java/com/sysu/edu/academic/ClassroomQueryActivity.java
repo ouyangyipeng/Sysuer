@@ -9,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -35,7 +32,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.textview.MaterialTextView;
@@ -47,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -105,34 +102,25 @@ public class ClassroomQueryActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        findViewById(R.id.campus_select_all).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for(int i=1;i<((ChipGroup)v.getParent()).getChildCount();i++){
-                    Chip chip=(Chip)((ChipGroup)v.getParent()).getChildAt(i);
-                    chip.setChecked(!chip.isChecked());
-                }
+        findViewById(R.id.campus_select_all).setOnClickListener(v -> {
+            for(int i=1;i<((ChipGroup)v.getParent()).getChildCount();i++){
+                Chip chip=(Chip)((ChipGroup)v.getParent()).getChildAt(i);
+                chip.setChecked(!chip.isChecked());
             }
         });
-        findViewById(R.id.office_select_all).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for(int i=1;i<((ChipGroup)v.getParent()).getChildCount();i++){
-                    Chip chip=(Chip)((ChipGroup)v.getParent()).getChildAt(i);
-                    chip.setChecked(!chip.isChecked());
-                }
+        findViewById(R.id.office_select_all).setOnClickListener(v -> {
+            for(int i=1;i<((ChipGroup)v.getParent()).getChildCount();i++){
+                Chip chip=(Chip)((ChipGroup)v.getParent()).getChildAt(i);
+                chip.setChecked(!chip.isChecked());
             }
         });
         cookie=getSharedPreferences("privacy",0).getString("Cookie","");
         http=getHttp();
         MaterialToolbar tool= findViewById(R.id.classroom_query_toolbar);
         setSupportActionBar(tool);
-        dateDialog.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<>() {
-            @Override
-            public void onPositiveButtonClick(Long selection) {
-                dateStr = new SimpleDateFormat("yyyy-MM-dd").format(new Date(selection));
-                dateText.setText(new SimpleDateFormat("yyyy年MM月dd日").format(new Date(selection)));
-            }
+        dateDialog.addOnPositiveButtonClickListener(selection -> {
+            dateStr = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINESE).format(new Date(selection));
+            dateText.setText(new SimpleDateFormat("yyyy年MM月dd日",Locale.CHINESE).format(new Date(selection)));
         });
         campusGroup=findViewById(R.id.campusGroup);
         officeGroup=findViewById(R.id.officeGroup);
@@ -141,37 +129,23 @@ public class ClassroomQueryActivity extends AppCompatActivity {
         result=findViewById(R.id.result);
         result.setAdapter(adp);
         //BottomSheetBehavior.from(findViewById(R.id.result_sheet)).setState(BottomSheetBehavior.STATE_COLLAPSED);
-        findViewById(R.id.date).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog.show(getSupportFragmentManager(),null);
-            }
+        findViewById(R.id.date).setOnClickListener(v -> dateDialog.show(getSupportFragmentManager(),null));
+        ((RangeSlider)findViewById(R.id.timeSlider)).addOnChangeListener((slider, value, fromUser) -> {
+            startClassTime=String.format("%.0f",slider.getValues().get(0));
+            endClassTime=String.format("%.0f",slider.getValues().get(1));
+            ((MaterialTextView)findViewById(R.id.time)).setText(String.format("第%s节到第%s节", startClassTime,endClassTime));
         });
-        ((RangeSlider)findViewById(R.id.timeSlider)).addOnChangeListener(new RangeSlider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
-                startClassTime=String.format("%.0f",slider.getValues().get(0));
-                endClassTime=String.format("%.0f",slider.getValues().get(1));
-                ((MaterialTextView)findViewById(R.id.time)).setText(String.format("第%s节到第%s节", startClassTime,endClassTime));
-            }
-        });
-        findViewById(R.id.query).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adp.clear();
-                page=1;
-                getRoom();
-            }
+        findViewById(R.id.query).setOnClickListener(v -> {
+            adp.clear();
+            page=1;
+            getRoom();
         });
         getCampus();
-        launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult o) {
-                if(o.getResultCode()==RESULT_OK){
-                    cookie=getSharedPreferences("privacy",0).getString("Cookie","");
-                    http=getHttp();
-                    getCampus();
-                }
+        launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            if(o.getResultCode()==RESULT_OK){
+                cookie=getSharedPreferences("privacy",0).getString("Cookie","");
+                http=getHttp();
+                getCampus();
             }
         });
         ((RecyclerView)findViewById(R.id.result)).addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -186,8 +160,8 @@ public class ClassroomQueryActivity extends AppCompatActivity {
             }
         });
         dateText= findViewById(R.id.dateText);
-        dateStr=new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
-        dateText.setText(new SimpleDateFormat("yyyy年MM月dd日").format(new Date(System.currentTimeMillis())));
+        dateStr=new SimpleDateFormat("yyyy-MM-dd", Locale.CHINESE).format(new Date(System.currentTimeMillis()));
+        dateText.setText(new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINESE).format(new Date(System.currentTimeMillis())));
         handler = new Handler(getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -223,25 +197,20 @@ public class ClassroomQueryActivity extends AppCompatActivity {
                                 String cid = ((JSONObject) campusInfo).getString("id");
                                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip, campusGroup, false);
                                 campusGroup.addView(chip);
-                                chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                    @Override
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                        if (isChecked) {
-                                            if (classroom.containsKey(cid)) {
-                                                classroom.get(cid).forEach(e -> e.setVisibility(View.VISIBLE));
-                                            } else {
-                                                getOffice(cid);
-                                            }
+                                chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                                    if (isChecked) {
+                                        if (classroom.containsKey(cid)) {
+                                            classroom.get(cid).forEach(e -> e.setVisibility(View.VISIBLE));
                                         } else {
-                                            classroom.get(cid).forEach(e -> {
-                                                e.setVisibility(View.GONE);
-                                            });
+                                            getOffice(cid);
                                         }
+                                    } else {
+                                        classroom.get(cid).forEach(e -> e.setVisibility(View.GONE));
                                     }
                                 });
                                 chip.setText(((JSONObject) campusInfo).getString("campusName"));
                             } else if (msg.what == 2) {
-                                classroom.computeIfAbsent(msg.getData().getString("campus"), k -> new ArrayList<Chip>());
+                                classroom.computeIfAbsent(msg.getData().getString("campus"), k -> new ArrayList<>());
                                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip, officeGroup, false);
                                 officeGroup.addView(chip);
                                 office.put(chip.getId(), ((JSONObject) campusInfo).getString("id"));
@@ -313,7 +282,7 @@ public class ClassroomQueryActivity extends AppCompatActivity {
     }
     public void getRoom(){
         ArrayList<String> teachingBuildIDs= new ArrayList<>();
-        classType= new ArrayList<String>();
+        classType= new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
         map.put("自习室","003");
         map.put("有声研讨室","002");
@@ -402,11 +371,8 @@ class RoomAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 .override(127*3, 116*3)
                 .fitCenter()
                 .into((ShapeableImageView)holder.itemView.findViewById(R.id.pic));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.setOnClickListener(v -> {
 
-            }
         });
     }
 
