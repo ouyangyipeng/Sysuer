@@ -38,7 +38,7 @@ Handler handler;
 
         class Adapter extends FragmentStateAdapter{
 
-            final List<NewFragment> pages = List.of(new NewFragment(cookie),new NewFragment(cookie));
+            final List<NewFragment> pages = List.of(new NewFragment(cookie,0),new NewFragment(cookie,1));
 
             public Adapter(@NonNull Fragment fragment) {
                 super(fragment);
@@ -54,7 +54,7 @@ Handler handler;
             @NonNull
             @Override
             public Fragment createFragment(int position) {
-                return new NewFragment(cookie);
+                return new NewFragment(cookie,position);
             }
 
             @Override
