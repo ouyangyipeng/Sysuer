@@ -18,7 +18,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
 import com.sysu.edu.databinding.NewsBinding;
 
-import java.util.List;
 public class News extends AppCompatActivity {
 NewsBinding binding;
 String cookie;
@@ -37,35 +36,24 @@ Handler handler;
         });
 
         class Adapter extends FragmentStateAdapter{
-
-            final List<NewFragment> pages = List.of(new NewFragment(cookie,0),new NewFragment(cookie,1));
-
-            public Adapter(@NonNull Fragment fragment) {
-                super(fragment);
-            }
-
+          //  final List<NewFragment> pages = List.of(new NewFragment(cookie,0),new NewFragment(cookie,1));
             public Adapter(@NonNull FragmentActivity fragmentActivity) {
                 super(fragmentActivity);
-            }
-
-            public NewFragment getItem(int i){
-                return pages.get(i);
             }
             @NonNull
             @Override
             public Fragment createFragment(int position) {
                 return new NewFragment(cookie,position);
             }
-
             @Override
             public int getItemCount() {
-                return pages.size();
+                return 4;
             }
         }
         Adapter adapter = new Adapter(this);
         binding.pager.setAdapter(adapter);
         //adapter.getItem(0).getSubscription();
-        new TabLayoutMediator(binding.tabLayout, binding.pager, (tab, position) -> tab.setText(new String[]{"资讯","通知","公众号"}[position])).attach();
+        new TabLayoutMediator(binding.tabLayout, binding.pager, (tab, position) -> tab.setText(new String[]{"资讯","公众号","通知","今日中大"}[position])).attach();
         handler=new Handler(getMainLooper()){
             @Override
             public void handleMessage(@NonNull Message msg) {
