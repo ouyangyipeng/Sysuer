@@ -348,4 +348,28 @@ public class NewFragment extends Fragment {
             }
         });
     }
+    void get() {
+        http.newCall(new Request.Builder().url("https://iportal-443.webvpn.sysu.edu.cn/ai_service/content-portal/user/content/page")
+                .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"4cef8rqw\",\"notice\":false}", MediaType.parse("application/json")))
+                .header("Content-type", "application/json")
+                .header("Authorization", authorization)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .header("Cookie", cookie).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    Message msg = new Message();
+                    msg.what = 5;
+                    Bundle data = new Bundle();
+                    data.putBoolean("isJson",response.header("Content-Type","").startsWith("application/json"));
+                    data.putString("data",response.body().string());
+                    msg.setData(data);
+                    handler.sendMessage(msg);
+                }
+            }
+        });
+    }
 }
