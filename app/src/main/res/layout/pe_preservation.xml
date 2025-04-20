@@ -11,8 +11,10 @@
     android:layout_height="wrap_content">
     <com.google.android.material.appbar.MaterialToolbar
         android:layout_width="match_parent"
+        android:id="@+id/tool"
         android:layout_height="wrap_content"
         android:transitionName="miniapp"
+        app:navigationIcon="?homeAsUpIndicator"
         app:layout_scrollFlags="scroll|enterAlways"
         app:title="体育场馆与预订系统"/>
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,7 +40,8 @@
                 app:chipSpacingVertical="0dp"
                 app:lineSpacing="0dp"
                 android:layout_height="wrap_content"
-                />
+                app:selectionRequired="true"
+                app:singleSelection="true" />
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,9 +51,10 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/field"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                app:selectionRequired="true"
+                android:layout_width="match_parent"
+                app:singleSelection="true"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,10 +72,17 @@
                 android:layout_marginBottom="8dp"
                 android:text="@string/date"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:singleLine="true"
+
+                    app:singleSelection="true"
                     app:selectionRequired="true"/>
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
@@ -81,10 +92,19 @@
                     android:text="@string/time"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
                 <com.google.android.material.chip.ChipGroup
-                android:id="@+id/time"
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/preservation"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:selectionRequired="true"/>
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/preservation"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

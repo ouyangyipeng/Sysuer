@@ -152,8 +152,8 @@ public class ClassroomQueryActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if(recyclerView.canScrollVertically(1)&&total/20+1>=page){
-                    System.out.println(total);
-                    System.out.println(page);
+//                    System.out.println(total);
+//                    System.out.println(page);
                     getRoom();
                 }
                 super.onScrolled(recyclerView, dx, dy);
