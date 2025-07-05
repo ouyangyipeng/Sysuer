@@ -92,5 +92,9 @@
     <string name="total_evaluation">总评数</string>
     <string name="total_for_evaluation">待评数</string>
     <string name="open">打开</string>
+    <string name="score">成绩</string>
+    <string name="subject">科目</string>
+    <string name="year">学年</string>
+    <string name="trainType">培养类型</string>
 
 </resources>

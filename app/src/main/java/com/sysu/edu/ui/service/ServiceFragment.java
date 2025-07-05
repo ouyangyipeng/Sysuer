@@ -26,6 +26,7 @@ import com.sysu.edu.academic.AgendaActivity;
 import com.sysu.edu.academic.BrowseActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.Evaluation;
+import com.sysu.edu.academic.Grade;
 import com.sysu.edu.academic.TrainingSchedule;
 import com.sysu.edu.news.News;
 import com.sysu.edu.system.PEPreservation;
@@ -51,8 +52,8 @@ public class ServiceFragment extends Fragment {
         };
         View.OnClickListener[][] actions = new View.OnClickListener[][]{
                 {
-newActivity(News.class),
-        },//信息
+                        newActivity(News.class),
+                },//信息
                 {newActivity(PEPreservation.class),
                         browse("https://xgxt-443.webvpn.sysu.edu.cn/main/#/index"),
                         browse("https://jwxt.sysu.edu.cn/jwxt/yd/index/#/Home"),
@@ -72,28 +73,28 @@ newActivity(News.class),
                         browse("https://alumni.sysu.edu.cn/"),
                 },//官网
                 {
-
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                if(v.getContext().getPackageManager().getPackageInfo("com.tencent.wework",0)!= null) {
-                                    startActivity(new Intent(Intent.ACTION_MAIN).setPackage("com.tencent.wework"));
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    if(v.getContext().getPackageManager().getPackageInfo("com.tencent.wework",0)!= null) {
+                                        startActivity(new Intent(Intent.ACTION_MAIN).setPackage("com.tencent.wework"));
+                                    }
+                                } catch (PackageManager.NameNotFoundException e) {
+                                    Toast.makeText(v.getContext(),"未安装企业微信",Toast.LENGTH_SHORT).show();
+                                    throw new RuntimeException(e);
                                 }
-                            } catch (PackageManager.NameNotFoundException e) {
-                                Toast.makeText(v.getContext(),"未安装企业微信",Toast.LENGTH_SHORT).show();
-                                throw new RuntimeException(e);
                             }
-                        }
-                    },
+                        },
                 },//官媒
-                {   newActivity(Evaluation.class),
-null,
-                    newActivity(AgendaActivity.class),
+                {newActivity(Evaluation.class),
+                        null,
+                        newActivity(AgendaActivity.class),
                         null,
                         null,
                         newActivity(ClassroomQueryActivity.class),
-                        null,null,newActivity(TrainingSchedule.class),
+                        newActivity(Grade.class),null,
+                        newActivity(TrainingSchedule.class),
                 },//教务
                 {
 
@@ -121,22 +122,22 @@ null,
         title.setText(box_title);
         title.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
-                   }
+            }
 
-    });
+        });
         DisplayMetrics metrics = new DisplayMetrics();
         ((WindowManager) requireContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
         int length=36;
         for(int i=0;i<items.length;i++){
             MaterialButton item = (MaterialButton) inflater.inflate(R.layout.service_item,items_container,false);
             item.setOnClickListener(
-                       (i<actions.length&&actions[i]!=null)?actions[i]:new View.OnClickListener() {
-                           @Override
-                           public void onClick(View v) {
-                               Toast.makeText(v.getContext(),"未开发",Toast.LENGTH_LONG).show();
-                           }
-                       }
-                );
+                    (i<actions.length&&actions[i]!=null)?actions[i]:new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(v.getContext(),"未开发",Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
             item.setId(i+1);
             item.setText(items[i]);
             item.measure(View.MEASURED_SIZE_MASK,View.MEASURED_SIZE_MASK);

@@ -326,7 +326,6 @@ public void getTable(String academicYear,int week){
 public void getTerm(){
     http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
                     .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
-
             .addHeader("Cookie",cookie).build()).enqueue(new Callback() {
         @Override
         public void onFailure(@NonNull Call call, @NonNull IOException e) {

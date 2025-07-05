@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.activity.EdgeToEdge;
@@ -74,9 +73,7 @@ public class Evaluation extends AppCompatActivity {
                 if (msg.what == 1) {
                     JSONObject data = JSON.parseObject((String) msg.obj);
                     if (data.get("code").equals("200")) {
-                        data.getJSONObject("result").getJSONArray("list").forEach(e -> {
-                            evals.add((JSONObject) e);
-                        });
+                        data.getJSONObject("result").getJSONArray("list").forEach(e -> evals.add((JSONObject) e));
                         adp.set(evals);
                     }
                     else {
@@ -143,17 +140,11 @@ class EvalAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        holder.itemView.findViewById(R.id.open).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.findViewById(R.id.open).setOnClickListener(v -> {
 
-            }
         });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.setOnClickListener(v -> {
 
-            }
         });
         ((MaterialTextView)holder.itemView.findViewById(R.id.title)).setText(data.get(position).getString("rwmc"));
         ((MaterialTextView)holder.itemView.findViewById(R.id.start_time)).setText(String.format("起始时间：%s", data.get(position).getString("rwkssj")));
