@@ -1,26 +1,26 @@
 package com.sysu.edu.ui.service;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.sysu.edu.R;
 import com.sysu.edu.academic.AgendaActivity;
 import com.sysu.edu.academic.BrowseActivity;
@@ -73,17 +73,14 @@ public class ServiceFragment extends Fragment {
                         browse("https://alumni.sysu.edu.cn/"),
                 },//官网
                 {
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    if(v.getContext().getPackageManager().getPackageInfo("com.tencent.wework",0)!= null) {
-                                        startActivity(new Intent(Intent.ACTION_MAIN).setPackage("com.tencent.wework"));
-                                    }
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    Toast.makeText(v.getContext(),"未安装企业微信",Toast.LENGTH_SHORT).show();
-                                    throw new RuntimeException(e);
+                        v -> {
+                            try {
+                                if(v.getContext().getPackageManager().getPackageInfo("com.tencent.wework",0)!= null) {
+                                    startActivity(new Intent(Intent.ACTION_MAIN).setPackage("com.tencent.wework"));
                                 }
+                            } catch (PackageManager.NameNotFoundException e) {
+                                Toast.makeText(v.getContext(),"未安装企业微信",Toast.LENGTH_SHORT).show();
+                                throw new RuntimeException(e);
                             }
                         },
                 },//官媒
@@ -112,65 +109,35 @@ public class ServiceFragment extends Fragment {
         for (int i=0;i<titles.length;i++){
             initBox(inflater,titles[i],items[i],actions[i]);
         }
+
         return fragment;
     }
     public void initBox(LayoutInflater inflater, String box_title, String[] items, View.OnClickListener[] actions)
     {
         LinearLayout box= (LinearLayout) inflater.inflate(R.layout.service_box,service_container,false);
         TextView title=box.findViewById(R.id.service_box_title);
-        RelativeLayout items_container=box.findViewById(R.id.service_box_items);
+        ChipGroup items_container=box.findViewById(R.id.service_box_items);
         title.setText(box_title);
-        title.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-            }
-
+        ViewCompat.setOnApplyWindowInsetsListener(box, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(48, systemBars.top, 48, systemBars.bottom);
+            return insets;
         });
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((WindowManager) requireContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
-        int length=36;
         for(int i=0;i<items.length;i++){
-            MaterialButton item = (MaterialButton) inflater.inflate(R.layout.service_item,items_container,false);
+            Chip item = (Chip) inflater.inflate(R.layout.service_item,items_container,false);
             item.setOnClickListener(
-                    (i<actions.length&&actions[i]!=null)?actions[i]:new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(v.getContext(),"未开发",Toast.LENGTH_LONG).show();
-                        }
-                    }
+                    (i<actions.length&&actions[i]!=null)?actions[i]: v -> Toast.makeText(v.getContext(),"未开发",Toast.LENGTH_LONG).show()
             );
-            item.setId(i+1);
             item.setText(items[i]);
-            item.measure(View.MEASURED_SIZE_MASK,View.MEASURED_SIZE_MASK);
-            RelativeLayout.LayoutParams lp= (RelativeLayout.LayoutParams) item.getLayoutParams();
-            length=length+item.getMeasuredWidth()+24;
-            if (length+24<metrics.widthPixels)
-            {
-                lp.addRule(RelativeLayout.RIGHT_OF,i);
-                lp.addRule(RelativeLayout.ALIGN_TOP,i);
-            }else{
-                lp.topMargin=12;
-                lp.bottomMargin=12;
-                lp.addRule(RelativeLayout.BELOW,i);
-                lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                length=item.getMeasuredWidth()+36;
-            }
             items_container.addView(item);
         }
         service_container.addView(box);
     }
     public View.OnClickListener browse(String url){
-        return new View.OnClickListener(){
-            public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), BrowseActivity.class).setData(Uri.parse(url)), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
-            }
-        };
+        return view -> startActivity(new Intent(view.getContext(), BrowseActivity.class).setData(Uri.parse(url)), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
     }
     public View.OnClickListener newActivity(Class activity_class){
-        return new View.OnClickListener(){
-            public void onClick(View view) {
-                startActivity(new Intent(view.getContext(),activity_class),ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
-            }
-        };
+        return view -> startActivity(new Intent(view.getContext(),activity_class),ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
     }
 }
 

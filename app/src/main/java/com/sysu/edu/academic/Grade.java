@@ -86,7 +86,7 @@ public class Grade extends AppCompatActivity {
         yearPop = new PopupMenu(this, binding.year,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         typePop = new PopupMenu(this, binding.type,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         binding.toolbar.setNavigationOnClickListener(view -> finishAfterTransition());
-        binding.scores.setLayoutManager(new GridLayoutManager(this,(dm.widthPixels<1980)?1:3));
+        binding.scores.setLayoutManager(new GridLayoutManager(this,(dm.widthPixels<1080)?1:(dm.widthPixels<2160)?2:3));
         binding.term.setOnClickListener(view -> termPop.show());
         binding.year.setOnClickListener(view -> yearPop.show());
         binding.type.setOnClickListener(view -> typePop.show());
@@ -131,8 +131,17 @@ public class Grade extends AppCompatActivity {
                         String rank=pull.getJSONArray("compulsorySelectList").getJSONObject(0).getString("rank");
                         String point=pull.getJSONArray("compulsorySelectList").getJSONObject(0).getString("vegPoint");
                         String total =pull.getString("stuTotal");
+                        JSONObject stuCredit = pull.getJSONObject("stuCredit");
                         binding.detail.setText(String.format("总排名：%s/%s\n总学分：%s\n总绩点：%s",totalRank,total,totalCredit,totalPoint));
                         binding.detail2.setText(String.format("当前排名：%s/%s\n当前绩点：%s",rank,total,point));
+                        binding.detail3.setText(String.format("学期学分：%s\n公必学分：%s\n公选学分：%s\n专必学分：%s\n专选学分：%s\n荣誉学分：%s",
+                                stuCredit.getString("allGetCredit"),
+                                stuCredit.getString("publicGetCredit"),
+                                stuCredit.getString("publicSelectGetCredit"),
+                                stuCredit.getString("majorGetCredit"),
+                                stuCredit.getString("majorSelectGetCredit"),
+                                stuCredit.getString("honorCourseGetCredit")
+                        ));
                         }
                 }
                 else {

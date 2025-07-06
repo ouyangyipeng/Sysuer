@@ -32,6 +32,7 @@
                 app:layout_scrollFlags="scroll"
                 app:title="@string/app_name"
                 app:titleTextColor="@color/purple_500"/>
+
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment_activity_main"

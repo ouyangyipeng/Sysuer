@@ -22,13 +22,13 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="8dp">
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/date"
-                style="@style/TextAppearance.Material3.TitleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:layout_margin="8dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/date"
+                    style="@style/TextAppearance.Material3.TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginTop="0dp"/>
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/time"
                     style="@style/TextAppearance.Material3.BodyMedium"
@@ -42,34 +42,35 @@
             android:layout_width="match_parent"
             android:layout_margin="8dp"
             android:gravity="center">
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="8dp"
-            android:tag="card_title"
-            android:text="@string/today_courses"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            app:drawableLeftCompat="@drawable/course"/>
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleSelection="true">
-            <Button
-                android:id="@+id/today"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:tag="card_title"
+                android:text="@string/today_courses"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                app:drawableLeftCompat="@drawable/course"/>
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/today"/>
-            <Button
-                android:id="@+id/tomorrow"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tomorrow"/>
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                app:selectionRequired="true"
+                app:singleSelection="true">
+                <Button
+                    android:id="@+id/today"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today"/>
+                <Button
+                    android:id="@+id/tomorrow"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tomorrow"/>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </TableRow>
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"
@@ -77,11 +78,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginTop="0dp">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/course_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/course_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"/>
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/noClass"
                 android:layout_width="wrap_content"
@@ -94,35 +95,35 @@
             android:layout_width="match_parent"
             android:layout_margin="8dp"
             android:gravity="center">
-        <com.google.android.material.textview.MaterialTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:drawablePadding="8dp"
-        android:tag="card_title"
-            android:layout_weight="1"
-            android:text="@string/exam"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
-        app:drawableLeftCompat="@drawable/exam"/>
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggle2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:selectionRequired="true"
-            app:singleSelection="true">
-            <Button
-                android:id="@+id/this_week"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:tag="card_title"
+                android:text="@string/exam"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                app:drawableLeftCompat="@drawable/exam"/>
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/this_week"/>
-            <Button
-                android:id="@+id/next_week"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/next_week"/>
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                app:selectionRequired="true"
+                app:singleSelection="true">
+                <Button
+                    android:id="@+id/this_week"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/this_week"/>
+                <Button
+                    android:id="@+id/next_week"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next_week"/>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </TableRow>
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"
@@ -143,6 +144,9 @@
                 android:layout_height="match_parent"
                 android:padding="8dp"/>
         </com.google.android.material.card.MaterialCardView>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_margin="8dp">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -152,6 +156,7 @@
             android:text="@string/todo"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:drawableLeftCompat="@drawable/todo"/>
+        </TableRow>
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"
             android:layout_width="match_parent"

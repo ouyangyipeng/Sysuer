@@ -6,13 +6,13 @@
             app:icon="@drawable/account"
             app:title="个人中心"/>
         <Preference
+            app:isPreferenceVisible="false"
             app:title="数据"/>
     </PreferenceCategory>
     <PreferenceCategory app:title="软件">
         <Preference
             app:icon="@drawable/setting"
-            app:title="设置"
-            />
+            app:title="设置" />
         <Preference
             app:icon="@drawable/info"
             app:title="关于"/>

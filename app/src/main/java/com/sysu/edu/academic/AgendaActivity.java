@@ -13,11 +13,15 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -63,29 +67,34 @@ public class AgendaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = AgendaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
         cookie=getSharedPreferences("privacy",MODE_PRIVATE).getString("Cookie","");
-        binding.toolbar.getChildAt(0).setTransitionName("miniapp");
         setSupportActionBar(binding.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         String[] duration = getResources().getStringArray(R.array.duration);
         for (int i=0;i<11;i++)
         {
             LinearLayout row_item = (LinearLayout) getLayoutInflater().inflate(R.layout.duration, binding.day, false);
+             ((MaterialTextView)row_item.findViewById(R.id.course_duration)).setText(duration[i].replace("~","\n"));
             ((MaterialTextView)row_item.findViewById(R.id.course_order)).setText(String.valueOf(i+1));
-            ((MaterialTextView)row_item.findViewById(R.id.course_duration)).setText(duration[i].replace("~","\n"));
             if(i==10){
                 row_item.measure(View.MEASURED_SIZE_MASK,View.MEASURED_SIZE_MASK);
-                binding.month.getLayoutParams().width=row_item.getMeasuredWidth();}
-                GridLayout.LayoutParams gl = (GridLayout.LayoutParams) row_item.getLayoutParams();
-                gl.rowSpec=GridLayout.spec(i,1.0f);
-                binding.day.addView(row_item);
+                binding.month.getLayoutParams().width=row_item.getMeasuredWidth();
+            }
+            GridLayout.LayoutParams gl = (GridLayout.LayoutParams) row_item.getLayoutParams();
+            gl.rowSpec=GridLayout.spec(i);
+            binding.day.addView(row_item);
         }
         binding.month.setText(new SimpleDateFormat("M月", Locale.CHINESE).format(new Date()));
         int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        if(weekday==1){weekday=8;}
+        weekday=(weekday==1)?weekday:8;
         binding.last.setOnClickListener(v -> changeWeek(currentWeekIndex-1));
         binding.next.setOnClickListener(view -> changeWeek(currentWeekIndex+1));
-//        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+//      int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         String[] ws = getResources().getStringArray(R.array.weeks);
         for(int i=0;i<7;i++){
             LinearLayout column_item = (LinearLayout) getLayoutInflater().inflate(R.layout.weekday,binding.week, false);
@@ -108,8 +117,7 @@ public class AgendaActivity extends AppCompatActivity {
         launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             if(o.getResultCode()==RESULT_OK){
                 cookie=getSharedPreferences("privacy",0).getString("Cookie","");
-                if(currentTerm!=null){getTable(currentTerm,currentWeek);}
-                else{getTerm();getAvailableTerms();}
+                if(currentTerm!=null){getTable(currentTerm,currentWeek);} else{getTerm();getAvailableTerms();}
             }
         });
         binding.term.setOnClickListener(v -> {
@@ -143,34 +151,36 @@ public class AgendaActivity extends AppCompatActivity {
                 if (response.getInteger("code").equals(200)) {
                     switch(msg.what) {
                         case 1: {
-                                views.forEach(e->binding.day.removeView(e));
-                                views.clear();
-                                response.getJSONArray("data").forEach(e -> {
-                                    String week = ((JSONObject) e).getString("week");
-                                    String startClassTimes = ((JSONObject) e).getString("startClassTimes");
-                                    String endClassTimes = ((JSONObject) e).getString("endClassTimes");
-                                    JSONArray info = ((JSONObject) e).getJSONArray("teachingInfoList");
-                                    JSONObject detail = (JSONObject) info.get(0);
-                                    String course = detail.getString("courseName");
-                                    String teacher = detail.getString("teacherName");
-                                    String campus = detail.getString("teachingCampusName");
-                                    String isStop = detail.getString("whetherStopClass");
-                                    String teachingBuildingName = detail.getString("teachingBuildingName");
-                                    String classroomNum = detail.getString("classroomNum");
-                                    View item = getLayoutInflater().inflate(R.layout.agenda_item, binding.day, false);
-                                    if(isStop!=null&&!isStop.equals("0")){item.setEnabled(false);item.setBackgroundColor(getColor(R.color.teal_700));}
-                                    views.add(item);
-                                    item.setOnClickListener(v -> {
-                                        setDetail(course,(campus == null ? "" : campus)+"-"+(teachingBuildingName == null ? "" : teachingBuildingName)+"-"+(classroomNum == null ? "" : classroomNum),teacher,String.format("第%s节到第%s节",startClassTimes,endClassTimes));
-                                        detailDialog.show();
-                                    });
-                                    ((MaterialTextView) item.findViewById(R.id.content)).setText(String.format("%s/%s-%s", course, teachingBuildingName == null ? "" : teachingBuildingName, classroomNum == null ? "" : classroomNum));
-                                    GridLayout.LayoutParams gl = (GridLayout.LayoutParams) item.getLayoutParams();
-                                    gl.columnSpec = GridLayout.spec(Integer.parseInt(week), 1.0f);
-                                    gl.rowSpec = GridLayout.spec(Integer.parseInt(startClassTimes) - 1, Integer.parseInt(endClassTimes) - Integer.parseInt(startClassTimes) + 1, 1.0f);
-                                    binding.day.addView(item);
+                            views.forEach(e->binding.day.removeView(e));
+                            views.clear();
+                            response.getJSONArray("data").forEach(e -> {
+                                String week = ((JSONObject) e).getString("week");
+                                String startClassTimes = ((JSONObject) e).getString("startClassTimes");
+                                String endClassTimes = ((JSONObject) e).getString("endClassTimes");
+                                JSONArray info = ((JSONObject) e).getJSONArray("teachingInfoList");
+                                JSONObject detail = (JSONObject) info.get(0);
+                                String course = detail.getString("courseName");
+                                String teacher = detail.getString("teacherName");
+                                String campus = detail.getString("teachingCampusName");
+                                String isStop = detail.getString("whetherStopClass");
+                                String teachingBuildingName = detail.getString("teachingBuildingName");
+                                String classroomNum = detail.getString("classroomNum");
+                                View item = getLayoutInflater().inflate(R.layout.agenda_item, binding.day, false);
+                                if(isStop!=null&&!isStop.equals("0")){item.setEnabled(false);item.setBackgroundColor(getColor(R.color.teal_700));}
+                                views.add(item);
+                                item.setOnClickListener(v -> {
+                                    String location = (campus == null ? "" : campus) + "-" + (teachingBuildingName == null ? "" : teachingBuildingName) + "-" + (classroomNum == null ? "" : classroomNum);
+                                    setDialogDetail(course, location,teacher,String.format("第%s节到第%s节",startClassTimes,endClassTimes));
+                                    detailDialog.show();
+                                    setDetail(course, location,teacher,String.format("第%s节到第%s节",startClassTimes,endClassTimes));
                                 });
-                                break;
+                                ((MaterialTextView) item.findViewById(R.id.content)).setText(String.format("%s/%s-%s", course, teachingBuildingName == null ? "" : teachingBuildingName, classroomNum == null ? "" : classroomNum));
+                                GridLayout.LayoutParams gl = (GridLayout.LayoutParams) item.getLayoutParams();
+                                gl.columnSpec = GridLayout.spec(Integer.parseInt(week), 1.0f);
+                                gl.rowSpec = GridLayout.spec(Integer.parseInt(startClassTimes) - 1, Integer.parseInt(endClassTimes) - Integer.parseInt(startClassTimes) + 1, 1.0f);
+                                binding.day.addView(item);
+                            });
+                            break;
                         }
                         case 2: {
                             currentTerm = response.getJSONObject("data").getString("acadYearSemester");
@@ -184,7 +194,7 @@ public class AgendaActivity extends AppCompatActivity {
                                 Calendar c = Calendar.getInstance();
                                 Date date = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINESE).parse(from);
                                 if(date!=null){c.setTime(date);
-                                binding.month.setText(new SimpleDateFormat("M月",Locale.CHINESE).format(date.getTime()));
+                                    binding.month.setText(new SimpleDateFormat("M月",Locale.CHINESE).format(date.getTime()));
                                 }
                                 for(int i=0;i<7;i++){
                                     ((MaterialTextView) binding.week.getChildAt(i+1).findViewById(R.id.course_date)).setText(new SimpleDateFormat("dd日",Locale.CHINESE).format(c.getTime()));
@@ -200,48 +210,57 @@ public class AgendaActivity extends AppCompatActivity {
                             break;
                         }case 5:{
                             weeks.clear();
-                            currentWeek = Integer.parseInt(response.getJSONObject("data").getString("nowWeekly"));
+                            String nowWeekly=response.getJSONObject("data").getString("nowWeekly");
+                            if(nowWeekly!=null){currentWeek = Integer.parseInt(nowWeekly);}
                             response.getJSONObject("data").getJSONArray("weeklyList").forEach(e->weeks.add(((JSONObject)e).getInteger("weekly")));
                             currentWeekIndex = weeks.indexOf(currentWeek);
                             binding.weekTime.setText(String.format("第%d周", currentWeek));
                             getTable(currentTerm, currentWeek);
                             break;
+                        } case 0:{
+                            Toast.makeText(AgendaActivity.this,"请检查网络",Toast.LENGTH_LONG).show();
                         }
                     }
                 }else{
-                launch.launch(new Intent(AgendaActivity.this, Login.class));
-            }
+                    Toast.makeText(AgendaActivity.this,"请登录",Toast.LENGTH_LONG).show();
+                    launch.launch(new Intent(AgendaActivity.this, Login.class));
+                }
             }
         };
         getTerm();
         getAvailableTerms();
     }
-public void getAvailableWeeks(String academicYear){
-    http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender/weekly?academicYear="+academicYear)
-            .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
-            .header("Cookie",cookie).build()).enqueue(new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-        }
-
-        @Override
-        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-            if (response.body() != null) {
+    public void getAvailableWeeks(String academicYear){
+        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender/weekly?academicYear="+academicYear)
+                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+                .header("Cookie",cookie).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message msg = new Message();
-                msg.what=5;
-                msg.obj=response.body().string();
+                msg.what=0;
                 handler.sendMessage(msg);
             }
-        }
-    });
-}
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    Message msg = new Message();
+                    msg.what=5;
+                    msg.obj=response.body().string();
+                    handler.sendMessage(msg);
+                }
+            }
+        });
+    }
     public  void  getAvailableTerms(){
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/findAcadyeartermNamesBox")
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
                 .addHeader("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                Message msg = new Message();
+                msg.what=0;
+                handler.sendMessage(msg);
             }
 
             @Override
@@ -262,20 +281,22 @@ public void getAvailableWeeks(String academicYear){
     }
     void changeTerm(String newTerm){
         if(!newTerm.equals(currentTerm)){
-        currentTerm = newTerm;
-        binding.term.setText(currentTerm);
-        getAvailableWeeks(currentTerm);
-        getTable(currentTerm,currentWeek);
+            currentTerm = newTerm;
+            binding.term.setText(currentTerm);
+            getAvailableWeeks(currentTerm);
+            getTable(currentTerm,currentWeek);
         }
     }
     void getRange(String academicYear,int week)
     {
-        http.newCall(new Request.Builder().url(String.format("https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender?academicYear=%s&weekly=%d",academicYear,week))
+        http.newCall(new Request.Builder().url(String.format(Locale.CHINA,"https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender?academicYear=%s&weekly=%d",academicYear,week))
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
-                .addHeader("Cookie",cookie).build()).enqueue(new Callback() {
+                .header("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                Message msg = new Message();
+                msg.what=0;
+                handler.sendMessage(msg);
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
@@ -288,59 +309,70 @@ public void getAvailableWeeks(String academicYear){
             }
         });
     }
-    void setDetail(String course,String location,String teacher,String classTime){
+    void setDialogDetail(String course,String location,String teacher,String classTime){
         ((MaterialTextView) Objects.requireNonNull(detailDialog.findViewById(R.id.course))).setText(course);
         ((MaterialTextView) Objects.requireNonNull(detailDialog.findViewById(R.id.location))).setText(location);
         ((MaterialTextView) Objects.requireNonNull(detailDialog.findViewById(R.id.teacher))).setText(teacher);
         ((MaterialTextView) Objects.requireNonNull(detailDialog.findViewById(R.id.classTime))).setText(classTime);
     }
+    void setDetail(String course,String location,String teacher,String classTime){
+//        ((MaterialTextView) findViewById(R.id.course)).setText(course);
+//        ((MaterialTextView) findViewById(R.id.location)).setText(location);
+//        ((MaterialTextView) findViewById(R.id.teacher)).setText(teacher);
+//        ((MaterialTextView) findViewById(R.id.classTime)).setText(classTime);
+    }
     void changeWeek(int newWeek){
         if(newWeek>=0){
             int currentWeek = weeks.get(newWeek);
             currentWeekIndex =newWeek;
-            binding.weekTime.setText(String.format("第%d周",currentWeek));
+            binding.weekTime.setText(String.format(Locale.CHINA,"第%d周",currentWeek));
             getTable(currentTerm,currentWeek);
             getRange(currentTerm,currentWeek);
         }
 
     }
-public void getTable(String academicYear,int week){
-    if(academicYear.isEmpty()||week<1){return;}
-    System.out.println(academicYear+week);
-    http.newCall(new Request.Builder().url(String.format("https://jwxt.sysu.edu.cn/jwxt/timetable-search/classTableInfo/queryStudentClassTable?academicYear=%s&weekly=%d",academicYear,week)).addHeader("Cookie",cookie).build()).enqueue(new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
-        }
-        @Override
-        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-            if (response.body() != null) {
+    public void getTable(String academicYear,int week){
+        if(academicYear.isEmpty()||week<1){return;}
+        System.out.println(academicYear+week);
+        http.newCall(new Request.Builder().url(String.format(Locale.CHINA,"https://jwxt.sysu.edu.cn/jwxt/timetable-search/classTableInfo/queryStudentClassTable?academicYear=%s&weekly=%d",academicYear,week)).addHeader("Cookie",cookie).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message msg = new Message();
-                msg.what=1;
-                msg.obj=response.body().string();
+                msg.what=0;
                 handler.sendMessage(msg);
             }
-        }
-    });
-}
-public void getTerm(){
-    http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
-                    .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
-            .addHeader("Cookie",cookie).build()).enqueue(new Callback() {
-        @Override
-        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-        }
-        @Override
-        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-            if (response.body() != null) {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    Message msg = new Message();
+                    msg.what=1;
+                    msg.obj=response.body().string();
+                    handler.sendMessage(msg);
+                }
+            }
+        });
+    }
+    public void getTerm(){
+        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
+                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+                .header("Cookie",cookie).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message msg = new Message();
-                msg.what=2;
-                msg.obj=response.body().string();
+                msg.what=0;
                 handler.sendMessage(msg);
             }
-        }
-    });
-}
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.body() != null) {
+                    Message msg = new Message();
+                    msg.what=2;
+                    msg.obj=response.body().string();
+                    handler.sendMessage(msg);
+                }
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
