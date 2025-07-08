@@ -86,7 +86,7 @@ public class Grade extends AppCompatActivity {
         yearPop = new PopupMenu(this, binding.year,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         typePop = new PopupMenu(this, binding.type,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         binding.toolbar.setNavigationOnClickListener(view -> finishAfterTransition());
-        binding.scores.setLayoutManager(new GridLayoutManager(this,(dm.widthPixels<1080)?1:(dm.widthPixels<2160)?2:3));
+        binding.scores.setLayoutManager(new GridLayoutManager(this,(dm.widthPixels<1830)?1:(dm.widthPixels<3050)?2:3));
         binding.term.setOnClickListener(view -> termPop.show());
         binding.year.setOnClickListener(view -> yearPop.show());
         binding.type.setOnClickListener(view -> typePop.show());

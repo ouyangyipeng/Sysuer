@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
-    android:padding="12dp">
+    android:paddingStart="12dp"
+    android:paddingTop="0dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="0dp">
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/pic"
         android:layout_width="wrap_content"
@@ -23,14 +26,18 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintLeft_toLeftOf="@id/pic"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/c" />
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/c"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        app:horizontalItemSpacing="0dp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
         app:layout_constraintLeft_toRightOf="@id/pic"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/pic">
+        app:layout_constraintTop_toTopOf="parent">
         <com.google.android.material.chip.Chip
             android:id="@+id/location"
             style="@style/Widget.Material3.Chip.Assist"
@@ -53,13 +60,12 @@
             app:chipIcon="@drawable/time"
             app:chipIconTint="?attr/colorPrimary"/>
         <com.google.android.material.chip.Chip
-        android:id="@+id/seat"
-        style="@style/Widget.Material3.Chip.Assist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:chipIcon="@drawable/seat"
-        app:chipIconTint="?attr/colorPrimary"/>
-
+            android:id="@+id/seat"
+            style="@style/Widget.Material3.Chip.Assist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipIcon="@drawable/seat"
+            app:chipIconTint="?attr/colorPrimary"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/type"
             style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -68,16 +74,15 @@
             android:text="@string/selfStudyRoom"
             app:icon="@drawable/book"/>
     </com.google.android.material.chip.ChipGroup>
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Title"
         android:textAppearance="?textAppearanceTitleLarge"
         app:layout_constraintBottom_toTopOf="@id/divider"
         app:layout_constraintLeft_toLeftOf="@id/pic"
+        app:layout_constraintRight_toLeftOf="@id/c"
         app:layout_constraintTop_toBottomOf="@id/pic"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

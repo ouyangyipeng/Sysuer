@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/toolbar"
+    android:transitionName="miniapp"
     app:navigationIcon="?homeAsUpIndicator"
     app:title="@string/app_name"/>
     <WebView
@@ -16,9 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        style="@style/Widget.Material3.BottomNavigationView"
+        style="@style/Widget.Design.BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:labelVisibilityMode="unlabeled"

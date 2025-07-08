@@ -1,8 +1,11 @@
 package com.sysu.edu.academic;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
@@ -12,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -37,6 +41,7 @@ BrowserBinding binding;
                 finishAfterTransition();
             }
         });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -61,6 +66,13 @@ BrowserBinding binding;
         String url = getIntent().getDataString() != null ? getIntent().getDataString() : "https://www.sysu.edu.cn/";
         //c.setCookie(url,"LYSESSIONID=1e1f3aaf-9f78-43e6-a017-9afa4c283aba;user=eyJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjI0MzA4MTUyIiwibmFtZSI6IuWUkOi0pOaghyIsImxvZ2luUGF0dGVybiI6InN0dWRlbnQtbG9naW4iLCJzc28iOnRydWV9; ssoUsername=gDzeK9sUezH5IwnImtM2c3WnwW+qqkUKoujpcC19UUx+fD0kp79drFFVWIf8U4tcsWp1ornU9tjcfn4QpsnQILtb8/HoXwSEy041MvQ71V/2YzeG4n6RHnZaVDxzLy4pxxsZauutoE+4UL7SZy+tHCafNPRHltjOgkwRf4TRAqo=;user=eyJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjI0MzA4MTUyIiwibmFtZSI6IuWUkOi0pOaghyIsImxvZ2luUGF0dGVybiI6InN0dWRlbnQtbG9naW4iLCJzc28iOnRydWV9");
        // c.flush();
+        binding.toolbar.getMenu().add("在浏览器中打开").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+                return false;
+            }
+        });
         WebSettings webSettings = web.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setSupportMultipleWindows(true);

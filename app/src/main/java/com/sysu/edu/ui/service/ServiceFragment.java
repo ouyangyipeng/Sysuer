@@ -1,7 +1,6 @@
 package com.sysu.edu.ui.service;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,12 +23,15 @@ import com.google.android.material.chip.ChipGroup;
 import com.sysu.edu.R;
 import com.sysu.edu.academic.AgendaActivity;
 import com.sysu.edu.academic.BrowseActivity;
+import com.sysu.edu.academic.CalendarActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.Evaluation;
 import com.sysu.edu.academic.Grade;
 import com.sysu.edu.academic.TrainingSchedule;
 import com.sysu.edu.news.News;
 import com.sysu.edu.system.PEPreservation;
+
+import java.util.Objects;
 
 public class ServiceFragment extends Fragment {
     LinearLayout service_container;
@@ -39,7 +41,7 @@ public class ServiceFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragment=inflater.inflate(R.layout.fragment_service,container,false);
         service_container=fragment.findViewById(R.id.service_container);
-        String[] titles = new String[]{"讯息","系统", "官网", "官媒","教务","学习", "出行", "宿舍","查询"};
+        String[] titles = new String[]{"讯息","系统", "官网", "官媒","教务","学习", "出行", "宿舍"};
         String[][] items = new String[][]{{"资讯门户","学校活动","校园集市"},
                 {"体育场馆预定系统","学工系统","教务系统","中山大学统一门户","大学服务中心","财务信息系统"},
                 {"中山大学官网","本科招生","研究生招生","人才招聘","百年校庆","公务电子邮件系统","博物馆","图书馆","校友会"},
@@ -48,7 +50,6 @@ public class ServiceFragment extends Fragment {
                 {"SeeLight","雨课堂","课堂派","在线教学平台","中国大学（慕课）"},
                 {"校园地图","校车","出行证","校医院"},
                 {"宿舍报修","缴纳水电费"},
-                {"空教室查询"}
         };
         View.OnClickListener[][] actions = new View.OnClickListener[][]{
                 {
@@ -73,28 +74,27 @@ public class ServiceFragment extends Fragment {
                         browse("https://alumni.sysu.edu.cn/"),
                 },//官网
                 {
-                        v -> {
-                            try {
-                                if(v.getContext().getPackageManager().getPackageInfo("com.tencent.wework",0)!= null) {
-                                    startActivity(new Intent(Intent.ACTION_MAIN).setPackage("com.tencent.wework"));
-                                }
-                            } catch (PackageManager.NameNotFoundException e) {
-                                Toast.makeText(v.getContext(),"未安装企业微信",Toast.LENGTH_SHORT).show();
-                                throw new RuntimeException(e);
-                            }
-                        },
+                        v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
+                        v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
+                        v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
+                        v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                 },//官媒
                 {newActivity(Evaluation.class),
                         null,
                         newActivity(AgendaActivity.class),
                         null,
-                        null,
+                        newActivity(CalendarActivity.class),
                         newActivity(ClassroomQueryActivity.class),
                         newActivity(Grade.class),null,
                         newActivity(TrainingSchedule.class),
                 },//教务
                 {
 
+                        browse("https://www.seelight.net/"),
+                        browse("https://www.yuketang.cn/web"),
+                        browse("https://www.ketangpai.com/"),
+                        browse("https://lms.sysu.edu.cn/"),
+                        browse("https://www.icourse163.org/"),
                 },//学习
                 {
 
@@ -120,7 +120,7 @@ public class ServiceFragment extends Fragment {
         title.setText(box_title);
         ViewCompat.setOnApplyWindowInsetsListener(box, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(48, systemBars.top, 48, systemBars.bottom);
+            v.setPadding(48, 24, 48, 24);
             return insets;
         });
         for(int i=0;i<items.length;i++){

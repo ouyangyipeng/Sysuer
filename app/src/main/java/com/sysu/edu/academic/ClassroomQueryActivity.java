@@ -36,6 +36,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.R;
+import com.sysu.edu.databinding.ClassroomQueryBinding;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -44,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -74,6 +76,7 @@ public class ClassroomQueryActivity extends AppCompatActivity {
     HashMap<Integer, String> office= new HashMap<>();
     RecyclerView result;
     private ActivityResultLauncher<Intent> launch;
+    ClassroomQueryBinding binding;
 
     public OkHttpClient getHttp(){
         return new OkHttpClient.Builder().addInterceptor(new Interceptor() {
@@ -95,11 +98,12 @@ public class ClassroomQueryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.classroom_query);
-       // findViewById(R.id.toolbar).getChildAt(0).setTransitionName("miniapp");
+        binding = ClassroomQueryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+            binding.tool.setPadding(0,systemBars.top,0,0);
             return insets;
         });
         findViewById(R.id.campus_select_all).setOnClickListener(v -> {
@@ -131,8 +135,8 @@ public class ClassroomQueryActivity extends AppCompatActivity {
         //BottomSheetBehavior.from(findViewById(R.id.result_sheet)).setState(BottomSheetBehavior.STATE_COLLAPSED);
         findViewById(R.id.date).setOnClickListener(v -> dateDialog.show(getSupportFragmentManager(),null));
         ((RangeSlider)findViewById(R.id.timeSlider)).addOnChangeListener((slider, value, fromUser) -> {
-            startClassTime=String.format("%.0f",slider.getValues().get(0));
-            endClassTime=String.format("%.0f",slider.getValues().get(1));
+            startClassTime=String.format(Locale.CHINA,"%.0f",slider.getValues().get(0));
+            endClassTime=String.format(Locale.CHINA,"%.0f",slider.getValues().get(1));
             ((MaterialTextView)findViewById(R.id.time)).setText(String.format("第%s节到第%s节", startClassTime,endClassTime));
         });
         findViewById(R.id.query).setOnClickListener(v -> {
@@ -152,8 +156,6 @@ public class ClassroomQueryActivity extends AppCompatActivity {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if(recyclerView.canScrollVertically(1)&&total/20+1>=page){
-//                    System.out.println(total);
-//                    System.out.println(page);
                     getRoom();
                 }
                 super.onScrolled(recyclerView, dx, dy);
@@ -200,12 +202,12 @@ public class ClassroomQueryActivity extends AppCompatActivity {
                                 chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                                     if (isChecked) {
                                         if (classroom.containsKey(cid)) {
-                                            classroom.get(cid).forEach(e -> e.setVisibility(View.VISIBLE));
+                                            Objects.requireNonNull(classroom.get(cid)).forEach(e -> e.setVisibility(View.VISIBLE));
                                         } else {
                                             getOffice(cid);
                                         }
                                     } else {
-                                        classroom.get(cid).forEach(e -> e.setVisibility(View.GONE));
+                                        Objects.requireNonNull(classroom.get(cid)).forEach(e -> e.setVisibility(View.GONE));
                                     }
                                 });
                                 chip.setText(((JSONObject) campusInfo).getString("campusName"));
@@ -215,7 +217,7 @@ public class ClassroomQueryActivity extends AppCompatActivity {
                                 officeGroup.addView(chip);
                                 office.put(chip.getId(), ((JSONObject) campusInfo).getString("id"));
                                 chip.setText(((JSONObject) campusInfo).getString("dataName"));
-                                classroom.get(msg.getData().getString("campus")).add(chip);
+                                Objects.requireNonNull(classroom.get(msg.getData().getString("campus"))).add(chip);
                             }
                         }
                     }

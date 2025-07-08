@@ -64,5 +64,10 @@
             </intent-filter>
         </activity>
     </application>
-
+<queries>
+    <package android:name="com.tencent.wework"/>
+    <intent>
+        <action android:name="android.intent.action.MAIN"/>
+    </intent>
+</queries>
 </manifest>
