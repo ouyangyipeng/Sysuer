@@ -39,15 +39,13 @@
             android:exported="false" />
         <activity
             android:name=".more.Setting"
-            android:exported="false"
-            android:label="@string/title_activity_setting" />
+            android:exported="false"/>
         <activity
             android:name=".onlineClass.OnlineClassActivity"
             android:exported="false" />
         <activity
             android:name=".academic.Login"
             android:exported="false"
-            android:label="@string/title_activity_login"
             android:theme="@style/Theme.中大儿" />
         <activity
             android:name=".academic.CalendarActivity"

@@ -38,6 +38,7 @@
         <item>20:50~21:35</item>
     </array>
     <array name="number">
-        <item>1</item><item>11</item>
+        <item>1</item>
+        <item>11</item>
     </array>
 </resources>

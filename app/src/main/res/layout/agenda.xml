@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:text="@string/week"
+                android:text="@string/week1"
                 app:icon="@drawable/time"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/next"

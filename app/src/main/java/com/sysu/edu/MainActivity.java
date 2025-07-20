@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 //                R.id.navigation_activity, R.id.navigation_service, R.id.navigation_account)
 //                .build();
         NavController navController = ((NavHostFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main))).getNavController();
-        navController.setGraph(R.navigation.mobile_navigation);
+        navController.setGraph(R.navigation.main_navigation);
 
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController((NavigationBarView) binding.navView, navController);
