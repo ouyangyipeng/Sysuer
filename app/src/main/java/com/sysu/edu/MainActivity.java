@@ -1,13 +1,10 @@
 package com.sysu.edu;
 
-import android.app.ComponentCaller;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,7 +20,6 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            binding.appbar.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
         //BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -43,19 +39,13 @@ public class MainActivity extends AppCompatActivity {
 //                .build();
         NavController navController = ((NavHostFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main))).getNavController();
         navController.setGraph(R.navigation.main_navigation);
-
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController((NavigationBarView) binding.navView, navController);
         //startActivity(new Intent(this, Setting.class));
         //getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main).setArguments();
     //setSupportActionBar(findViewById(R.id.toolbar));
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data, @NonNull ComponentCaller caller) {
-        super.onActivityResult(requestCode, resultCode, data, caller);
-        recreate();
+        if(savedInstanceState==null){navController.navigate(new int[]{R.id.navigation_activity,R.id.navigation_service,R.id.navigation_account}[Integer.parseInt(getPreferences(Context.MODE_PRIVATE).getString("home","0"))]);}
+        LanguageUtil.setLanguage(this);
     }
 }

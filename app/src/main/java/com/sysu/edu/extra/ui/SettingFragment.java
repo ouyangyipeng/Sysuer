@@ -18,10 +18,18 @@ public class SettingFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.setting, rootKey);
         ThemeHelper th = new ThemeHelper(requireActivity());
         th.setTheme();
-        ((Preference)Objects.requireNonNull(findPreference("theme"))).setOnPreferenceChangeListener((preference, newValue) -> {
-           // initTheme((String)((DropDownPreference) Objects.requireNonNull(findPreference("theme"))).getValue());
+        ((Preference) Objects.requireNonNull(findPreference("theme"))).setOnPreferenceChangeListener((preference, newValue) -> {
+            // initTheme((String)((DropDownPreference) Objects.requireNonNull(findPreference("theme"))).getValue());
+           // requireActivity().setResult(Activity.RESULT_OK);
             requireActivity().recreate();
             return true;
         });
+        ((Preference) Objects.requireNonNull(findPreference("language"))).setOnPreferenceChangeListener((preference, v) -> {
+           // ((DropDownPreference)preference).setValue((new String[]{"zh-CN", "en", ""})[Integer.parseInt((String) v)]);
+                   // requireActivity().setResult(Activity.RESULT_OK);
+                    requireActivity().recreate();
+                    return true;
+                }
+        );
     }
 }

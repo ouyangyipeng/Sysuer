@@ -12,9 +12,13 @@ import com.sysu.edu.databinding.ActivitySettingBinding;
 
 public class SettingActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            setResult(RESULT_OK);
+        }
         ActivitySettingBinding binding = ActivitySettingBinding.inflate(getLayoutInflater());
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
@@ -23,6 +27,7 @@ public class SettingActivity extends AppCompatActivity {
             binding.appbar.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        binding.tool.setNavigationOnClickListener(v->{setResult(RESULT_OK);finishAfterTransition();});
+        binding.tool.setNavigationOnClickListener(v-> finishAfterTransition());
     }
+
 }

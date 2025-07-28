@@ -11,5 +11,6 @@ public class Application extends android.app.Application {
         super.onCreate();
         ThemeHelper th = new ThemeHelper(this);
         AppCompatDelegate.setDefaultNightMode(th.getThemeMode());
+        LanguageUtil.setLanguage(this);
     }
 }

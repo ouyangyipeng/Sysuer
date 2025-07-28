@@ -1,6 +1,5 @@
 package com.sysu.edu.academic;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.R;
+import com.sysu.edu.api.Http;
 import com.sysu.edu.databinding.AgendaBinding;
 
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class AgendaActivity extends AppCompatActivity {
     ArrayList<Integer> weeks=new ArrayList<>();
     ActivityResultLauncher<Intent> launch;
     PopupMenu termPop;
-    OkHttpClient http = new OkHttpClient.Builder().build();
+    OkHttpClient http;
     PopupMenu weekPop;
     String currentTerm="";
     int currentWeekIndex =-1;
@@ -65,6 +65,7 @@ public class AgendaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        http = (new Http(this)).getJwxtHttpWithReferer("https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/");
         binding = AgendaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
@@ -143,7 +144,6 @@ public class AgendaActivity extends AppCompatActivity {
         detailDialog=new BottomSheetDialog(this);
         detailDialog.setContentView(R.layout.detail);
         handler=new Handler(Looper.getMainLooper()){
-            @SuppressLint("DefaultLocale")
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
@@ -214,7 +214,7 @@ public class AgendaActivity extends AppCompatActivity {
                             if(nowWeekly!=null){currentWeek = Integer.parseInt(nowWeekly);}
                             response.getJSONObject("data").getJSONArray("weeklyList").forEach(e->weeks.add(((JSONObject)e).getInteger("weekly")));
                             currentWeekIndex = weeks.indexOf(currentWeek);
-                            binding.weekTime.setText(String.format("第%d周", currentWeek));
+                            binding.weekTime.setText(String.format(Locale.CHINA,"第%d周", currentWeek));
                             getTable(currentTerm, currentWeek);
                             break;
                         } case -1:{
@@ -232,7 +232,7 @@ public class AgendaActivity extends AppCompatActivity {
     }
     public void getAvailableWeeks(String academicYear){
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender/weekly?academicYear="+academicYear)
-                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+                //.header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
                 .header("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -252,8 +252,8 @@ public class AgendaActivity extends AppCompatActivity {
     }
     public  void  getAvailableTerms(){
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/findAcadyeartermNamesBox")
-                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
-                .addHeader("Cookie",cookie).build()).enqueue(new Callback() {
+               //.header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+                .header("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message msg = new Message();
@@ -286,7 +286,7 @@ public class AgendaActivity extends AppCompatActivity {
     void getRange(String academicYear,int week)
     {
         http.newCall(new Request.Builder().url(String.format(Locale.CHINA,"https://jwxt.sysu.edu.cn/jwxt/base-info/school-calender?academicYear=%s&weekly=%d",academicYear,week))
-                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+                //.header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
                 .header("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -346,7 +346,7 @@ public class AgendaActivity extends AppCompatActivity {
     }
     public void getTerm(){
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
-                .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
+               // .header("Referer","https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/")
                 .header("Cookie",cookie).build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {

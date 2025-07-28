@@ -3,8 +3,6 @@
     <string name="menu_account">我的</string>
     <string name="menu_service">服务</string>
     <string name="menu_activity">活动</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="service_box_title">服务</string>
     <string name="today_courses">课程</string>
     <string name="location">位置</string>
     <string name="time">时间</string>
@@ -12,16 +10,11 @@
     <string name="exam">考试</string>
     <string name="todo">待办</string>
     <string name="classroom_query">自习室/研讨室查询</string>
-    <string name="school">校区</string>
     <string name="office">教学楼</string>
     <string name="classroom">教室</string>
     <string name="date">日期</string>
     <string name="query">查询</string>
-    <string name="clear">重置</string>
     <string name="classroom_type">教室类型</string>
-    <string name="large_text" />
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
     <string name="agenda">课程表</string>
     <string name="evaluation">评教</string>
     <string name="teacher">教师</string>
@@ -73,5 +66,25 @@
     <string name="last">最近</string>
     <string name="setting">设置</string>
     <string name="privacy">个人信息</string>
+    <string name="system">系统</string>
+    <string name="official_website">官网</string>
+    <string name="official_media">官媒</string>
+    <string name="academy">教务</string>
+    <string name="study">学习</string>
+    <string name="traffic">出行</string>
+    <string name="dorm">宿舍</string>
+    <string name="light">明亮</string>
+    <string name="dark">黑暗</string>
+    <string name="follow_system">跟随系统</string>
+    <string name="about">关于</string>
+    <string name="help">帮助</string>
+    <string name="number">学工号</string>
+    <string name="app">软件</string>
+    <string name="theme">主题</string>
+    <string name="language">语言</string>
+    <string name="home">首页</string>
+    <string name="appearance">外观</string>
+    <string name="develop">开发</string>
+    <string name="open_source">开源</string>
 
 </resources>

@@ -12,13 +12,16 @@
     android:layout_height="match_parent">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
+        android:id="@+id/appbar"
+        style="@style/Widget.Material3.AppBarLayout"
+        app:elevation="4dp"
         android:layout_height="wrap_content">
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="@style/Widget.Material3.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            app:layout_scrollFlags="scroll"
+            app:layout_scrollFlags="enterAlways"
             app:title="@string/app_name"
             app:titleTextColor="@color/purple_500"/>
     </com.google.android.material.appbar.AppBarLayout>

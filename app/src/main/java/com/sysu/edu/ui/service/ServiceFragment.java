@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.chip.Chip;
@@ -33,14 +34,17 @@ import java.util.Objects;
 
 public class ServiceFragment extends Fragment {
     LinearLayout service_container;
+    private NestedScrollView fragment;
+
     @Nullable
     @Override
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if(fragment==null){
         FragmentServiceBinding binding = FragmentServiceBinding.inflate(inflater);
-        View fragment=binding.getRoot();
+        fragment=binding.getRoot();
         service_container=binding.serviceContainer;
-        String[] titles = new String[]{"讯息","系统", "官网", "官媒","教务","学习", "出行", "宿舍"};
+        String[] titles = new String[]{a(R.string.news),a(R.string.system), a(R.string.official_website), a(R.string.official_media),a(R.string.academy),a(R.string.study), a(R.string.traffic), a(R.string.dorm)};
         String[][] items = new String[][]{{"资讯门户"//,"学校活动","校园集市"
         },
                 {"体育场馆预定系统","学工系统","教务系统","中山大学统一门户","大学服务中心","财务信息系统"},
@@ -110,7 +114,7 @@ public class ServiceFragment extends Fragment {
         for (int i=0;i<titles.length;i++){
             initBox(inflater,titles[i],items[i],actions[i]);
         }
-
+        }
         return fragment;
     }
     public void initBox(LayoutInflater inflater, String box_title, String[] items, View.OnClickListener[] actions)
@@ -141,5 +145,6 @@ public class ServiceFragment extends Fragment {
     public View.OnClickListener newActivity(Class activity_class){
         return view -> startActivity(new Intent(view.getContext(),activity_class),ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
     }
+    String a(int i){return getString(i);}
 }
 

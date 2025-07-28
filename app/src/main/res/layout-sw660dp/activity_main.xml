@@ -23,6 +23,9 @@
         android:layout_height="match_parent">
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
+            android:id="@+id/appbar"
+            style="@style/Widget.Material3.AppBarLayout"
+            app:elevation="4dp"
             android:layout_height="?attr/actionBarSize">
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"

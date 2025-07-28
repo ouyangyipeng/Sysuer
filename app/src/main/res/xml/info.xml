@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="开发">
+    <PreferenceCategory app:title="@string/develop">
         <Preference
             app:icon="@drawable/account"
             app:summary="https://github.com/SYSU-Tang"
@@ -15,7 +15,7 @@
             <intent android:data="https://github.com/SYSU-Tang/Sysuer/"/>
         </Preference>
     </PreferenceCategory>
-    <PreferenceCategory app:title="开源">
+    <PreferenceCategory app:title="@string/open_source">
         <Preference
             app:icon="@drawable/info"
             app:summary="https://github.com/alibaba/fastjson2"
