@@ -14,12 +14,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.sysu.edu.R;
 import com.sysu.edu.databinding.BrowserBinding;
 import com.sysu.edu.extra.JavaScript;
@@ -42,7 +43,6 @@ public class BrowserActivity extends AppCompatActivity {
         binding = BrowserBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.toolbar.setNavigationOnClickListener(v -> finishAfterTransition());
-
         SharedPreferences privacy = getSharedPreferences("privacy", 0);
         String username = privacy.getString("username", "");
         String password = privacy.getString("password", "");
@@ -92,19 +92,16 @@ public class BrowserActivity extends AppCompatActivity {
         });
         binding.tool.setOnItemSelectedListener(menuItem -> {
             if(menuItem.getItemId()==R.id.js){
-                ArrayList<String> j = js.searchJS(web.getUrl());
-                new AlertDialog.Builder(BrowserActivity.this).setTitle("脚本").setItems(j.toArray(new String[]{}), (dialogInterface, i) -> {
+                ArrayList<JSONObject> j = js.searchJS(web.getUrl());
+                new MaterialAlertDialogBuilder(BrowserActivity.this).setTitle("脚本").setItems(js.getTitles(j), (dialogInterface, i) -> {
+                        web.evaluateJavascript(j.get(i).getString("script"), s -> {
 
-                        web.evaluateJavascript(j.get(i), s -> {
-
-                });
-                System.out.println(i);}).create().show();
+                });}).create().show();
             }
             return false;
         });
         String url = getIntent().getDataString() != null ? getIntent().getDataString() : "https://www.sysu.edu.cn/";
-        //c.setCookie(url,"LYSESSIONID=1e1f3aaf-9f78-43e6-a017-9afa4c283aba;user=eyJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjI0MzA4MTUyIiwibmFtZSI6IuWUkOi0pOaghyIsImxvZ2luUGF0dGVybiI6InN0dWRlbnQtbG9naW4iLCJzc28iOnRydWV9; ssoUsername=gDzeK9sUezH5IwnImtM2c3WnwW+qqkUKoujpcC19UUx+fD0kp79drFFVWIf8U4tcsWp1ornU9tjcfn4QpsnQILtb8/HoXwSEy041MvQ71V/2YzeG4n6RHnZaVDxzLy4pxxsZauutoE+4UL7SZy+tHCafNPRHltjOgkwRf4TRAqo=;user=eyJ1c2VyVHlwZSI6IjEiLCJ1c2VyTmFtZSI6IjI0MzA4MTUyIiwibmFtZSI6IuWUkOi0pOaghyIsImxvZ2luUGF0dGVybiI6InN0dWRlbnQtbG9naW4iLCJzc28iOnRydWV9");
-        // c.flush();
+
         binding.toolbar.getMenu().add("在浏览器中打开").setOnMenuItemClickListener(menuItem -> {
             startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
             return false;

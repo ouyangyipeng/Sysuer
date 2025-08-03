@@ -1,5 +1,26 @@
-{
-  "lms.sysu.edu.cn/mod/fsresource/view.php":"viewTotalTime=videoDuration*1000;ajaxOrder();",
-"www.sysu.edu.cn": "document.querySelector('.ftb').style.visibility = 'hidden';",
-  ".": "var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};"
-}
+[
+  {
+    "title": "网页调试",
+    "description": "使用Eruda，开启网页调试",
+    "matches": [
+      ".+",".?","."
+    ],
+    "script": "var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};"
+  },
+  {
+    "title": "速通视频",
+    "description": "在线教学平台，视频一键通关",
+    "matches": [
+      "lms.sysu.edu.cn/mod/fsresource/view.php"
+    ],
+    "script": "viewTotalTime=videoDuration*1000;ajaxOrder();"
+  },
+  {
+    "title": "美化",
+    "description": "在线教学平台，视频一键通关",
+    "matches": [
+      "www.sysu.edu.cn"
+    ],
+    "script": "document.querySelector('.ftb').style.visibility = 'hidden';"
+  }
+]

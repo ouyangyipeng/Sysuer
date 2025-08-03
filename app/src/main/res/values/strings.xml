@@ -123,5 +123,6 @@
     <string name="course_method">教学方法</string>
     <string name="course_score">成绩评定方式</string>
     <string name="course_reference">主要参考书目</string>
+    <string name="add_filter">高级筛选</string>
 
 </resources>

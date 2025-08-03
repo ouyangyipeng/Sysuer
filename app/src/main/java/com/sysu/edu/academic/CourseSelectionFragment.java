@@ -115,6 +115,9 @@ public class CourseSelectionFragment extends Fragment{
         selectedCate = 1;
         selectedType = 11;
         init();
+        binding.addFilter.setOnClickListener(view -> {
+
+        });
         binding.course.setLayoutManager(new GridLayoutManager(requireContext(),1));
         binding.course.addItemDecoration(new SpacesItemDecoration(dpToPx(8)));
         handler = new Handler(Looper.getMainLooper()){

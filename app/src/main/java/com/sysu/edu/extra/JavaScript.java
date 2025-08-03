@@ -1,29 +1,37 @@
 package com.sysu.edu.extra;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.TypeReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class JavaScript {
-    public HashMap<String, String> jsList;
+    public JSONArray jsList;
     public JavaScript(String s){
-        jsList = JSONObject.parseObject(s, new TypeReference<>() {
-        });
+        jsList = JSONArray.parse(s);
     }
-    public void add(String url, String js){
-        jsList.put(url,js);
+    public void add(String title,String description,String[] matches, String script){
+        jsList.add(JSONObject.parse(String.format("{\"title\": \"%s\",\"description\": \"%s\",\"matches\": %s,\"script\": \"%s\"}",title,description,Arrays.toString(matches),script)));
     }
-    public ArrayList<String> searchJS(String key){
-        ArrayList<String> list = new ArrayList<>();
-        jsList.forEach((a,b)->{
-            Pattern pattern = Pattern.compile(a);
-            if(pattern.matcher(key).find()){
-                list.add(b);
+    public ArrayList<JSONObject> searchJS(String key){
+        ArrayList<JSONObject> list = new ArrayList<>();
+        jsList.forEach(a->{
+            System.out.println(a);
+            for (Object e : ((JSONObject) a).getJSONArray("matches")) {
+                Pattern pattern = Pattern.compile((String) e);
+                if (pattern.matcher(key).find()) {
+                    list.add((JSONObject) a);
+                    break;
+                }
             }
         });
         return list;
+    }
+    public String[] getTitles(ArrayList<JSONObject> json){
+        ArrayList<String> items = new ArrayList<>();
+        json.forEach(a-> items.add(a.getString("title")));
+        return items.toArray(new String[]{});
     }
 }
