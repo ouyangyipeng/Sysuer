@@ -124,5 +124,13 @@
     <string name="course_score">成绩评定方式</string>
     <string name="course_reference">主要参考书目</string>
     <string name="add_filter">高级筛选</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Next</string>
+    <string name="course_query">课程查询</string>
+    <string name="week">星期</string>
+    <string name="section">节次</string>
+    <string name="special">特色课程</string>
+    <string name="school">学院</string>
+    <string name="submit">确定</string>
 
 </resources>

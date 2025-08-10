@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.sysu.edu.R;
+import com.sysu.edu.api.Params;
 import com.sysu.edu.databinding.GradeBinding;
 
 import java.io.IOException;
@@ -68,8 +68,6 @@ public class Grade extends AppCompatActivity {
             //((AppBarLayout.LayoutParams)binding.statusBar.getLayoutParams()).height=systemBars.top;
             return insets;
         });
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getRealMetrics(dm);
         termPop = new PopupMenu(Grade.this, binding.term,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         terms = new String[]{"第一学期", "第二学期", "第三学期"};
         for (int i = 0; i < terms.length; i++) {
@@ -86,7 +84,7 @@ public class Grade extends AppCompatActivity {
         yearPop = new PopupMenu(this, binding.year,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         typePop = new PopupMenu(this, binding.type,0, 0, com.google.android.material.R.style.Widget_Material3_PopupMenu_Overflow);
         binding.toolbar.setNavigationOnClickListener(view -> finishAfterTransition());
-        binding.scores.setLayoutManager(new GridLayoutManager(this,(dm.widthPixels<1830)?1:(dm.widthPixels<3050)?2:3));
+        binding.scores.setLayoutManager(new GridLayoutManager(this,new Params(this).getColumn()));
         binding.term.setOnClickListener(view -> termPop.show());
         binding.year.setOnClickListener(view -> yearPop.show());
         binding.type.setOnClickListener(view -> typePop.show());
