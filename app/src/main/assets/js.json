@@ -22,5 +22,13 @@
       "www.sysu.edu.cn"
     ],
     "script": "document.querySelector('.ftb').style.visibility = 'hidden';"
+  },
+  {
+    "title": "美化",
+    "description": "个人培养方案查看界面美化",
+    "matches": [
+      "jwxt.sysu.edu.cn/jwxt/mk/#/personalTrainingProgramView"
+    ],
+    "script": "['.sys-header','.sys-footer','.ant-breadcrumb'].forEach(function(v){document.querySelector(v).style.display='none';});document.querySelector('div.pyfa > div > h1').style.margin='0px';"
   }
 ]

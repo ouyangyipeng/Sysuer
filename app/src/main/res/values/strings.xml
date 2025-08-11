@@ -132,5 +132,6 @@
     <string name="special">特色课程</string>
     <string name="school">学院</string>
     <string name="submit">确定</string>
+    <string name="only_collection">只显示收藏</string>
 
 </resources>
