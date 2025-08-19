@@ -10,9 +10,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.bumptech.glide.Glide;
@@ -41,14 +38,8 @@ public class CalendarActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         CalendarBinding binding = CalendarBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         binding.tool.setNavigationOnClickListener(view -> finishAfterTransition());
         binding.scroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            //top = binding.content.getChildAt(2).getTop();
             if(top>scrollY&&binding.tabs.getSelectedTabPosition()==1&&scrollY<oldScrollY){
                 Objects.requireNonNull(binding.tabs.getTabAt(0)).select();
             }else if(top<=scrollY&&binding.tabs.getSelectedTabPosition()==0&&scrollY>oldScrollY){

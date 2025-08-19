@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.sysu.edu.ui.dashboard.DashboardFragment">
+    tools:context="com.sysu.edu.home.DashboardFragment">
     <GridLayout
         android:id="@+id/activity_container"
         android:layout_width="match_parent"

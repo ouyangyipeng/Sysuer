@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/navigation_activity"
-        android:name="com.sysu.edu.ui.dashboard.DashboardFragment"
+        android:name="com.sysu.edu.home.DashboardFragment"
         android:label="@string/menu_activity"
         tools:layout="@layout/fragment_dashboard"/>
     <fragment
         android:id="@+id/navigation_service"
-        android:name="com.sysu.edu.ui.service.ServiceFragment"
+        android:name="com.sysu.edu.home.ServiceFragment"
         android:label="@string/menu_service"
         tools:layout="@layout/fragment_service" />
 
     <fragment
         android:id="@+id/navigation_account"
-        android:name="com.sysu.edu.ui.account.AccountFragment"
+        android:name="com.sysu.edu.home.AccountFragment"
         android:label="@string/menu_account"/>
 </navigation>

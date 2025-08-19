@@ -8,6 +8,8 @@
     tools:context=".academic.CalendarActivity">
 <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    app:statusBarForeground="@macro/m3_comp_app_bar_container_color"
     android:layout_height="wrap_content">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tool"
@@ -21,8 +23,7 @@
         android:id="@+id/tabs"
         style="@style/Widget.Material3.TabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabBackground="@android:color/transparent">
+        android:layout_height="wrap_content">
     </com.google.android.material.tabs.TabLayout>
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"

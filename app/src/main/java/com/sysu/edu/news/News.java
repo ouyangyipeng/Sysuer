@@ -52,7 +52,6 @@ public class News extends AppCompatActivity {
     OkHttpClient http = new OkHttpClient.Builder().build();
     Handler handler;
     String cookie = "login_token_ec583190dcd12bca757dd13df10f59c3=ad6e129cb0c2e7ad6d842afa0e0ebf31; username_ec583190dcd12bca757dd13df10f59c3=tangxb6; login_sn_ec583190dcd12bca757dd13df10f59c3=0c3845934e6ec207f5b898ed0d3dd86f;";//cookie + ";_webvpn_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidGFuZ3hiNiIsImdyb3VwcyI6WzNdLCJpYXQiOjE3NDM5Mjg1OTUsImV4cCI6MTc0NDAxNDk5NX0.luGDbfa_19Ye5TBVpwo3gaZPXldD7gsnSqGkX6IJHb0;";
-
     String authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c2g1XzEwMDA0MCIsInVzZXJfbmFtZSI6IjI0MzA4MTUyIiwic2NvcGUiOlsiYWxsIl0sIm5hbWUiOiIyNDMwODE1MiIsImV4cCI6MTc1MTk4OTIyNiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXSwianRpIjoiZFFqR1Q5Q25Ia1lWUDY0VmlGZFZURExCU1lNIiwiY2xpZW50X2lkIjoiMTY3M2YwMWQ5NjFhNjEwZmU5MjIwZWZmMGQ3YjNiYzQiLCJ1c2VybmFtZSI6IjI0MzA4MTUyIn0.wYTyy8gBr37xItZW2qJp81W2T-17-E9y4RQiODLj9pQ";
 
     @Override
@@ -91,7 +90,6 @@ public class News extends AppCompatActivity {
         }
         Adapter adapter = new Adapter(this);
         binding.pager.setAdapter(adapter);
-        //adapter.getItem(0).getSubscription();
         new TabLayoutMediator(binding.tabLayout, binding.pager, (tab, position) -> tab.setText(new String[]{"资讯","公众号","通知","今日中大"}[position])).attach();
         handler=new Handler(getMainLooper()){
             @Override
@@ -100,23 +98,22 @@ public class News extends AppCompatActivity {
             }
         };
         binding.tabLayout.addOnTabSelectedListener(new
+                                                           TabLayout.OnTabSelectedListener() {
+                                                               @Override
+                                                               public void onTabSelected(TabLayout.Tab tab) {
 
-TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+                                                               }
 
-            }
+                                                               @Override
+                                                               public void onTabUnselected(TabLayout.Tab tab) {
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                                                               }
 
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                //adapter.getItem(binding.pager.getCurrentItem()).run.run();
-            }
-        });
+                                                               @Override
+                                                               public void onTabReselected(TabLayout.Tab tab) {
+                                                                   //adapter.getItem(binding.pager.getCurrentItem()).run.run();
+                                                               }
+                                                           });
         SugAdp sug = new SugAdp(this);
         binding.sugs.setAdapter(sug);
         binding.sugs.setLayoutManager(new GridLayoutManager(this,1));
@@ -223,4 +220,4 @@ class SugAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public int getItemCount() {
         return data.size();
     }
-    }
+}

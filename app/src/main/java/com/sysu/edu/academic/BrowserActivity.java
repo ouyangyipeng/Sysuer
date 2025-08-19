@@ -77,7 +77,7 @@ public class BrowserActivity extends AppCompatActivity {
         web.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                 System.out.println(request.getUrl());
+                 //System.out.println(request.getUrl());
                  webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
                 // view.loadUrl(String.valueOf(request.getUrl()));
                 return true;
@@ -101,10 +101,11 @@ public class BrowserActivity extends AppCompatActivity {
         });
         binding.tool.setOnItemSelectedListener(menuItem -> {
             if(menuItem.getItemId()==R.id.js){
-                ArrayList<JSONObject> j = js.searchJS(web.getUrl());
+                String url = web.getUrl();
+                url = url==null?"":url;
+                ArrayList<JSONObject> j = js.searchJS(url);
                 new MaterialAlertDialogBuilder(BrowserActivity.this).setTitle("脚本").setItems(js.getTitles(j), (dialogInterface, i) -> {
                         web.evaluateJavascript(j.get(i).getString("script"), s -> {
-
                 });}).create().show();
             }
             return false;

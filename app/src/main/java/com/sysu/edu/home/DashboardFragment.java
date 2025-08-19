@@ -1,4 +1,4 @@
-package com.sysu.edu.ui.dashboard;
+package com.sysu.edu.home;
 
 import android.app.Activity;
 import android.content.Context;

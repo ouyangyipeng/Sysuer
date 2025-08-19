@@ -125,7 +125,7 @@
     <string name="course_reference">主要参考书目</string>
     <string name="add_filter">高级筛选</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="next">Next</string>
+    <string name="next">下一个</string>
     <string name="course_query">课程查询</string>
     <string name="week">星期</string>
     <string name="section">节次</string>
@@ -134,5 +134,9 @@
     <string name="submit">确定</string>
     <string name="only_collection">只显示收藏</string>
     <string name="school_roll">学籍</string>
+    <string name="cet">四六级</string>
+    <string name="base_info">基本信息</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

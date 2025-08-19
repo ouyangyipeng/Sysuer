@@ -1,6 +1,7 @@
 package com.sysu.edu.api;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.DisplayMetrics;
 
 public class Params {
@@ -18,5 +19,8 @@ public class Params {
     }
     public int dpToPx(int dps) {
         return Math.round(context.getResources().getDisplayMetrics().density * dps);
+    }
+    public String getCookie(){
+        return context.getSharedPreferences("privacy", Context.MODE_PRIVATE).getString("Cookie","");
     }
 }
