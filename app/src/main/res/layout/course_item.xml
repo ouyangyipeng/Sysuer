@@ -8,53 +8,50 @@
     android:paddingStart="8dp"
     android:paddingTop="8dp"
     android:paddingEnd="8dp">
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/course_title"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="@string/course_name"
+        android:layout_height="wrap_content"
+        android:text="@string/year"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/location_container"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
-        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/flow"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow"
         android:layout_height="0dp"
-        android:text="@string/location"
-        app:icon="@drawable/location"
-        app:layout_constraintBottom_toTopOf="@id/time_container"
+        app:constraint_referenced_ids="location_container,teacher,time_container,course"
+        app:flow_horizontalBias="0"
+        android:layout_width="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/course_title" />
-
+        app:flow_horizontalStyle="packed"
+        app:flow_wrapMode="chain"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/course_title"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/time_container"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="@string/time"
-        app:icon="@drawable/time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/location_container"/>
+        android:layout_height="wrap_content"
+        app:icon="@drawable/time"/>
     <com.google.android.material.button.MaterialButton
     android:id="@+id/course"
     style="@style/Widget.Material3.Button.TextButton.Icon"
     android:layout_width="wrap_content"
-    android:layout_height="0dp"
-    android:text="@string/time"
-    app:icon="@drawable/calendar"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/time_container"/>
+    android:layout_height="wrap_content"
+    app:icon="@drawable/calendar"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/teacher"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="@string/time"
-        app:icon="@drawable/account"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/course"/>
+        android:layout_height="wrap_content"
+        app:icon="@drawable/account"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/location_container"
+        style="@style/Widget.Material3.Button.TextButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/location" />
 </androidx.constraintlayout.widget.ConstraintLayout>

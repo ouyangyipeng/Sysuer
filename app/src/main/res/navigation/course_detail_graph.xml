@@ -11,7 +11,6 @@
     </fragment>
     <fragment
     android:id="@+id/draftFragment"
-    android:name="com.sysu.edu.academic.CourseDraftFragment"
-    tools:layout="@layout/course_draft_fragment">
+    android:name="com.sysu.edu.academic.CourseDraftFragment">
 </fragment>
 </navigation>

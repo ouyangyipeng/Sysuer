@@ -29,8 +29,10 @@ import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.CourseSelection;
 import com.sysu.edu.academic.Grade;
 import com.sysu.edu.academic.MajorInfo;
+import com.sysu.edu.academic.Pay;
 import com.sysu.edu.academic.RegisterInfo;
 import com.sysu.edu.academic.SchoolRoll;
+import com.sysu.edu.academic.SchoolWorkWarning;
 import com.sysu.edu.academic.TrainingSchedule;
 import com.sysu.edu.databinding.FragmentServiceBinding;
 import com.sysu.edu.databinding.ServiceBoxBinding;
@@ -42,38 +44,41 @@ public class ServiceFragment extends Fragment {
     LinearLayout service_container;
     private NestedScrollView fragment;
     ActivityResultLauncher<Intent> launcher;
+
     @Nullable
     @Override
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(fragment==null){
+        if (fragment == null) {
             FragmentServiceBinding binding = FragmentServiceBinding.inflate(inflater);
-            fragment=binding.getRoot();
+            fragment = binding.getRoot();
             launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             });
-            service_container=binding.serviceContainer;
-            String[] titles = new String[]{"查看",a(R.string.news),a(R.string.system), a(R.string.official_website), a(R.string.official_media),a(R.string.academy),a(R.string.study), a(R.string.traffic), a(R.string.dorm)};
+            service_container = binding.serviceContainer;
+            String[] titles = new String[]{"查看", a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study), a(R.string.life), "AI"};
             String[][] items = new String[][]{
-                    {"学籍","四六级","报到注册信息"},
-                    {"资讯门户"//,"学校活动","校园集市"
+                    {a(R.string.school_roll), a(R.string.cet), a(R.string.register_info), a(R.string.school_work_warning)},
+                    {"资讯门户", "校园集市"//,"学校活动"
                     },
-                    {"体育场馆预定系统","学工系统","本科教务系统","中山大学统一门户","大学服务中心","财务信息系统"},
-                    {"中山大学官网","本科招生","研究生招生","人才招聘","百年校庆","博物馆","图书馆","校友会","公务电子邮件系统"},
-                    {"逸仙码","企业微信","中大招生"},
-                    {a(R.string.evaluation),a(R.string.course_selection),a(R.string.agenda),a(R.string.exam),a(R.string.calendar),a(R.string.selfStudyRoom),a(R.string.score),a(R.string.course),"个人培养方案",a(R.string.trainType),"本科专业"},
-                    {"SeeLight","雨课堂","课堂派","在线教学平台","中国大学（慕课）"},
-                    {"校园地图","校车","出行证","校医院"},
-                    {"宿舍报修","缴纳水电费"},
+                    {"体育场馆预定系统", "学工系统", "本科教务系统", "中山大学统一门户", "大学服务中心", "财务信息系统"},
+                    {"中山大学官网", "本科招生", "研究生招生", "人才招聘", "百年校庆", "博物馆", "图书馆", "校友会", "公务电子邮件系统"},
+                    {"逸仙码", "企业微信", "中大招生"},
+                    {a(R.string.evaluation), a(R.string.course_selection), a(R.string.agenda), a(R.string.exam), a(R.string.calendar), a(R.string.selfStudyRoom), a(R.string.score), a(R.string.course), "个人培养方案", a(R.string.trainType), "本科专业"},
+                    {"SeeLight", "雨课堂", "课堂派", "在线教学平台", "中国大学（慕课）"},
+                    {"校园地图", "校车", "逸仙通行", "校医院", "宿舍报修", "水电费", "缴费大厅"},
+                    {"Deepseek", "逸闻", "学工君"}
             };
             View.OnClickListener[][] actions = new View.OnClickListener[][]{
                     {
                             newActivity(SchoolRoll.class),
                             newActivity(CET.class),
-                            newActivity(RegisterInfo.class)
+                            newActivity(RegisterInfo.class),
+                            newActivity(SchoolWorkWarning.class)
                     },
                     {
                             newActivity(News.class),
 
+                            v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.comingx.zanao")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                     },//信息
                     {//newActivity(PEPreservation.class),
                             browse("https://gym-443.webvpn.sysu.edu.cn/#/"),
@@ -121,45 +126,54 @@ public class ServiceFragment extends Fragment {
                             browse("https://lms.sysu.edu.cn/"),
                             browse("https://www.icourse163.org/"),
                     },//学习
+                    {null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            newActivity(Pay.class),
+                    },//生活
                     {
-
-                    },//出行
-                    {
-
-                    },//宿舍
-                    {
-
-                    },//查询
+                            browse("https://chat.sysu.edu.cn/zntgc/agent"),
+                            browse("https://chat.sysu.edu.cn/znt/chat/empty"),
+                            browse("https://xgxw.sysu.edu.cn/aicounsellor/agents/outlink/sunyatsenuniversity"),
+                    }//AI
             };
-            for (int i=0;i<titles.length;i++){
-                initBox(inflater,titles[i],items[i],actions[i]);
+            for (int i = 0; i < titles.length; i++) {
+                initBox(inflater, titles[i], items[i], actions[i]);
             }
         }
         return fragment;
     }
-    public void initBox(LayoutInflater inflater, String box_title, String[] items, View.OnClickListener[] actions)
-    {
-        ServiceBoxBinding b=ServiceBoxBinding.inflate(inflater);
-        LinearLayout box= b.getRoot();
-        TextView title=b.serviceBoxTitle;
-        ChipGroup items_container=b.serviceBoxItems;
+
+    public void initBox(LayoutInflater inflater, String box_title, String[] items, View.OnClickListener[] actions) {
+        ServiceBoxBinding b = ServiceBoxBinding.inflate(inflater);
+        LinearLayout box = b.getRoot();
+        TextView title = b.serviceBoxTitle;
+        ChipGroup items_container = b.serviceBoxItems;
         title.setText(box_title);
-        for(int i=0;i<items.length;i++){
-            Chip item = (Chip) inflater.inflate(R.layout.service_item,items_container,false);
+        for (int i = 0; i < items.length; i++) {
+            Chip item = (Chip) inflater.inflate(R.layout.service_item, items_container, false);
             item.setOnClickListener(
-                    (i<actions.length&&actions[i]!=null)?actions[i]: v -> Toast.makeText(v.getContext(),"未开发",Toast.LENGTH_LONG).show()
+                    (i < actions.length && actions[i] != null) ? actions[i] : v -> Toast.makeText(v.getContext(), "未开发", Toast.LENGTH_LONG).show()
             );
             item.setText(items[i]);
             items_container.addView(item);
         }
         service_container.addView(box);
     }
-    public View.OnClickListener browse(String url){
-        return view -> startActivity(new Intent(view.getContext(), BrowserActivity.class).setData(Uri.parse(url)), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp").toBundle());
+
+    public View.OnClickListener browse(String url) {
+        return view -> startActivity(new Intent(view.getContext(), BrowserActivity.class).setData(Uri.parse(url)), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), view, "miniapp").toBundle());
     }
-    public View.OnClickListener newActivity(Class<?> activity_class){
-        return view ->launcher.launch(new Intent(view.getContext(),activity_class),ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"miniapp"));
+
+    public View.OnClickListener newActivity(Class<?> activity_class) {
+        return view -> launcher.launch(new Intent(view.getContext(), activity_class), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), view, "miniapp"));
     }
-    String a(int i){return getString(i);}
+
+    String a(int i) {
+        return getString(i);
+    }
 }
 

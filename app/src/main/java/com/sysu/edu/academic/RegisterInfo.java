@@ -18,7 +18,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
 import com.sysu.edu.api.Params;
-import com.sysu.edu.databinding.ActivityRegisterInfoBinding;
+import com.sysu.edu.databinding.ActivityPagerBinding;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
@@ -36,18 +36,18 @@ import okhttp3.Response;
 
 public class RegisterInfo extends AppCompatActivity {
 
-    ActivityRegisterInfoBinding binding;
+    ActivityPagerBinding binding;
     Params params;
     String cookie;
     Handler handler;
     OkHttpClient http = new OkHttpClient.Builder().build();
     int page = 1;
-    PagerAdapter adp;
+    Pager2Adapter adp;
     boolean changeYear=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityRegisterInfoBinding.inflate(getLayoutInflater());
+        binding = ActivityPagerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         params = new Params(this);
         cookie = params.getCookie();
@@ -57,7 +57,7 @@ public class RegisterInfo extends AppCompatActivity {
                 getNextPage(0);
             }
         });
-        adp = new PagerAdapter(this);
+        adp = new Pager2Adapter(this);
         binding.pager.setAdapter(adp);
         for(String i : new String[]{"2024","2025"}){
             binding.toolbar.getMenu().add(i).setOnMenuItemClickListener(menuItem -> {

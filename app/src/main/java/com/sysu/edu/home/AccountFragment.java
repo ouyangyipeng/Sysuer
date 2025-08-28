@@ -16,6 +16,8 @@ import com.sysu.edu.extra.SettingActivity;
 import java.util.Objects;
 
 public class AccountFragment extends PreferenceFragmentCompat {
+
+
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.account, rootKey);
@@ -24,8 +26,8 @@ public class AccountFragment extends PreferenceFragmentCompat {
                 requireActivity().recreate();
             }
         });
-        ((Preference)Objects.requireNonNull(findPreference("setting"))).setOnPreferenceClickListener(preference -> {
-                    launch.launch(new Intent(requireActivity(), SettingActivity.class),null);
+        ((Preference) Objects.requireNonNull(findPreference("setting"))).setOnPreferenceClickListener(preference -> {
+                    launch.launch(new Intent(requireActivity(), SettingActivity.class), null);
                     return false;
                 }
         );

@@ -13,14 +13,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
-import com.sysu.edu.databinding.ActivitySchoolRollBinding;
+import com.sysu.edu.databinding.ActivityPagerBinding;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
@@ -39,20 +36,20 @@ import okhttp3.Response;
 
 public class SchoolRoll extends AppCompatActivity {
 
-    ActivitySchoolRollBinding binding;
+    ActivityPagerBinding binding;
     Map<String, List<String>> data;
     String cookie;
     int order = 0;
     OkHttpClient http = new OkHttpClient.Builder().build();
     Handler handler;
-    PagerAdapter pagerAdapter;
+    Pager2Adapter pager2Adapter;
     int page=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivitySchoolRollBinding.inflate(getLayoutInflater());
+        binding = ActivityPagerBinding.inflate(getLayoutInflater());
         cookie = getSharedPreferences("privacy", Context.MODE_PRIVATE).getString("Cookie", "");
         setContentView(binding.getRoot());
         data = Map.of(
@@ -256,10 +253,10 @@ public class SchoolRoll extends AppCompatActivity {
                 getNextPage(0);
             }
         });
-        pagerAdapter = new PagerAdapter(this);
-        binding.pager.setAdapter(pagerAdapter);
+        pager2Adapter = new Pager2Adapter(this);
+        binding.pager.setAdapter(pager2Adapter);
         new TabLayoutMediator(binding.tabs, binding.pager, (tab, position) -> tab.setText(new String[]{"基本信息", "家庭成员及社会关系", "学历及经历", "交流经历", "异动情况","双专业双学位辅修", "注册状态", "惩处"}[position])).attach();
-        binding.tool.setNavigationOnClickListener(v -> supportFinishAfterTransition());
+        binding.toolbar.setNavigationOnClickListener(v -> supportFinishAfterTransition());
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -276,7 +273,7 @@ public class SchoolRoll extends AppCompatActivity {
                                     ArrayList<String> values = new ArrayList<>();
                                     int key = List.of("个人基本信息", "学籍信息", "联系方式").indexOf(title);
                                     keys.get(key).forEach(c -> values.add(d.getString(c)));
-                                    ((StaggeredFragment) pagerAdapter.getItem(0)).add(title,null, keyName, values);
+                                    ((StaggeredFragment) pager2Adapter.getItem(0)).add(title,null, keyName, values);
                                 });
                                 getNextPage(msg.what+1);
                             } else {
@@ -304,7 +301,7 @@ public class SchoolRoll extends AppCompatActivity {
                                                 {"rewPundate","rewPunBriefing","rewPunTypeName","rewPunSourceName","rewPunName","rewPunCause","rewPunTime","rewPunProof","rewPunRepealTime","rewPunRepealProof","rewPunWheGraduate","rewPunWheDegree","rewPunSponDeparName","rewPunDeparName","rewPunAdapt","rewPunMoney","rewPunSchrollState","rewPunWhetherAtsch"}
                                         }[msg.what-1][i]));
                                     }
-                                    ((StaggeredFragment) pagerAdapter.getItem(msg.what)).add(SchoolRoll.this,String.valueOf(order), List.of(keyName), values);
+                                    ((StaggeredFragment) pager2Adapter.getItem(msg.what)).add(SchoolRoll.this,String.valueOf(order), List.of(keyName), values);
                                 });
                                 if(total/10>page-1){
                                     page++;
@@ -330,7 +327,7 @@ public class SchoolRoll extends AppCompatActivity {
     }
     void getNextPage(int what){
         if(what<8){
-            pagerAdapter.add(StaggeredFragment.newInstance(what));
+            pager2Adapter.add(StaggeredFragment.newInstance(what));
         }
         switch (what){
             case 0:
@@ -425,30 +422,3 @@ public class SchoolRoll extends AppCompatActivity {
     }
 }
 
-class PagerAdapter extends FragmentStateAdapter{
-
-    ArrayList<Fragment> fragments=new ArrayList<>();
-
-    public PagerAdapter(@NonNull FragmentActivity fragmentActivity) {
-        super(fragmentActivity);
-    }
-
-    @NonNull
-    @Override
-    public Fragment createFragment(int position) {
-        return fragments.get(position);
-    }
-
-    public PagerAdapter add(Fragment e){
-        fragments.add(e);
-        notifyItemInserted(getItemCount());
-        return this;
-    }
-    public Fragment getItem(int position){
-        return fragments.get(position);
-    }
-    @Override
-    public int getItemCount() {
-        return fragments.size();
-    }
-}

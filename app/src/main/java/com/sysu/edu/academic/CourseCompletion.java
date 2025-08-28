@@ -17,7 +17,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
 import com.sysu.edu.api.Params;
-import com.sysu.edu.databinding.ActivityCourseCompletionBinding;
+import com.sysu.edu.databinding.ActivityPagerBinding;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
@@ -28,18 +28,19 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class CourseCompletion extends AppCompatActivity {
 
-    ActivityCourseCompletionBinding binding;
+    ActivityPagerBinding binding;
     String cookie;
     Handler handler;
     OkHttpClient http = new OkHttpClient.Builder().build();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityCourseCompletionBinding.inflate(getLayoutInflater());
+        binding=ActivityPagerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.toolbar.setNavigationOnClickListener(v->supportFinishAfterTransition());
         Params params = new Params(this);
@@ -50,7 +51,8 @@ public class CourseCompletion extends AppCompatActivity {
                 getCreditHours();
             }
         });
-        PagerAdapter adp = new PagerAdapter(this).add(StaggeredFragment.newInstance(0)).add(StaggeredFragment.newInstance(0));
+        binding.toolbar.setTitle(R.string.course_completion);
+        Pager2Adapter adp = new Pager2Adapter(this).add(StaggeredFragment.newInstance(0)).add(new CourseCompletionFragment());
         binding.pager.setAdapter(adp);
         new TabLayoutMediator(binding.tabs, binding.pager, (tab, position) -> tab.setText(List.of("学分学时情况","课程完成情况").get(position))).attach();
         handler = new Handler(Looper.getMainLooper()) {
@@ -62,22 +64,18 @@ public class CourseCompletion extends AppCompatActivity {
                     JSONObject response = JSONObject.parseObject((String) msg.obj);
                     if (response != null && response.getInteger("code").equals(200)) {
                         if (response.get("data") != null) {
-                            switch (msg.what){
-                                case 0:
+                            if (msg.what == 0) {
+                                response.getJSONArray("data").forEach(a -> {
                                     ArrayList<String> values = new ArrayList<>();
-                                    String[] keyNames = new String[]{"培养方案学分要求","免修课程学分","实际毕业学分要求","实得"};
-                                    response.getJSONArray("data").forEach(a->{
-                                        for (String key : new String[]{"courseCategoryName","trainingCredit","exemptCredit","actualCredit","earnedCredit"}) {
-                                            values.add(((JSONObject) a).getString(key));
-                                        }
-                                        ((StaggeredFragment)adp.getItem(0)).add(values.get(1), List.of(keyNames),values);
-                                    });
-                                    break;
-                                case 1:
-
-                                    break;
+                                    for (String key : new String[]{"courseCategoryName", "trainingCredit", "exemptCredit", "actualCredit", "earnedCredit"}) {
+                                        values.add(((JSONObject) a).getString(key));
+                                    }
+                                    ((StaggeredFragment) adp.getItem(0)).add(CourseCompletion.this, values.get(0), List.of("课程类别", "培养方案学分要求", "免修课程学分", "实际毕业学分要求", "实得"), values);
+                                });
                             }
                         }
+                    }else if(response != null && response.getInteger("code").equals(50030000)){
+                        Toast.makeText(CourseCompletion.this, response.getString("message"), Toast.LENGTH_LONG).show();
                     }
                     else {
                         Toast.makeText(CourseCompletion.this, getString(R.string.login_warning), Toast.LENGTH_LONG).show();
@@ -92,6 +90,7 @@ public class CourseCompletion extends AppCompatActivity {
     void getCreditHours(){
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/gradua-degree/graduatemsg/studentsGraduationExamination/creditHoursStu?cultureTypeCode=01")
                 .header("Cookie",cookie)
+                .post(RequestBody.create("",null))
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/gradua/")
                 .build()).enqueue(new Callback() {
             @Override

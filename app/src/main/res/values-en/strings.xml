@@ -113,4 +113,5 @@
     <string name="hide_selected">Hide Selected</string>
     <string name="like">Like</string>
     <string name="select">Select</string>
+    <string name="between">~</string>
 </resources>

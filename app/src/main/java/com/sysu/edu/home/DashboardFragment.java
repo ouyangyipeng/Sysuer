@@ -25,9 +25,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.R;
+import com.sysu.edu.api.Params;
+import com.sysu.edu.databinding.CourseItemBinding;
+import com.sysu.edu.databinding.ExamItemBinding;
 import com.sysu.edu.databinding.FragmentDashboardBinding;
 import com.sysu.edu.extra.LoginActivity;
 
@@ -58,32 +60,31 @@ public class DashboardFragment extends Fragment {
     LinkedList<JSONObject> thisWeekExams=new LinkedList<>();
     LinkedList<JSONObject> nextWeekExams=new LinkedList<>();
     private ActivityResultLauncher<Intent> launch;
-    private Adp adp;
-    private MaterialButtonToggleGroup toggle;
+    Params params;
     RecyclerView examList;
     ExamAdp examAdp;
     FragmentDashboardBinding binding;
+    private CourseAdp courseAdp;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(savedInstanceState==null){
             binding = FragmentDashboardBinding.inflate(inflater);
-            RecyclerView list = binding.courseList;
+            RecyclerView courseList = binding.courseList;
             examList = binding.examList;
             launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
                 if(o.getResultCode()== Activity.RESULT_OK){
-                    cookie= requireActivity().getSharedPreferences("privacy",0).getString("Cookie","");
+                    cookie = params.getCookie();
                     getTodayCourses();
                 }
             });
             (binding.date).setText(String.format("%s 星期%s", new SimpleDateFormat("M月dd日", Locale.CHINESE).format(new Date()), (new String[]{"日","一","二","三","四","五","六"})[Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1]));
-            toggle=binding.toggle;
-            LinearLayoutManager lm2 = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
-            LinearLayoutManager lm = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
-            list.addItemDecoration(new DividerItemDecoration(requireContext(),0));
-            list.setLayoutManager(lm);
+            //toggle=;
+            courseList.addItemDecoration(new DividerItemDecoration(requireContext(),0));
+            courseList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             examList.addItemDecoration(new DividerItemDecoration(requireContext(),0));
-            examList.setLayoutManager(lm2);
+            examList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -91,16 +92,17 @@ public class DashboardFragment extends Fragment {
                     handler.postDelayed(this,1000);
                 }
             });
-            cookie=requireActivity().getSharedPreferences("privacy",0).getString("Cookie","");
+            params = new Params(requireActivity());
+            cookie= params.getCookie();
             getTodayCourses();
-            adp=new Adp(this.requireActivity());
-            list.setAdapter(adp);
-            examAdp=new ExamAdp(this.requireActivity());
+            courseAdp =new CourseAdp(requireActivity());
+            courseList.setAdapter(courseAdp);
+            examAdp=new ExamAdp(requireActivity());
             examList.setAdapter(examAdp);
-            toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            binding.toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
                 if(group.getCheckedButtonId()==checkedId){
-                    adp.set(checkedId==R.id.today?todayCourse:tomorrowCourse);
-                    binding.noClass.setVisibility(adp.getItemCount()==0?View.VISIBLE:View.GONE);
+                    courseAdp.set(checkedId==R.id.today?todayCourse:tomorrowCourse);
+                    binding.noClass.setVisibility(courseAdp.getItemCount()==0?View.VISIBLE:View.GONE);
                 }
             });
             binding.toggle2.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -121,7 +123,7 @@ public class DashboardFragment extends Fragment {
                                     addCourse(flag.equals("TD") ? todayCourse : tomorrowCourse, (String) ((JSONObject) e).get("courseName"), (String) ((JSONObject) e).get("teachingPlace"), ((JSONObject) e).get("startTime") + "~" + ((JSONObject) e).get("endTime")
                                             , "第" + ((JSONObject) e).get("startClassTimes") + "~" + ((JSONObject) e).get("endClassTimes") + "节课", (String) ((JSONObject) e).get("teacherName"), flag);
                                 });
-                                toggle.check(R.id.today);
+                                binding.toggle.check(R.id.today);
                                 getExams();
                             } else {
                                 launch.launch(new Intent(getContext(), LoginActivity.class));
@@ -170,7 +172,7 @@ public class DashboardFragment extends Fragment {
                             break;
                         }
                         case -1:{
-                            Toast.makeText(requireActivity(),"网络状态不佳",Toast.LENGTH_LONG).show();
+                            Toast.makeText(requireActivity(),getString(R.string.no_wifi_warning),Toast.LENGTH_LONG).show();
                             break;
                         }
                     }
@@ -179,6 +181,7 @@ public class DashboardFragment extends Fragment {
         }
         return binding.getRoot();
     }
+
     public void getTodayCourses(){
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/timetable-search/classTableInfo/queryTodayStudentClassTable?academicYear=2024-2")
                 .header("Cookie",cookie)
@@ -199,8 +202,6 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
-
-
 
     public void addCourse(ArrayList<HashMap<String,String>> data, String name, String location, String time, String course, String teacher, String flag){
         HashMap<String, String> map = new HashMap<>();
@@ -235,16 +236,16 @@ public class DashboardFragment extends Fragment {
         });
     }
 }
-class Adp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class CourseAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context context;
     ArrayList<HashMap<String,String>> data=new ArrayList<>();
-    public Adp(Context context){
+    public CourseAdp(Context context){
         super();
         this.context=context;
     }
-    public void set(ArrayList<HashMap<String,String>> mdata){
+    public void set(ArrayList<HashMap<String,String>> d){
         clear();
-        data.addAll(mdata);
+        data.addAll(d);
         notifyItemRangeInserted(0,getItemCount());
     }
     public void clear(){
@@ -255,7 +256,7 @@ class Adp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new RecyclerView.ViewHolder(LayoutInflater.from(context).inflate(R.layout.course_item, parent, false)){};
+        return new RecyclerView.ViewHolder(CourseItemBinding.inflate(LayoutInflater.from(context)).getRoot()){};
     }
 
     @Override
@@ -293,13 +294,11 @@ class ExamAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new RecyclerView.ViewHolder(LayoutInflater.from(context).inflate(R.layout.exam_item, parent, false)){};
+        return new RecyclerView.ViewHolder(ExamItemBinding.inflate(LayoutInflater.from(context)).getRoot()){};
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        holder.itemView.setOnClickListener(v -> {
-        });
+        holder.itemView.setOnClickListener(v -> {});
         int startClassTimes = data.get(position).getIntValue("startClassTimes");
         int endClassTimes = data.get(position).getIntValue("endClassTimes");
         ((MaterialTextView)holder.itemView.findViewById(R.id.exam_name)).setText(data.get(position).getString("examSubjectName"));
@@ -310,7 +309,6 @@ class ExamAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ((MaterialButton)holder.itemView.findViewById(R.id.exam_class_time)).setText(String.format(context.getString(R.string.section_range), startClassTimes, endClassTimes));
         ((MaterialButton)holder.itemView.findViewById(R.id.exam_mode)).setText(String.format("%s：%s",context.getString(R.string.exam_mode), data.get(position).getString("examMode")));
         ((MaterialButton)holder.itemView.findViewById(R.id.exam_stage)).setText(String.format("%s：%s",context.getString(R.string.exam_stage), data.get(position).getString("examStage")));
-
     }
     @Override
     public int getItemCount() {

@@ -12,6 +12,7 @@ import com.sysu.edu.databinding.ActivityPrivacyBinding;
 
 public class Privacy extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,4 +27,5 @@ public class Privacy extends AppCompatActivity {
         binding.tool.setNavigationOnClickListener(e -> finishAfterTransition());
 
     }
+
 }

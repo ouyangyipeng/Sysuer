@@ -17,7 +17,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
 import com.sysu.edu.api.Params;
-import com.sysu.edu.databinding.ActivityMajorInfoBinding;
+import com.sysu.edu.databinding.ActivityPagerBinding;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ import okhttp3.Response;
 
 public class MajorInfo extends AppCompatActivity {
 
-    ActivityMajorInfoBinding binding;
+    ActivityPagerBinding binding;
     String cookie;
     Handler handler;
     OkHttpClient http = new OkHttpClient.Builder().build();
@@ -39,8 +39,9 @@ public class MajorInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMajorInfoBinding.inflate(getLayoutInflater());
+        binding = ActivityPagerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.toolbar.setTitle(R.string.major_info);
         binding.toolbar.setNavigationOnClickListener(v->supportFinishAfterTransition());
         Params params = new Params(this);
         cookie  = params.getCookie();
@@ -50,7 +51,7 @@ public class MajorInfo extends AppCompatActivity {
                 getCategory();
             }
         });
-        PagerAdapter adp = new PagerAdapter(this);
+        Pager2Adapter adp = new Pager2Adapter(this);
         binding.pager.setAdapter(adp);
         new TabLayoutMediator(binding.tabs, binding.pager, (tab, position) -> tab.setText(categories.get(position))).attach();
         handler = new Handler(Looper.getMainLooper()) {

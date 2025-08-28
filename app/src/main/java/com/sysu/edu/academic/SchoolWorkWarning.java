@@ -32,13 +32,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CET extends AppCompatActivity {
-
+public class SchoolWorkWarning extends AppCompatActivity {
     ActivityListBinding binding;
     Params params;
     String cookie;
     Handler handler;
     int order=0;
+    String alarmOperationTerm;
+    String alarmTerm;
     OkHttpClient http = new OkHttpClient.Builder().build();
     int page;
     @Override
@@ -55,16 +56,16 @@ public class CET extends AppCompatActivity {
                 page=0;
                 fr.clear();
                 cookie = params.getCookie();
-                getExchange();
+                getWarning();
             }
         });
-
+        binding.toolbar.setTitle(R.string.school_work_warning);
         binding.toolbar.setNavigationOnClickListener(v->supportFinishAfterTransition());
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == -1) {
-                    Toast.makeText(CET.this, getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
+                    Toast.makeText(SchoolWorkWarning.this, getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
                 }else {
                     JSONObject response = JSONObject.parseObject((String) msg.obj);
                     if (response != null && response.getInteger("code").equals(200)) {
@@ -74,31 +75,31 @@ public class CET extends AppCompatActivity {
                             d.getJSONArray("rows").forEach(a->{
                                 order++;
                                 ArrayList<String> values = new ArrayList<>();
-                                String[] keyName = new String[]{"考试年份","上/下半年","语言级别","学号","姓名","笔试考试时间","笔试准考证号","笔试成绩总分","听力分数","阅读分数","综合分数","写作分数","口试考试时间","口试准考证号","口语成绩","所属学校","院系","专业","年级","班级","笔试科目名称","笔试报名号","笔试报名学校","笔试报名校区","是否缺考","是否违纪","违纪类型","是否听力障碍","口试科目名称","口试报名号","口试报名学校","口试报名校区"};
+                                String[] keyName = new String[]{"预警结果","预警操作学期","预警学期","生成预警档案时间","操作"};
                                 for(int i=0;i<keyName.length;i++){
-                                    values.add(((JSONObject)a).getString(new String[]{"examYear","thePastOrNextHalfYearName","languageLevel","stuNum","stuName","writtenExaminationTime","writtenExaminationNumber","writtenExaminationTotalScore","hearingScore","readingScore","comprehensiveScore","writingScore","oralExamTime","oralExamNumber","oralExamAchievement","schoolName","collegeName","professionName","grade","stuClassName","writtenExaminationSubject","writtenExaminationApplyNumber","writtenExaminationApplySchool","writtenExaminationApplyCampus","whetherMissingTest","whetherViolation","violationType","whetherHearingObstacle","oralExamSubject","oralExamApplyNumber","oralExamApplySchool","oralExamApplyCampus"}[i]));
+                                    values.add(((JSONObject)a).getString(new String[]{"alarmResultName","alarmOperationTerm","alarmTerm","createTime","action"}[i]));
                                 }
-                                fr.add(CET.this,String.valueOf(order),List.of(keyName), values);
+                                fr.add(SchoolWorkWarning.this,String.valueOf(order), List.of(keyName), values);
                             });
                             if(total/10>page-1){
-                                getExchange();
+                                getWarning();
                             }
                         }
                     }
                     else {
-                        Toast.makeText(CET.this, getString(R.string.login_warning), Toast.LENGTH_LONG).show();
-                        launch.launch(new Intent(CET.this, LoginActivity.class));
+                        Toast.makeText(SchoolWorkWarning.this, getString(R.string.login_warning), Toast.LENGTH_LONG).show();
+                        launch.launch(new Intent(SchoolWorkWarning.this, LoginActivity.class));
                     }
                 }
             }
         };
-        getExchange();
+        getWarning();
     }
-    void getExchange(){
+    void getWarning(){
         page++;
-        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/achievement-manage/englishGradeAchievement/stuPageList")
+        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/alarm/alarm-archives/student/archives")
                 .header("Cookie",cookie)
-                .post(RequestBody.create(String.format(Locale.CHINA,"{\"pageNo\":%d,\"pageSize\":10,\"total\":true,\"param\":{}}",page), MediaType.parse("application/json")))
+                .post(RequestBody.create(String.format(Locale.CHINA,"{\"pageNo\":%d,\"pageSize\":10,\"total\":true,\"param\":{\"publicationStatus\":\"1\"%s%s}}",page,getTerm(alarmTerm),getTerm(alarmOperationTerm)), MediaType.parse("application/json")))
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/studentWeb/")
                 .build()).enqueue(new Callback() {
             @Override
@@ -116,5 +117,12 @@ public class CET extends AppCompatActivity {
                 handler.sendMessage(msg);
             }
         });
+    }
+    String getTerm(String s){
+        if(s!=null&&s.isEmpty()){
+            return "";
+        }else {
+            return String.format(",\"alarmOperationTerm\":\"%s\"",s);
+        }
     }
 }

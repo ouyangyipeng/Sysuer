@@ -140,5 +140,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="register_info">注册信息查看</string>
     <string name="major_info">本科专业查询</string>
+    <string name="school_work_warning">学业预警</string>
+    <string name="course_completion">课程进度</string>
+    <string name="pay">缴费</string>
+    <string name="life">生活</string>
+    <string name="between">~</string>
+    <string name="school_bus">校车</string>
+    <string name="note">备注</string>
 
 </resources>

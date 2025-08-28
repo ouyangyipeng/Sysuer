@@ -1,16 +1,17 @@
 package com.sysu.edu.extra;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -21,7 +22,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.sysu.edu.R;
 import com.sysu.edu.databinding.LoginBinding;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -32,11 +37,11 @@ public class LoginActivity extends AppCompatActivity {
     String password="";
     SharedPreferences privacy;
     LoginBinding binding;
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding=LoginBinding.inflate(getLayoutInflater());
-        EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
         privacy = getSharedPreferences("privacy", 0);
         username=privacy.getString("username","");
@@ -44,8 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         binding.username.setText(username);
         binding.password.setText(password);
         binding.tool.setNavigationOnClickListener(v->finishAfterTransition());
-        //setSupportActionBar(binding.tool);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
@@ -53,47 +56,59 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
         web=new WebView(this);
-        // binding.m.addView(web);
-        web.loadUrl("https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login");
+        binding.m.addView(web);
+        String url = getIntent().getStringExtra("url");
+        if(url==null){url="https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login";}
+        web.loadUrl(url);
         web.setWebViewClient(new WebViewClient(){
+
             @Override
             public void onPageFinished(WebView view, String url) {
-                // CookieManager.getInstance().getCookie(url);
                 sessionId=CookieManager.getInstance().getCookie(url);
-                if (url.startsWith("https://jwxt.sysu.edu.cn")){
+                Pattern pattern = Pattern.compile("//cas.+?\\.sysu.edu\\.cn");
+                if(!pattern.matcher(url).find()){
                     if(isEmpty()){
                         setResult(RESULT_OK);
                         SharedPreferences.Editor edit = privacy.edit();
-                        edit.putString("Cookie",sessionId).apply();
+                        edit.putString("Cookie",sessionId);
+                        edit.putString("token",getToken(sessionId));
                         edit.putString("username", username);
                         edit.putString("password", password);
                         edit.apply();
-                        finishAfterTransition();
+                       finishAfterTransition();
                     }
                 }
-                else if(getSharedPreferences("privacy",MODE_PRIVATE).getString("Cookie","").isEmpty()||url.startsWith("https://cas.sysu.edu.cn/cas/login")){
+                else if(getSharedPreferences("privacy",MODE_PRIVATE).getString("Cookie","").isEmpty()||pattern.matcher(url).find()){
                     binding.loginButton.setEnabled(true);
                     Glide.with(LoginActivity.this).load(new GlideUrl("https://cas.sysu.edu.cn/cas/captcha.jsp",new LazyHeaders.Builder().addHeader("Cookie",sessionId).build())).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).override(92*3,34*3).into(binding.ca);
                 }
-
-//                web.evaluateJavascript("(function(){return document.cookie;})()", new ValueCallback<String>() {
-//                    @Override
-//                    public void onReceiveValue(String value) {
-//                        System.out.println(value);
-//                    }
-//                });
+                web.evaluateJavascript("var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};", s -> {});
+            }
+            @Override
+            public void onLoadResource(WebView view, String url) {
+                view.evaluateJavascript("document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1024px, initial-scale=' + (document.documentElement.clientWidth / 1024));", null);
+            }
+        });
+        binding.tool.getMenu().add("确认").setIcon(R.drawable.submit).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                web.loadUrl("https://portal.sysu.edu.cn/newClient/#/newPortal/index");
+                return false;
             }
         });
         WebSettings webSettings = web.getSettings();
-        // 开启DOM storage API 功能
         webSettings.setDomStorageEnabled(true);
-        // 开启database storage API功能
         webSettings.setDatabaseEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBlockNetworkImage(false);
+        webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setJavaScriptEnabled(true);
+        webSettings.supportZoom();
+        webSettings.setSupportZoom(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setBuiltInZoomControls(false);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         //web.getSettings().
         // captcha=(TextInputEditText) findViewById(R.id.captcha);
@@ -178,6 +193,14 @@ public class LoginActivity extends AppCompatActivity {
 //                });
 //
         });
+    }
+    String getToken(String cookie) {
+        Matcher matcher = Pattern.compile("ibps-1.0.1-token=(.+?);").matcher(cookie + ";");
+        String token="";
+        if(matcher.find()) {
+            token = matcher.group(1);
+        }
+        return token==null?"":token;
     }
     boolean isEmpty(){
         username = String.valueOf(binding.username.getText());

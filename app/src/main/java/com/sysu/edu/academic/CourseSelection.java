@@ -15,8 +15,7 @@ import java.util.Objects;
 
 public class CourseSelection extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityCourseSelectionBinding binding;
+    ActivityCourseSelectionBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

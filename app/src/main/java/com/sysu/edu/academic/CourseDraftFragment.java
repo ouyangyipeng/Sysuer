@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.sysu.edu.R;
-import com.sysu.edu.databinding.CourseDraftFragmentBinding;
 import com.sysu.edu.databinding.CourseOutlineItemBinding;
+import com.sysu.edu.databinding.RecyclerViewBinding;
 
 import java.util.ArrayList;
 
@@ -31,10 +31,10 @@ public class CourseDraftFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(root == null) {
-            CourseDraftFragmentBinding binding = CourseDraftFragmentBinding.inflate(inflater);
+            RecyclerViewBinding binding = RecyclerViewBinding.inflate(inflater);
             adp = new OutlineAdp(requireContext());
-            binding.list.setLayoutManager(new GridLayoutManager(requireContext(), 1));
-            binding.list.setAdapter(adp);
+            binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 1));
+            binding.recyclerView.setAdapter(adp);
             if(data!=null){
                 data.forEach(e -> {
                     if (e != null && adp != null) {

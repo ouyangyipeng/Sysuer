@@ -71,7 +71,7 @@ public class CourseSelectionFragment extends Fragment{
     int selectedType;
     int selectedCate;
     CourseAdapter adp;
-    int total;
+    Integer total;
     HashMap<String, Integer> totals= new HashMap<>();
     String key;
     String term;
@@ -137,14 +137,6 @@ public class CourseSelectionFragment extends Fragment{
                     getCourseList();
                 }
             });
-//            ActivityResultLauncher<Intent> launchFilter = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
-//                if (o.getResultCode() == Activity.RESULT_OK && o.getData() != null) {
-//                    filter = (HashMap<String, String>) o.getData().getSerializableExtra("filter");
-//                    map.put(key, null);
-//                    init();
-//                    //getCourseList();
-//                }
-//            });
             cookie = requireContext().getSharedPreferences("privacy", Context.MODE_PRIVATE).getString("Cookie", "");
             selectedCate = 1;
             selectedType = 11;
@@ -239,8 +231,8 @@ public class CourseSelectionFragment extends Fragment{
         if (adp != null) {
             page = (int) Math.ceil((double) adp.getItemCount() /10);
         }
-        total = totals.getOrDefault(key,-1);
-        if (total==-1){
+        total = totals.getOrDefault(key,null);
+        if (total!=null){
             totals.put(key, -1);
         }
         binding.course.setAdapter(adp);
@@ -329,7 +321,7 @@ public class CourseSelectionFragment extends Fragment{
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/choose-course-front-server/classCourseInfo/course/choose")
                 .header("Cookie",cookie)
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/courseSelection/?code=jwxsd_xk&resourceName=%E9%80%89%E8%AF%BE")
-                .post(RequestBody.create(String.format("{\"clazzId\":\"%s\",\"selectedType\":\"%d\",\"selectedCate\":\"%d\",\"check\":true}",code,selectedType,selectedCate), MediaType.get("application/json")))
+                .post(RequestBody.create(String.format(Locale.CHINA,"{\"clazzId\":\"%s\",\"selectedType\":\"%d\",\"selectedCate\":\"%d\",\"check\":true}",code,selectedType,selectedCate), MediaType.get("application/json")))
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -352,7 +344,7 @@ public class CourseSelectionFragment extends Fragment{
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/choose-course-front-server/classCourseInfo/course/back")
                 .header("Cookie",cookie)
                 .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/courseSelection/?code=jwxsd_xk&resourceName=%E9%80%89%E8%AF%BE")
-                .post(RequestBody.create(String.format("{\"courseId\":\"%s\",\"clazzId\":\"%s\",\"selectedType\":\"%d\"}",classId,code,selectedType), MediaType.get("application/json")))
+                .post(RequestBody.create(String.format(Locale.CHINA,"{\"courseId\":\"%s\",\"clazzId\":\"%s\",\"selectedType\":\"%d\"}",classId,code,selectedType), MediaType.get("application/json")))
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -412,11 +404,6 @@ class CourseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         data.add(e);
         notifyItemInserted(getItemCount()-1);
     }
-    //    void  clear(){
-//        int tmp = getItemCount();
-//        data.clear();
-//        notifyItemRangeRemoved(0,tmp);
-//    }
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -22,16 +22,36 @@
         android:theme="@style/Theme.中大儿"
         tools:targetApi="36">
         <activity
+            android:name=".life.SchoolBus"
+            android:configChanges="uiMode|orientation|screenSize"
+            android:exported="true" />
+        <activity
+            android:name=".academic.Pay"
+            android:configChanges="uiMode|orientation|screenSize"
+            android:exported="true" />
+        <activity
+            android:name=".academic.PEList"
+            android:configChanges="uiMode|orientation|screenSize"
+            android:exported="true" />
+        <activity
+            android:name=".academic.SchoolWorkWarning"
+            android:configChanges="uiMode|orientation|screenSize"
+            android:exported="true" />
+        <activity
             android:name=".academic.CourseCompletion"
-            android:exported="false" />
+            android:configChanges="uiMode|orientation|screenSize"
+            android:exported="true" />
         <activity
             android:name=".academic.MajorInfo"
+            android:configChanges="uiMode|orientation|screenSize"
             android:exported="true" />
         <activity
             android:name=".academic.RegisterInfo"
+            android:configChanges="uiMode|orientation|screenSize"
             android:exported="true" />
         <activity
             android:name=".academic.CET"
+            android:configChanges="uiMode|orientation|screenSize"
             android:exported="true"
             android:theme="@style/Theme.中大儿" />
         <activity

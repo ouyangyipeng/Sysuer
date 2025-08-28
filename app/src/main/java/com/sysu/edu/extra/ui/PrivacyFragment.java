@@ -1,100 +1,147 @@
 package com.sysu.edu.extra.ui;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.sysu.edu.R;
+import com.sysu.edu.api.Params;
+import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
 import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PrivacyFragment extends PreferenceFragmentCompat {
-    OkHttpClient http = new OkHttpClient.Builder().build();
-    boolean init = false;
+    Params params;
     Handler handler;
-
+    OkHttpClient http = new OkHttpClient.Builder().build();
+    String token;
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
-        if(!init) {
+        if (savedInstanceState == null) {
             setPreferencesFromResource(R.xml.privacy, rootKey);
-            //getInfo();
-            ((Preference)Objects.requireNonNull(findPreference("netId"))).setSummary(requireContext().getSharedPreferences("privacy",Context.MODE_PRIVATE).getString("username",""));
-            ((Preference)Objects.requireNonNull(findPreference("password")))
+            ((Preference) Objects.requireNonNull(findPreference("netId"))).setSummary(requireContext().getSharedPreferences("privacy", Context.MODE_PRIVATE).getString("username", ""));
+            ((Preference) Objects.requireNonNull(findPreference("password")))
                     .setOnPreferenceClickListener(preference -> {
-                        Toast.makeText(requireContext(),requireContext().getSharedPreferences("privacy",Context.MODE_PRIVATE).getString("password",""),Toast.LENGTH_LONG).show();
-                        return  false;
+                        Toast.makeText(requireContext(), requireContext().getSharedPreferences("privacy", Context.MODE_PRIVATE).getString("password", ""), Toast.LENGTH_LONG).show();
+                        return false;
                     });
-            handler = new Handler(Looper.getMainLooper()){
+            params = new Params(requireActivity());
+            token = params.getToken();
+            ActivityResultLauncher<Intent> launchLogin = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+                if (o.getResultCode() == Activity.RESULT_OK) {
+                    token = params.getToken();
+                    getInfo();
+                }
+            });
+            //params.browse("https://pay.sysu.edu.cn/").run();
+            handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(@NonNull Message msg) {
-                    //msg.what
-                    switch (msg.what) {
-                        case -1:
-                            Toast.makeText(requireContext(), getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
-                            break;
-                        case 1:
-                        JSONObject info = JSONArray.parse((String) msg.obj).getJSONObject(0);
-                        String[] keys = new String[]{"UserId", "HostKey", "Name"};
-                        for (int i = 0; i < keys.length; i++) {
-                            Preference name = getPreferenceManager().findPreference((new String[]{"netid", "account", "name"})[i]);
-                            if (name != null) {
-                                name.setOnPreferenceClickListener(preference -> {
-                                    ClipboardManager clipboardManager = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                                    clipboardManager.setPrimaryClip(ClipData.newPlainText(name.getTitle(), name.getSummary()));
-                                    Toast.makeText(requireContext(), "已复制", Toast.LENGTH_LONG).show();
-                                    return true;
-                                });
-                                name.setSummary(info.getString(keys[i]));
+                    if (msg.what == -1) {
+                        Toast.makeText(requireContext(), getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
+                    } else {
+                        JSONObject response = JSONObject.parseObject((String) msg.obj);
+                        if (response != null && response.getInteger("code").equals(200)) {
+                            if (response.get("data") != null) {
+                                if (msg.what == 0) {
+                                    JSONObject data = response.getJSONObject("data");
+                                    String[] keyName = new String[]{"姓名", "学号", "证件类别","证件号码", "电话", "邮箱"};
+                                    for (int i = 0; i < keyName.length; i++) {
+                                        Preference p = new Preference(requireContext());
+                                        p.setTitle(keyName[i]);
+                                        p.setSummary(data.getString(new String[]{"userName","userCode","idTypeStr","idNum","tele","email"}[i]));
+                                        p.setIcon(new int[]{R.drawable.name,R.drawable.id,R.drawable.card,R.drawable.account,R.drawable.phone,R.drawable.email}[i]);
+                                        p.setOnPreferenceClickListener(preference -> {
+                                            params.copy((String) preference.getTitle(), (String) preference.getSummary());
+                                            params.toast("已复制");
+                                            return false;
+                                        });
+                                        getPreferenceScreen().addPreference(p);
+                                    }
+                                }
                             }
                         }
-                        break;
+                        else if(response != null && response.getInteger("code").equals(1003)){
+                            Toast.makeText(requireContext(), getString(R.string.login_warning), Toast.LENGTH_LONG).show();
+                            launchLogin.launch(new Intent(requireContext(), LoginActivity.class).putExtra("url","https://cas.sysu.edu.cn/cas/login?service=https://pay.sysu.edu.cn/sso"));
+                        }
+                        else {
+                            Toast.makeText(requireContext(), getString(R.string.login_warning), Toast.LENGTH_LONG).show();
+                            launchLogin.launch(new Intent(requireContext(), LoginActivity.class));
+                        }
                     }
                 }
             };
+            getInfo();
         }
     }
-    void getInfo(){
-        http.newCall(new Request.Builder()
-                .url("https://gym-443.webvpn.sysu.edu.cn/api/swimmer/me")
-                .header("User-Agent","SYSU")
-                .header("Authorization","Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjI1QjExQTk3MDQ0Qjc5MUVGN0I2MDAzOTdDMzk2MDJDQzA1RjY5NTYiLCJ4NXQiOiJKYkVhbHdSTGVSNzN0Z0E1ZkRsZ0xNQmZhVlkiLCJ0eXAiOiJKV1QifQ.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGFuZ3hiNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoidGFuZ3hiNiIsImh0dHA6Ly9zY2llbnRpYS5jb20vY2xhaW1zL0luc3RpdHV0aW9uIjoiNGZiMzdlMjgtMGE5MC00YmIwLWIwZTAtYjc5OGVjZTZmMzIwIiwiaHR0cDovL3NjaWVudGlhLmNvbS9jbGFpbXMvSW5zdGl0dXRpb25OYW1lIjoibWFpbC5zeXN1IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoidGFuZ3hiNkBtYWlsLnN5c3UuZWR1LmNuIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoidGFuZ3hiNiIsImh0dHA6Ly9zY2llbnRpYS5jb20vY2xhaW1zL1Njb3BlIjoiUkIiLCJuYmYiOjE3NTM0MzA5OTQsImV4cCI6MTc1MzQzNDU5NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3QvIiwiYXVkIjoiaHR0cDovL3Jlc291cmNlYm9va2VyYXBpLmNsb3VkYXBwLm5ldC8ifQ.cilrLUoi6BHj_Hyfy9HuqglivAJ_9VVpDtsOAyZMC_SqWjnJmbvf5ex6RZf_UgmR1F37rKq58XeacRkHUUUQ-lOrrHdcfEvQFQd7V9wizeMpstTFS5WPcaDj86e6c_8trk5VyycVFOFrvW2Cu0PyDAWTwomDXFV4Na7A7AUHWeijkD0Ne6WG4FTiYDG49RHf18RPQGD8JmeTvihplMM1t7arrfYz4j-ni6gTlA80lAIQxvAPs80-q1ZDvVN9pFuaN-C2alIjFxM39iYqp5-x6-DSsfXbteiK_V5AnyyzJ4vfXF-cDHumk3nLbGk_URte38CMRiEViCRXhov3-0uUPg")
-                .header("Accept","application/json, text/plain, */*")
-                //.header("Cookie","token_ec583190dcd12bca757dd13df10f59c3=594c188bae947989025e139002f8c374; sn_ec583190dcd12bca757dd13df10f59c3=360b7022ac411b79e43c01affcea5064; _webvpn_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidGFuZ3hiNiIsImdyb3VwcyI6WzNdLCJpYXQiOjE3NTM0MjYzMTYsImV4cCI6MTc1MzUxMjcxNn0.zT8EaI1FrbNxXn1OTcNzSBTZyMLerMxuob4z6Xe7XeU; safeline_bot_token=AH3ZruYAAAAAAAAAAAAAAACvo8BAmAEAAPBi/BnXHjmgWCy/zB+R2q4sshRh")
+
+
+
+    void getInfo () {
+        http.newCall(new Request.Builder().url("https://pay.sysu.edu.cn/client/api/client/person/get")
+                .post(RequestBody.create("{}", MediaType.parse("application/json")))
+                .header("token",token)
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message msg = new Message();
-                msg.what=-1;
+                msg.what = -1;
                 handler.sendMessage(msg);
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 Message msg = new Message();
-                msg.what=1;
-                msg.obj=response.body().string();
+                msg.what = 0;
+                msg.obj = response.body().string();
                 handler.sendMessage(msg);
-                //System.out.println(Objects.requireNonNull(response.header("Content-Type")).startsWith("application/json"));
             }
         });
     }
+    /*void Login() {
+        http.newCall(new Request.Builder().url("https://pay.sysu.edu.cn/client/api/client/auth/netId/login")
+               // .header("Cookie", cookie)
+                        .header("token","1409200795378913280")
+                .post(RequestBody.create("{\"key\":\"https://cas.sysu.edu.cn/cas/serviceValidate?service=https://pay.sysu.edu.cn/sso&ticket=ST-6877120-lLD5AX4dayQaCxMJ0bNF-cas\"}", MediaType.parse("application/json")))
+               // .header("Referer", "https://pay.sysu.edu.cn/")
+                .build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Message msg = new Message();
+                msg.what = -1;
+                handler.sendMessage(msg);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Message msg = new Message();
+                msg.what = 1;
+                msg.obj = response.body().string();
+                handler.sendMessage(msg);
+            }
+        });
+    }*/
 }

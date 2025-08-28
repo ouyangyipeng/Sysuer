@@ -24,7 +24,6 @@ import com.sysu.edu.extra.LoginActivity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,52 +33,34 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MajorInfoFragment extends StaggeredFragment {
-
+public class CourseCompletionFragment extends StaggeredFragment{
     String cookie;
     Handler handler;
     OkHttpClient http = new OkHttpClient.Builder().build();
-    int page=0;
-    int total=-1;
-    String code;
-
-    public static MajorInfoFragment newInstance(Bundle args) {
-        MajorInfoFragment fragment = new MajorInfoFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    int total;
+    int page;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        if(getArguments()!=null){
-            code = getArguments().getString("code");
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        Params params = new Params(requireActivity());
-        cookie  = params.getCookie();
+        page=0;
         binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView v, int dx, int dy) {
                 if (!v.canScrollVertically(1) && total / 10 + 1 >= page) {
-                    getList();
+                    //getStudentCourse();
                 }
-                 super.onScrolled(v, dx, dy);
+                super.onScrolled(v, dx, dy);
             }
         });
+        Params params = new Params(requireActivity());
+        cookie  = params.getCookie();
         ActivityResultLauncher<Intent> launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             if (o.getResultCode() == Activity.RESULT_OK) {
                 cookie = params.getCookie();
-                page=0;
-                total=-1;
-                getList();
+                page = 0;
+                getStudentCourse();
             }
         });
-        getList();
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -89,26 +70,26 @@ public class MajorInfoFragment extends StaggeredFragment {
                     JSONObject response = JSONObject.parseObject((String) msg.obj);
                     if (response != null && response.getInteger("code").equals(200)) {
                         if (response.get("data") != null) {
-                            JSONObject data = response.getJSONObject("data");
-                            switch (msg.what){
-                                case 0:
-                                    if (total == -1) {
-                                        total = data.getInteger("total");
+                            if (msg.what == 1) {
+                                JSONObject data = response.getJSONObject("data");
+                                total = data.getInteger("total");
+                                data.getJSONArray("rows").forEach(a -> {
+                                    ArrayList<String> values = new ArrayList<>();
+                                    for (String key : new String[]{"acadYearSemester", "courseNumber", "courseName", "courseCategoryName", "credit",/**/"acadYearSemester", "achievementCourseNumber", "achievementCourseName", "achievementCourseCategoryName", "achievementCredit", "ispassed", "achievementPoint"}) {
+                                        values.add(((JSONObject) a).getString(key));
                                     }
-                                    data.getJSONArray("rows").forEach(a->{
-                                        ArrayList<String> values = new ArrayList<>();
-                                        String[] keyName = new String[]{"专业代码","专业名称","学制","修业年限","学科门类","学位授予门类"};
-                                        for(int i=0;i<keyName.length;i++){
-                                            values.add(((JSONObject)a).getString(new String[]{"code","name","educationalSystem","maxStudyYear","disciplineCateName","degreeGrantName"}[i]));
-                                        }
-                                        add(values.get(1), List.of(keyName),values);
-                                    });
-
-                                    break;
-                                    case 1:
-                                    break;
+                                    if (values.get(0) != null) {
+                                        values.set(0, values.get(0).replace(",", "|"));
+                                    }
+                                    if (values.get(5) != null) {
+                                        values.set(5, values.get(5).replace(",", "|"));
+                                    }
+                                    add(requireContext(), values.get(2), List.of("学年学期", "课程号", "课程名称", "课程类别", "学分", "成绩获取学年学期", "课程号", "课程名称", "课程类别", "学分", "是否及格", "成绩"), values);
+                                });
                             }
                         }
+                    }else if(response != null && response.getInteger("code").equals(50030000)){
+                        Toast.makeText(requireContext(), response.getString("message"), Toast.LENGTH_LONG).show();
                     }
                     else {
                         Toast.makeText(requireContext(), getString(R.string.login_warning), Toast.LENGTH_LONG).show();
@@ -117,14 +98,15 @@ public class MajorInfoFragment extends StaggeredFragment {
                 }
             }
         };
+        getStudentCourse();
         return view;
     }
-    void getList(){
+    void getStudentCourse(){
         page++;
-        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/profession-direction/list")
+        http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/gradua-degree/graduatemsg/studentsGraduationExamination/studentCourse")
                 .header("Cookie",cookie)
-                .post(RequestBody.create(String.format(Locale.CHINA,"{\"pageNo\":%d,\"pageSize\":10,\"total\":true,\"param\":{\"majorProfessionDircetion\":\"0\",\"disciplineCateCode\":\"%s\"}}",page,code), MediaType.parse("application/json")))
-                .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/studentWeb/")
+                .post(RequestBody.create(String.format("{\"pageNo\":%d,\"pageSize\":10,\"total\":true,\"param\":{\"cultureTypeCode\":\"01\"}}", page), MediaType.parse("application/json")))
+                .header("Referer","https://jwxt.sysu.edu.cn/jwxt/mk/gradua/")
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -136,7 +118,7 @@ public class MajorInfoFragment extends StaggeredFragment {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 Message msg = new Message();
-                msg.what= 0;
+                msg.what= 1;
                 msg.obj=response.body().string();
                 handler.sendMessage(msg);
             }

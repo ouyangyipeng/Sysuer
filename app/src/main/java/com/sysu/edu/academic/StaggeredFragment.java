@@ -32,7 +32,7 @@ import java.util.List;
 
 public class StaggeredFragment extends Fragment {
 
-    public RecyclerViewScrollBinding binding;
+    RecyclerViewScrollBinding binding;
     Params params;
     int position;
     StaggeredAdapter staggeredAdapter;
@@ -47,7 +47,7 @@ public class StaggeredFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         params = new Params(requireActivity());
-        binding = RecyclerViewScrollBinding.inflate(inflater, container, false);
+        binding = RecyclerViewScrollBinding.inflate(inflater);
         lm  = new StaggeredGridLayoutManager(params.getColumn(), StaggeredGridLayoutManager.VERTICAL);
         binding.recyclerView.setLayoutManager(lm);
         if(staggeredAdapter==null){
@@ -93,7 +93,7 @@ public class StaggeredFragment extends Fragment {
 class StaggeredAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     boolean hideNull;
     Context context;
-    ArrayList<String> titles=new ArrayList<>();
+    public ArrayList<String> titles=new ArrayList<>();
     ArrayList<List<String>> keys=new ArrayList<>();
     ArrayList<Integer> icons= new ArrayList<>();
     ArrayList<List<String>> values=new ArrayList<>();
@@ -102,11 +102,11 @@ class StaggeredAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         this.context = c;
         this.hideNull=false;
     }
-    public StaggeredAdapter(Context c,boolean hideNull){
+    /*public StaggeredAdapter(Context c,boolean hideNull){
         super();
         this.context = c;
         this.hideNull=hideNull;
-    }
+    }*/
 
     public void setHideNull(boolean hideNull) {
         this.hideNull = hideNull;
