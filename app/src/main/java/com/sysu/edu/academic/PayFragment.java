@@ -48,7 +48,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PayFragment extends StaggeredFragment {
-        public View view;
+    public View view;
     Handler handler;
     OkHttpClient http = new OkHttpClient.Builder().build();
     String token;
@@ -95,6 +95,7 @@ public class PayFragment extends StaggeredFragment {
                         getPaymentList(Params.getDateTime(fromDate),Params.getDateTime(toDate));
                     }
                 })
+
                 this.view = b0.getRoot();
                 view = b0.getRoot();
                 break;
@@ -114,12 +115,12 @@ public class PayFragment extends StaggeredFragment {
                     getFeeList(String.valueOf(yearCodes.get(i)));
                 });
                 binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    b0.chips.setElevation(recyclerView.canScrollVertically(-1) ? 6 : 0);
-                    super.onScrolled(recyclerView, dx, dy);
-                }
-            });
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        b0.chips.setElevation(recyclerView.canScrollVertically(-1) ? 6 : 0);
+                        super.onScrolled(recyclerView, dx, dy);
+                    }
+                });
                 view = b1.getRoot();
                 break;
             case 3:
@@ -139,7 +140,7 @@ RecyclerView.OnScrollListener() {
                 b2.from.setText(dm.getFromDateString());
                 b2.from.setOnClickListener(view2 -> {
                     MaterialDatePicker<Long> fromDatePicker = MaterialDatePicker.Builder.datePicker().setSelection(dm.getFromDateTimeMillis()).setCalendarConstraints(new CalendarConstraints.Builder()
-                                    .setValidator(CompositeDateValidator.allOf(List.of(DateValidatorPointBackward.before(dm.getToDateTimeMillis())))).build()).build();
+                            .setValidator(CompositeDateValidator.allOf(List.of(DateValidatorPointBackward.before(dm.getToDateTimeMillis())))).build()).build();
                     fromDatePicker.addOnPositiveButtonClickListener(selection -> {
                         dm.fromDate = new Date(selection);
                         fromDatePicker.dismissAllowingStateLoss();
@@ -152,11 +153,11 @@ RecyclerView.OnScrollListener() {
                 b2.to.setOnClickListener(view2 -> {
                     MaterialDatePicker<Long> toDatePicker = MaterialDatePicker.Builder.datePicker().setSelection(dm.getToDateTimeMillis()).setCalendarConstraints(new CalendarConstraints.Builder().setValidator(CompositeDateValidator.allOf(List.of(DateValidatorPointForward.from(dm.getFromDateTimeMillis())))).build()).build();
                     toDatePicker.addOnPositiveButtonClickListener(selection -> {
-                                dm.toDate=new Date(selection);
-                                toDatePicker.dismissAllowingStateLoss();
-                                b2.to.setText(dm.getToDateString());
-                                dm.getData();
-                            });
+                        dm.toDate=new Date(selection);
+                        toDatePicker.dismissAllowingStateLoss();
+                        b2.to.setText(dm.getToDateString());
+                        dm.getData();
+                    });
                     toDatePicker.show(requireActivity().getSupportFragmentManager(), null);
                 });
                 binding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
