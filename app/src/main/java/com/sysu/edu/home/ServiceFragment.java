@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.sysu.edu.R;
+import com.sysu.edu.academic.AcademyNotification;
 import com.sysu.edu.academic.AgendaActivity;
 import com.sysu.edu.academic.BrowserActivity;
 import com.sysu.edu.academic.CET;
@@ -59,7 +60,7 @@ public class ServiceFragment extends Fragment {
             String[] titles = new String[]{"查看", a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study), a(R.string.life), "AI"};
             String[][] items = new String[][]{
                     {a(R.string.school_roll), a(R.string.cet), a(R.string.register_info), a(R.string.school_work_warning),a(R.string.course_completion)},
-                    {"资讯门户", "校园集市"//,"学校活动"
+                    {"资讯门户", "校园集市","教务通知"//,"学校活动"
                     },
                     {"体育场馆预定系统", "学工系统", "本科教务系统", "中山大学统一门户", "大学服务中心", "财务信息系统"},
                     {"中山大学官网", "本科招生", "研究生招生", "人才招聘", "百年校庆", "博物馆", "图书馆", "校友会", "公务电子邮件系统"},
@@ -79,8 +80,8 @@ public class ServiceFragment extends Fragment {
                     },
                     {
                             newActivity(News.class),
-
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.comingx.zanao")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
+                            newActivity(AcademyNotification.class),
                     },//信息
                     {//newActivity(PEPreservation.class),
                             browse("https://gym-443.webvpn.sysu.edu.cn/#/"),

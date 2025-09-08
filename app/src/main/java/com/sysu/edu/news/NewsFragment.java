@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.R;
 import com.sysu.edu.academic.BrowserActivity;
+import com.sysu.edu.api.Params;
+import com.sysu.edu.databinding.NewsPageBinding;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class NewsFragment extends Fragment {
     int page=1;
     public Runnable run;
     String authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c2g1XzEwMDA0MCIsInVzZXJfbmFtZSI6IjI0MzA4MTUyIiwic2NvcGUiOlsiYWxsIl0sIm5hbWUiOiIyNDMwODE1MiIsImV4cCI6MTc1MTk4OTIyNiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXSwianRpIjoiZFFqR1Q5Q25Ia1lWUDY0VmlGZFZURExCU1lNIiwiY2xpZW50X2lkIjoiMTY3M2YwMWQ5NjFhNjEwZmU5MjIwZWZmMGQ3YjNiYzQiLCJ1c2VybmFtZSI6IjI0MzA4MTUyIn0.wYTyy8gBr37xItZW2qJp81W2T-17-E9y4RQiODLj9pQ";
+    Params params;
+
     public NewsFragment(String cookie, int pos) {
         this.cookie = "login_token_ec583190dcd12bca757dd13df10f59c3=ad6e129cb0c2e7ad6d842afa0e0ebf31; username_ec583190dcd12bca757dd13df10f59c3=tangxb6; login_sn_ec583190dcd12bca757dd13df10f59c3=0c3845934e6ec207f5b898ed0d3dd86f;";//cookie + ";_webvpn_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidGFuZ3hiNiIsImdyb3VwcyI6WzNdLCJpYXQiOjE3NDM5Mjg1OTUsImV4cCI6MTc0NDAxNDk5NX0.luGDbfa_19Ye5TBVpwo3gaZPXldD7gsnSqGkX6IJHb0;";
         this.position = pos;
@@ -63,12 +66,12 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (view == null) {
-            view = LayoutInflater.from(requireActivity()).inflate(R.layout.news_page, container, false);
-            RecyclerView list = view.findViewById(R.id.news_page);
-            DisplayMetrics dm = new DisplayMetrics();
-            requireActivity().getWindowManager().getDefaultDisplay().getRealMetrics(dm);
-            list.setLayoutManager(new GridLayoutManager(requireContext(),(dm.widthPixels<1830)?1:(dm.widthPixels<3050)?2:3));
+        if (savedInstanceState == null) {
+            NewsPageBinding binding = NewsPageBinding.inflate(inflater);
+            view = binding.getRoot();
+            params = new Params(requireActivity());
+            RecyclerView list = binding.newsPage;
+            list.setLayoutManager(new GridLayoutManager(requireContext(),params.getColumn()));
             list.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -172,7 +175,6 @@ public class NewsFragment extends Fragment {
                             }
                             //今日中大
                             break;
-
                     }
                 }
             };

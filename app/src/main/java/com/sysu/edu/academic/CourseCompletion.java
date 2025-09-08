@@ -92,6 +92,16 @@ public class CourseCompletion extends AppCompatActivity {
                                             progress.setLayoutParams(lp);
                                             ((CardItemBinding) binding).getRoot().addView(progress);
                                         }
+
+                                        @Override
+                                        public void onBind(NewsFragment.NewsAdp a, RecyclerView.ViewHolder holder, int position) {
+
+                                        }
+
+                                        @Override
+                                        public void onCreate(NewsFragment.NewsAdp a, ViewBinding binding) {
+
+                                        }
                                     });
                                     ((StaggeredFragment) adp.getItem(0)).add(CourseCompletion.this, values.get(0), List.of("课程类别", "培养方案学分要求", "免修课程学分", "实际毕业学分要求", "实得"), values);
                                 });
