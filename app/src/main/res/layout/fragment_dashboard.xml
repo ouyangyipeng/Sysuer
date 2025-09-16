@@ -7,8 +7,8 @@
         android:id="@+id/activity_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:orientation="vertical">
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Outlined"
@@ -78,10 +78,8 @@
             android:layout_marginTop="0dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/course_list"
-                android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp"/>
+                android:layout_height="match_parent" />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/noClass"
                 android:layout_width="wrap_content"
@@ -141,8 +139,7 @@
                 android:id="@+id/exam_list"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp"/>
+                android:layout_height="match_parent"/>
         </com.google.android.material.card.MaterialCardView>
         <TableRow
             android:layout_width="match_parent"

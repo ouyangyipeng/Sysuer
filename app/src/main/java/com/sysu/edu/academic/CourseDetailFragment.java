@@ -47,12 +47,12 @@ public class CourseDetailFragment extends Fragment {
                         binding.evaluationMethod.setText(data.getString("evaluationMethod"));
                         binding.reference.setText(data.getString("referenceBook"));
                         binding.resource.setText(data.getString("courseResource"));
-                        String[] info = new String[]{"courseName", "courseTypeName", "courseNum", "subCourseTypeName", "subTypeModuleName", "credit", "totalHours", "lecturesCreHours", "labCreHours", "weekHours","totalHoursComment","languageName", "establishUnitNumberName", "planClassSize", "teacherName", "intendedAcadYear", "intendedCampusName"};
+                        String[] info = new String[]{"courseName","faceProfessionName", "courseTypeName", "courseNum","courseId" ,"subCourseTypeName", "subTypeModuleName","courseTextBook", "credit", "totalHours", "lecturesCreHours", "labCreHours", "weekHours","totalHoursComment","languageName", "establishUnitNumberName", "planClassSize", "teacherName", "intendedAcadYear", "intendedCampusName"};
                         for (int i = 0; i < info.length; i++) {
                             String content = (i==9|i==10?data0:data).getString(info[i]);
                             if (content == null) {content = "";}
                             Chip chip = ServiceItemBinding.inflate(getLayoutInflater()).getRoot();
-                            chip.setText(String.format("%s：%s", (new String[]{"课程名称", "课程类别", "课程编码", "课程细类", "艺术教育板块", "学分", "总学时", "理论学时", "实践(含实验)学时", "周学时","总学时备注", "授课语种", "开课单位", "接收人数", "主讲教师", "意向开课学期", "意向线下上课校区", "是否有意向开设跨校园同步课程"})[i], content));
+                            chip.setText(String.format("%s：%s", (new String[]{"课程名称","面向专业","课程类别", "课程编码","课程id" ,"课程细类", "艺术教育板块", "课本","学分", "总学时", "理论学时", "实践(含实验)学时", "周学时","总学时备注", "授课语种", "开课单位", "接收人数", "主讲教师", "意向开课学期", "意向线下上课校区", "是否有意向开设跨校园同步课程"})[i], content));
                             chip.setOnLongClickListener(a -> {
                                 ((ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("", ((Chip) a).getText()));
                                 return false;

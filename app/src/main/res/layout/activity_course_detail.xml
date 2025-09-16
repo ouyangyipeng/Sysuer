@@ -10,6 +10,7 @@
         style="@style/SYSU.AppBarLayout.Solid"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        app:statusBarForeground="?attr/colorSurfaceContainer"
         android:background="?attr/colorSurfaceContainer">
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"

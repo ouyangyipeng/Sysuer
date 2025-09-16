@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/course_item"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/box_background"
-    android:paddingStart="8dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="8dp">
+    android:padding="8dp">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/item"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+<!--    <androidx.constraintlayout.widget.Group-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:id="@+id/group"-->
+<!--        app:constraint_referenced_ids="location_container,teacher,time_container,course"-->
+<!--        android:layout_height="wrap_content"/>-->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/course_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/year"
+        android:padding="8dp"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -55,3 +64,4 @@
         android:layout_height="wrap_content"
         app:icon="@drawable/location" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>

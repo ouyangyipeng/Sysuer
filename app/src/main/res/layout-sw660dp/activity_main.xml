@@ -10,33 +10,29 @@
         style="@style/Widget.MaterialComponents.NavigationRailView.Colored.Compact"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
-        app:itemIconTint="@color/purple_500"
-        app:itemTextColor="@color/purple_500"
+        app:itemIconTint="?colorPrimary"
+        app:itemTextColor="?colorPrimary"
         app:labelVisibilityMode="selected"
         app:menu="@menu/bottom_nav_menu"
         app:menuGravity="center" />
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/container"
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:id="@+id/appbar"
-            style="@style/Widget.Material3.AppBarLayout"
-            app:elevation="4dp"
-            android:layout_height="?attr/actionBarSize">
+            style="@style/SYSU.AppBarLayout"
+            android:layout_height="wrap_content">
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 style="@style/Widget.Material3.Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll"
+                app:layout_scrollFlags="noScroll"
                 app:title="@string/app_name"
                 app:titleTextColor="?colorPrimary"/>
-
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment_activity_main"
