@@ -22,6 +22,7 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.sysu.edu.R;
 import com.sysu.edu.databinding.LoginBinding;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,12 +56,13 @@ public class LoginActivity extends AppCompatActivity {
 //        });
         web=new WebView(this);
         binding.m.addView(web);
-        String url = getIntent().getStringExtra("url");
-        if(url==null){url="https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login";}
-        web.loadUrl(url);
+        String loginUrl = getIntent().getStringExtra("url");
+        if(loginUrl==null){loginUrl="https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login";}
+        web.loadUrl(loginUrl);
         web.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
+                boolean reloadCap = Objects.equals(sessionId, CookieManager.getInstance().getCookie(url));
                 sessionId=CookieManager.getInstance().getCookie(url);
                 if(!pattern.matcher(url).find()){
                     if(isEmpty()){
@@ -74,16 +76,16 @@ public class LoginActivity extends AppCompatActivity {
                        finishAfterTransition();
                     }
                 }
-                else if(pattern.matcher(url).find()||privacy.getString("Cookie","").isEmpty()){
+                else if(!reloadCap){
                     binding.loginButton.setEnabled(true);
                     Glide.with(LoginActivity.this).load(new GlideUrl("https://cas.sysu.edu.cn/cas/captcha.jsp",new LazyHeaders.Builder().addHeader("Cookie",sessionId).build())).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).override(92*3,34*3).into(binding.ca);
                 }
                 //web.evaluateJavascript("var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};", s -> {});
             }
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                view.evaluateJavascript("document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1024px, initial-scale=' + (document.documentElement.clientWidth / 1024));", null);
-            }
+//            @Override
+//            public void onLoadResource(WebView view, String url) {
+//               // view.evaluateJavascript("document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1024px, initial-scale=' + (document.documentElement.clientWidth / 1024));", null);
+//            }
         });
         binding.tool.getMenu().add("确认").setIcon(R.drawable.submit).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener(menuItem -> {
             web.loadUrl("https://portal.sysu.edu.cn/newClient/#/newPortal/index");
@@ -95,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBlockNetworkImage(false);
-        webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
+        //webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setJavaScriptEnabled(true);
         webSettings.supportZoom();
@@ -127,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-//        new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://cas.sysu.edu.cn/cas/login?service=https://jwxt.sysu.edu.cn/jwxt/api/sso/cas/login?pattern=student-login").build()).enqueue(new Callback() {
+//        new OkHttpClient.Builder().build().newCall(new Request.Builder().loginUrl("https://cas.sysu.edu.cn/cas/login?service=https://jwxt.sysu.edu.cn/jwxt/api/sso/cas/login?pattern=student-login").build()).enqueue(new Callback() {
 //            @Override
 //            public void onFailure(@NonNull Call call, @NonNull IOException e) {
 //
@@ -152,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 //                        .add("geolocation", "")
 //                        .build();
 //                new OkHttpClient.Builder().build().newCall(
-//                        new Request.Builder().url("https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login")
+//                        new Request.Builder().loginUrl("https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login")
 //                               // .addHeader("Cookie", String.valueOf(((TextInputEditText)findViewById(R.id.password)).getText()))
 //                                .addHeader("Referer","https://cas.sysu.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.sysu.edu.cn%2Fjwxt%2Fapi%2Fsso%2Fcas%2Flogin%3Fpattern%3Dstudent-login")
 //                                .addHeader("Sec-Fetch-Dest","document")

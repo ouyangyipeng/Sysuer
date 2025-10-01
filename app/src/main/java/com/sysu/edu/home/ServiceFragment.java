@@ -58,9 +58,11 @@ public class ServiceFragment extends Fragment {
             launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             });
             service_container = binding.serviceContainer;
-            String[] titles = new String[]{"查看", a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study), a(R.string.life), "AI"};
+            String[] titles = new String[]{"学业","学工", a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study), a(R.string.life), "AI"};
             String[][] items = new String[][]{
                     {a(R.string.school_roll), a(R.string.cet), a(R.string.register_info), a(R.string.school_work_warning),a(R.string.course_completion)},
+
+                    {"勤工俭学"},
                     {"资讯门户", "校园集市","教务通知"//,"学校活动"
                     },
                     {"体育场馆预定系统", "学工系统", "本科教务系统", "中山大学统一门户", "大学服务中心", "财务信息系统"},
@@ -79,6 +81,9 @@ public class ServiceFragment extends Fragment {
                             newActivity(SchoolWorkWarning.class),
                             newActivity(CourseCompletion.class)
                     },
+                    {
+
+                    },//学工
                     {
                             newActivity(News.class),
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.comingx.zanao")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),

@@ -6,7 +6,7 @@
         </shape>
     </item>
     <item>
-    <shape android:shape="rectangle">
+    <shape>
     </shape>
 </item>
 </ripple>
