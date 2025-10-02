@@ -43,17 +43,11 @@ public class LoginActivity extends AppCompatActivity {
         binding=LoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         privacy = getSharedPreferences("privacy", 0);
-        username=privacy.getString("username","");
-        password=privacy.getString("password","");
+        username = privacy.getString("username","");
+        password = privacy.getString("password","");
         binding.username.setText(username);
         binding.password.setText(password);
         binding.tool.setNavigationOnClickListener(v->finishAfterTransition());
-//        ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
-//            binding.appbar.setPadding(0,systemBars.top,0,0);
-//            return insets;
-//        });
         web=new WebView(this);
         binding.m.addView(web);
         String loginUrl = getIntent().getStringExtra("url");
@@ -64,9 +58,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 boolean reloadCap = Objects.equals(sessionId, CookieManager.getInstance().getCookie(url));
                 sessionId=CookieManager.getInstance().getCookie(url);
+                System.out.println(sessionId);
                 if(!pattern.matcher(url).find()){
                     if(isEmpty()){
                         SharedPreferences.Editor edit = privacy.edit();
+                        System.out.println(sessionId);
                         edit.putString("Cookie",sessionId);
                         edit.putString("token",getToken(sessionId));
                         edit.putString("username", username);
@@ -97,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBlockNetworkImage(false);
-        //webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
+        webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setJavaScriptEnabled(true);
         webSettings.supportZoom();

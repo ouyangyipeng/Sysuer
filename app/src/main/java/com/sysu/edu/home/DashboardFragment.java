@@ -81,7 +81,6 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (binding == null) {
             binding = FragmentDashboardBinding.inflate(inflater);
-            RecyclerView courseList = binding.courseList;
             examList = binding.examList;
             launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
                 if (o.getResultCode() == Activity.RESULT_OK) {
@@ -89,8 +88,8 @@ public class DashboardFragment extends Fragment {
                     getTerm();
                 }
             });
-            courseList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
-            courseList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            binding.courseList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
+            binding.courseList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             examList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
             examList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             new Handler().post(new Runnable() {
@@ -103,7 +102,7 @@ public class DashboardFragment extends Fragment {
             params = new Params(requireActivity());
             cookie = params.getCookie();
             courseAdp = new CourseAdp(requireActivity());
-            courseList.setAdapter(courseAdp);
+            binding.courseList.setAdapter(courseAdp);
             examAdp = new ExamAdp(requireActivity());
             examList.setAdapter(examAdp);
             binding.toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {

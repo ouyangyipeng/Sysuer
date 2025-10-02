@@ -1,5 +1,6 @@
 package com.sysu.edu.news;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,8 +10,9 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -29,7 +31,8 @@ import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.R;
 import com.sysu.edu.academic.BrowserActivity;
 import com.sysu.edu.api.Params;
-import com.sysu.edu.databinding.NewsPageBinding;
+import com.sysu.edu.databinding.RecyclerViewScrollBinding;
+import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,18 +51,27 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class NewsFragment extends Fragment {
-    View view;
     String cookie;
     int position;
-    OkHttpClient http = new OkHttpClient.Builder().build();
+    RecyclerViewScrollBinding binding;
+    OkHttpClient http = new OkHttpClient.Builder().authenticator((route, response) -> {
+//                System.out.println("Authenticating for response: " + response);
+//                System.out.println("Challenges: " + response.challenges());
+                String credential = Credentials.basic("tangxb6", "Tang@1245");
+                System.out.println(credential);
+                return response.request().newBuilder()
+                        .header("Authorization", credential)
+                        .build();
+            }).build();
     Handler handler;
     int page=1;
-    public Runnable run;
-    String authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c2g1XzEwMDA0MCIsInVzZXJfbmFtZSI6IjI0MzA4MTUyIiwic2NvcGUiOlsiYWxsIl0sIm5hbWUiOiIyNDMwODE1MiIsImV4cCI6MTc1MTk4OTIyNiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXSwianRpIjoiZFFqR1Q5Q25Ia1lWUDY0VmlGZFZURExCU1lNIiwiY2xpZW50X2lkIjoiMTY3M2YwMWQ5NjFhNjEwZmU5MjIwZWZmMGQ3YjNiYzQiLCJ1c2VybmFtZSI6IjI0MzA4MTUyIn0.wYTyy8gBr37xItZW2qJp81W2T-17-E9y4RQiODLj9pQ";
+    Runnable run;
+    String authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c3NlYXJjaF8xMDAwNTAiLCJ1c2VyX25hbWUiOiIyNDMwODE1MiIsInNjb3BlIjpbImFsbCJdLCJuYW1lIjoiMjQzMDgxNTIiLCJleHAiOjE3NTkzOTg1MjUsImF1dGhvcml0aWVzIjpbIkFETUlOIl0sImp0aSI6Inp5Z3RBeEhDdkx0ckFMODdnWWJuNDhxWUlyNCIsImNsaWVudF9pZCI6IjE2NzNmMDFkOTYxYTYxMGZlOTIyMGVmZjBkN2IzYmM0IiwidXNlcm5hbWUiOiIyNDMwODE1MiJ9.viBuKujwPQO9ai5orJsJtloWhwZhDThl40O_kfJFK_k";//"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c2g1XzEwMDA0MCIsInVzZXJfbmFtZSI6IjI0MzA4MTUyIiwic2NvcGUiOlsiYWxsIl0sIm5hbWUiOiIyNDMwODE1MiIsImV4cCI6MTc1MTk4OTIyNiwiYXV0aG9yaXRpZXMiOlsiQURNSU4iXSwianRpIjoiZFFqR1Q5Q25Ia1lWUDY0VmlGZFZURExCU1lNIiwiY2xpZW50X2lkIjoiMTY3M2YwMWQ5NjFhNjEwZmU5MjIwZWZmMGQ3YjNiYzQiLCJ1c2VybmFtZSI6IjI0MzA4MTUyIn0.wYTyy8gBr37xItZW2qJp81W2T-17-E9y4RQiODLj9pQ";
     Params params;
+    ActivityResultLauncher<Intent> launch;
 
     public NewsFragment(String cookie, int pos) {
-        this.cookie = "login_token_ec583190dcd12bca757dd13df10f59c3=ad6e129cb0c2e7ad6d842afa0e0ebf31; username_ec583190dcd12bca757dd13df10f59c3=tangxb6; login_sn_ec583190dcd12bca757dd13df10f59c3=0c3845934e6ec207f5b898ed0d3dd86f;";//cookie + ";_webvpn_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidGFuZ3hiNiIsImdyb3VwcyI6WzNdLCJpYXQiOjE3NDM5Mjg1OTUsImV4cCI6MTc0NDAxNDk5NX0.luGDbfa_19Ye5TBVpwo3gaZPXldD7gsnSqGkX6IJHb0;";
+        //this.cookie = "login_token_ec583190dcd12bca757dd13df10f59c3=ad6e129cb0c2e7ad6d842afa0e0ebf31; username_ec583190dcd12bca757dd13df10f59c3=tangxb6; login_sn_ec583190dcd12bca757dd13df10f59c3=0c3845934e6ec207f5b898ed0d3dd86f;";//cookie + ";_webvpn_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoidGFuZ3hiNiIsImdyb3VwcyI6WzNdLCJpYXQiOjE3NDM5Mjg1OTUsImV4cCI6MTc0NDAxNDk5NX0.luGDbfa_19Ye5TBVpwo3gaZPXldD7gsnSqGkX6IJHb0;";
         this.position = pos;
         //System.out.println(cookie);
     }
@@ -66,16 +79,17 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            NewsPageBinding binding = NewsPageBinding.inflate(inflater);
-            view = binding.getRoot();
+                if (savedInstanceState == null) {
+            binding = RecyclerViewScrollBinding.inflate(inflater);
             params = new Params(requireActivity());
-            RecyclerView list = binding.newsPage;
-            list.setLayoutManager(new GridLayoutManager(requireContext(),params.getColumn()));
+            cookie = params.getCookie();
+            //cookie = "authorization=Bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsidXNlcl9tYW5hZ2VyIl0sImNsaWVudF9pZF9zeXMiOiJ6c3NlYXJjaF8xMDAwNTAiLCJ1c2VyX25hbWUiOiIyNDMwODE1MiIsInNjb3BlIjpbImFsbCJdLCJuYW1lIjoiMjQzMDgxNTIiLCJleHAiOjE3NTkzOTg1MjUsImF1dGhvcml0aWVzIjpbIkFETUlOIl0sImp0aSI6Inp5Z3RBeEhDdkx0ckFMODdnWWJuNDhxWUlyNCIsImNsaWVudF9pZCI6IjE2NzNmMDFkOTYxYTYxMGZlOTIyMGVmZjBkN2IzYmM0IiwidXNlcm5hbWUiOiIyNDMwODE1MiJ9.viBuKujwPQO9ai5orJsJtloWhwZhDThl40O_kfJFK_k";
+            RecyclerView list = binding.recyclerView;
+            list.setLayoutManager(new GridLayoutManager(requireContext(), params.getColumn()));
             list.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    if(recyclerView.canScrollVertically(1)&&position!=0){
+                    if (recyclerView.canScrollVertically(1) && position != 0) {
                         run.run();
                     }
                     super.onScrolled(recyclerView, dx, dy);
@@ -89,112 +103,123 @@ public class NewsFragment extends Fragment {
                     Bundle rdata = msg.getData();
                     boolean isJson = !rdata.getBoolean("isJson");
                     String json = rdata.getString("data");
+                    System.out.println(json);
                     JSONObject data;
-                    if(isJson){return;}else{data = JSON.parseObject(json);}
-                    if (data==null){
+                    if (isJson) {
+                        return;
+                    } else {
+                        data = JSON.parseObject(json);
+                    }
+                    if (data == null) {
                         return;
                     }
-                    switch (msg.what) {
-                        case -1:
-                            Toast.makeText(requireContext(),"网络状态不佳", Toast.LENGTH_LONG).show();
-                            return;
-                        case 1:
-                            break;
-                        case 2:
-                            Integer code = data.getInteger("code");
-                            if (code == 10000) {
-                                data.getJSONObject("data").getJSONArray("records").forEach(e -> {
-                                    String title = ((JSONObject) e).getString("title");
-                                    JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
-                                    String image = "";
-                                    if (cover != null&&!cover.isEmpty())
-                                    {if(cover.getJSONObject(0)!=null&& cover.getJSONObject(0).getString("outLink") !=null) {
-                                        image = cover.getJSONObject(0).getString("outLink");
-                                    }}
-                                    String url = ((JSONObject) e).getString("url");
-                                    String time = ((JSONObject) e).getString("createTime");
-                                    String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
-                                    adp.add(title, image, url,time,source);
-                                });
-                            }//公众号
-                            break;
-                        case 3:
-                            Integer code2 = data.getInteger("code");
-                            if (code2 == 10000) {
-                                data.getJSONArray("data").forEach(e -> {
-                                    String title = ((JSONObject) e).getString("title");
-                                    JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
-                                    String image = "";
-                                    if (cover != null && !cover.isEmpty()) {
-                                        image = cover.getJSONObject(0).getString("outLink");
-                                    }
-                                    if (image == null) {
-                                        image = "";
-                                    }
-                                    String url = ((JSONObject) e).getString("url");
-                                    String time = ((JSONObject) e).getString("createTime");
-                                    String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
-                                    adp.add(title, image, url,time,source);
-                                });
-                            }//资讯
-                            break;
-                        case 4:
-                            Integer code3 = data.getInteger("code");
-                            if (code3 == 10000) {
-                                data.getJSONObject("data").getJSONArray("records").forEach(e -> {
-                                    String title = ((JSONObject) e).getString("title");
-                                    JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
-                                    String image = "";
-                                    if (cover != null &&cover.getJSONObject(0)!=null&& !cover.isEmpty()&& cover.getJSONObject(0).getString("outLink") !=null) {
-                                        image = cover.getJSONObject(0).getString("outLink");
-                                    }
-                                    String url = ((JSONObject) e).getString("url");
-                                    String time = ((JSONObject) e).getString("createTime");
-                                    String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
-                                    adp.add(title, image, url,time,source);
-                                });
+
+                    if (msg.what == -1) {
+                        params.toast(R.string.no_wifi_warning);
+                    } else {
+                        Integer code = data.getInteger("code");
+                        JSONObject response = null;
+                        if (msg.what != 3) {
+                            response = data.getJSONObject("data");
+                        }
+                        if (code == 10000) {
+                            switch (msg.what) {
+                                case 2:
+                                    response.getJSONArray("records").forEach(e -> {
+                                        String title = ((JSONObject) e).getString("title");
+                                        JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
+                                        String image = "";
+                                        if (cover != null && !cover.isEmpty()) {
+                                            if (cover.getJSONObject(0) != null && cover.getJSONObject(0).getString("outLink") != null) {
+                                                image = cover.getJSONObject(0).getString("outLink");
+                                            }
+                                        }
+                                        String url = ((JSONObject) e).getString("url");
+                                        String time = ((JSONObject) e).getString("createTime");
+                                        String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
+                                        adp.add(title, image, url, time, source);
+                                    });
+                                    break;
+                                case 3:
+                                    data.getJSONArray("data").forEach(e -> {
+                                        String title = ((JSONObject) e).getString("title");
+                                        JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
+                                        String image = "";
+                                        if (cover != null && !cover.isEmpty()) {
+                                            image = cover.getJSONObject(0).getString("outLink");
+                                        }
+                                        if (image == null) {
+                                            image = "";
+                                        }
+                                        String url = ((JSONObject) e).getString("url");
+                                        String time = ((JSONObject) e).getString("createTime");
+                                        String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
+                                        adp.add(title, image, url, time, source);
+                                    });
+                                    break;
+                                case 4:
+                                    response.getJSONArray("records").forEach(e -> {
+                                        String title = ((JSONObject) e).getString("title");
+                                        JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
+                                        String image = "";
+                                        if (cover != null && cover.getJSONObject(0) != null && !cover.isEmpty() && cover.getJSONObject(0).getString("outLink") != null) {
+                                            image = cover.getJSONObject(0).getString("outLink");
+                                        }
+                                        String url = ((JSONObject) e).getString("url");
+                                        String time = ((JSONObject) e).getString("createTime");
+                                        String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
+                                        adp.add(title, image, url, time, source);
+                                    });
+                                    //通知
+                                    break;
+                                case 5:
+                                    response.getJSONArray("records").forEach(e -> {
+                                        String title = ((JSONObject) e).getString("title");
+                                        JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
+                                        String image = "";
+                                        if (cover != null && cover.getJSONObject(0) != null && !cover.isEmpty() && cover.getJSONObject(0).getString("outLink") != null) {
+                                            image = cover.getJSONObject(0).getString("outLink");
+                                        }
+                                        String url = ((JSONObject) e).getString("url");
+                                        String time = ((JSONObject) e).getString("createTime");
+                                        String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
+                                        adp.add(title, image, url, time, source);
+                                    });
+                                    break;
                             }
-                            //通知
-                            break;
-                        case 5:
-                            JSONObject data4 = JSON.parseObject(json);
-                            Integer code4= data4.getInteger("code");
-                            if (code4 == 10000) {
-                                data4.getJSONObject("data").getJSONArray("records").forEach(e -> {
-                                    String title = ((JSONObject) e).getString("title");
-                                    JSONArray cover = ((JSONObject) e).getJSONArray("coversPicList");
-                                    String image = "";
-                                    if (cover != null &&cover.getJSONObject(0)!=null&& !cover.isEmpty()&& cover.getJSONObject(0).getString("outLink") !=null) {
-                                        image = cover.getJSONObject(0).getString("outLink");
-                                    }
-                                    String url = ((JSONObject) e).getString("url");
-                                    String time = ((JSONObject) e).getString("createTime");
-                                    String source = ((JSONObject) e).getJSONObject("source").getString("seedName");
-                                    adp.add(title, image, url,time,source);
-                                });
-                            }
-                            //今日中大
-                            break;
-                    }
+                        } else if (code == 10003) {
+                            params.toast(data.getString("message"));
+                            launch.launch(new Intent(requireContext(), LoginActivity.class).putExtra("url", "https://cas.sysu.edu.cn/cas/login?service=https://portal.sysu.edu.cn/newClient/shiro-cas"));
+                        }
+                    } //今日中大
+
                 }
             };
         }
-        run= () -> {
+        run = () -> {
             List.of(this::getNews, this::getSubscription, this::getNotice, (Runnable) this::getDailyNews).get(position).run();
-            page+=1;
+            page += 1;
         };
         run.run();
+        launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            if (o.getResultCode() == Activity.RESULT_OK) {
+                cookie = params.getCookie();
+                run.run();
+            }
+        });
         //getAuthorization();
-        return view;
+        return binding.getRoot();
     }
 
     void getNews() {
         http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/recommend/query-recommend")
+
                 // .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":1,\"apiCode\":\"3ytr4e6c\",\"notice\":false}", MediaType.parse("application/json")))
                 .post(RequestBody.create("", MediaType.parse("application/json")))
-
+                //.header("Content-Length","0")
                 .header("Authorization", authorization)
-                .header("Cookie", cookie).build()).enqueue(new Callback() {
+                //.header("Cookie", cookie)
+                .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message message = new Message();
@@ -218,10 +243,11 @@ public class NewsFragment extends Fragment {
     void getSubscription() {
         http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/user/content/page")
                 .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"3ytr4e6c\",\"notice\":false}", MediaType.parse("application/json")))
-                .header("Content-type", "application/json")
+                //.header("Content-type", "application/json")
                 .header("Authorization", authorization)
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                .header("Cookie", cookie).build()).enqueue(new Callback() {
+                //.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                //.header("Cookie", cookie)
+                .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message message = new Message();
@@ -242,36 +268,37 @@ public class NewsFragment extends Fragment {
         });
     }
 
-    void getAuthorization() {
-        http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/auth-center/account/zscasLogin?clientid=zssearch_100050;zsshow")
-                .header("Cookie", cookie)
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0")
-                .build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Message message = new Message();
-                message.what=-1;
-                handler.sendMessage(message);
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Message msg = new Message();
-                msg.what = 1;
-                Bundle data = new Bundle();
-                data.putBoolean("isJson", Objects.requireNonNull(response.header("Content-Type", "")).startsWith("application/json"));
-                data.putString("data", response.body().string());
-                msg.setData(data);
-                handler.sendMessage(msg);
-            }
-        });
-    }
+//    void getAuthorization() {
+//        http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/auth-center/account/zscasLogin?clientid=zssearch_100050;zsshow")
+//                .header("Cookie", cookie)
+//                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0")
+//                .build()).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+//                Message message = new Message();
+//                message.what=-1;
+//                handler.sendMessage(message);
+//            }
+//
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                Message msg = new Message();
+//                msg.what = 1;
+//                Bundle data = new Bundle();
+//                data.putBoolean("isJson", Objects.requireNonNull(response.header("Content-Type", "")).startsWith("application/json"));
+//                data.putString("data", response.body().string());
+//                msg.setData(data);
+//                handler.sendMessage(msg);
+//            }
+//        });
+//    }
 
     void getNotice() {
         http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/user/content/page")
                 .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"3ytunvv6\",\"notice\":false}", MediaType.parse("application/json")))
                 .header("Authorization", authorization)
-                .header("Cookie", cookie).build()).enqueue(new Callback() {
+                //.header("Cookie", cookie)
+                .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message message = new Message();
@@ -294,7 +321,8 @@ public class NewsFragment extends Fragment {
         http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/user/content/page")
                 .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"4cef8rqw\",\"notice\":false}", MediaType.parse("application/json")))
                 .header("Authorization", authorization)
-                .header("Cookie", cookie).build()).enqueue(new Callback() {
+                //.header("Cookie", cookie)
+                .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Message message = new Message();
@@ -313,34 +341,34 @@ public class NewsFragment extends Fragment {
             }
         });
     }
-    void getContent() {
-        http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/user/content/page")
-                .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"4cef8rqw\",\"notice\":false}", MediaType.parse("application/json")))
-                .header("Authorization", authorization)
-                .header("Cookie", cookie).build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Message message = new Message();
-                message.what=-1;
-                handler.sendMessage(message);
-            }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                Message msg = new Message();
-                msg.what = 5;
-                Bundle data = new Bundle();
-                data.putBoolean("isJson", Objects.requireNonNull(response.header("Content-Type", "")).startsWith("application/json"));
-                data.putString("data",response.body().string());
-                msg.setData(data);
-                handler.sendMessage(msg);
-            }
-        });
-    }
+//    void getContent() {
+//        http.newCall(new Request.Builder().url("https://iportal.sysu.edu.cn/ai_service/content-portal/user/content/page")
+//                .post(RequestBody.create("{\"pageSize\":20,\"currentPage\":"+page+",\"apiCode\":\"4cef8rqw\",\"notice\":false}", MediaType.parse("application/json")))
+//                //.header("Authorization", authorization)
+//                .header("Cookie", cookie).build()).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+//                Message message = new Message();
+//                message.what=-1;
+//                handler.sendMessage(message);
+//            }
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                Message msg = new Message();
+//                msg.what = 5;
+//                Bundle data = new Bundle();
+//                data.putBoolean("isJson", Objects.requireNonNull(response.header("Content-Type", "")).startsWith("application/json"));
+//                data.putString("data",response.body().string());
+//                msg.setData(data);
+//                handler.sendMessage(msg);
+//            }
+//        });
+//    }
 }
 class Adp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<HashMap<String, String>> data = new ArrayList<>();
     FragmentActivity context;
-    String cookie;
+    //String cookie;
 
     public Adp(FragmentActivity context) {
         super();
@@ -369,7 +397,7 @@ class Adp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Glide.with(context).load(img)
                     // .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
                     .placeholder(R.drawable.logo)
-                    .override(400).fitCenter().transform(new RoundedCorners(16))
+                    .override(new Params(context).dpToPx(120),new Params(context).dpToPx(120)).optionalFitCenter().transform(new RoundedCorners(16))
                     .into(image);
         }
     }
@@ -377,11 +405,11 @@ class Adp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         data.add(new HashMap<>(Map.of("title", title, "image", image, "url", url,"time",time,"source",source)));
         notifyItemInserted(getItemCount() - 1);
     }
-    Adp setCookie(String cookie)
-    {
-        this.cookie=cookie;
-        return this;
-    }
+    //    Adp setCookie(String cookie)
+//    {
+//        this.cookie=cookie;
+//        return this;
+//    }
     @Override
     public int getItemCount() {
         return data.size();

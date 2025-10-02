@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".news.News">
+    android:layout_height="match_parent">
     <androidx.viewpager2.widget.ViewPager2
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
+        style="@style/SYSU.AppBarLayout.Solid"
         android:layout_height="wrap_content">
         <com.google.android.material.search.SearchBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchbar"
             android:hint="@string/news"
-            android:transitionName="miniapp">
-        </com.google.android.material.search.SearchBar>
+            android:transitionName="miniapp"/>
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_Layout"
+            android:background="#00000000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="noScroll">
-        </com.google.android.material.tabs.TabLayout>
+            app:layout_scrollFlags="noScroll"/>
     </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.search.SearchView
         android:id="@+id/searchView"

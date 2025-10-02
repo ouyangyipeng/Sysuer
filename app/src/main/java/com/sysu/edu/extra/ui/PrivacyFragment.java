@@ -84,11 +84,11 @@ public class PrivacyFragment extends PreferenceFragmentCompat {
                             }
                         }
                         else if(response != null && response.getInteger("code").equals(1003)){
-                            Toast.makeText(requireContext(), getString(R.string.login_warning), Toast.LENGTH_LONG).show();
+                            params.toast(R.string.login_warning);
                             launchLogin.launch(new Intent(requireContext(), LoginActivity.class).putExtra("url","https://cas.sysu.edu.cn/cas/login?service=https://pay.sysu.edu.cn/sso"));
                         }
                         else {
-                            Toast.makeText(requireContext(), getString(R.string.login_warning), Toast.LENGTH_LONG).show();
+                            params.toast(R.string.login_warning);
                             launchLogin.launch(new Intent(requireContext(), LoginActivity.class));
                         }
                     }
@@ -97,9 +97,6 @@ public class PrivacyFragment extends PreferenceFragmentCompat {
             getInfo();
         }
     }
-
-
-
     void getInfo () {
         http.newCall(new Request.Builder().url("https://pay.sysu.edu.cn/client/api/client/person/get")
                 .post(RequestBody.create("{}", MediaType.parse("application/json")))

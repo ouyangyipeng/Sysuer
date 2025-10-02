@@ -2,12 +2,12 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
-    android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
-    android:background="?attr/colorSurface">
+    android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
+    android:fitsSystemWindows="false">
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:layout_width="match_parent"
         style="?attr/collapsingToolbarLayoutMediumStyle"
@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <TableLayout
+        <GridLayout
             android:layout_width="match_parent"
             android:id="@+id/m"
             android:layout_height="match_parent"
@@ -83,6 +83,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:text="@string/login"/>
-        </TableLayout>
+        </GridLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
