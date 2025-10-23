@@ -61,14 +61,22 @@
             app:defaultValue="true"
             app:icon="@drawable/book"
             app:key="privacyPolicy"
+            app:summary="https://sysu-tang.github.io/#/zh-cn/agreement/隐私政策"
             app:persistent="false"
-            app:title="隐私政策"/>
+            app:title="隐私政策">
+
+        <intent android:data="https://sysu-tang.github.io/#/zh-cn/agreement/隐私政策"/>
+
+    </Preference>
         <Preference
             app:defaultValue="true"
+            app:summary="https://sysu-tang.github.io/#/zh-cn/agreement/用户协议"
             app:icon="@drawable/book"
             app:key="userAgreement"
             app:persistent="false"
-            app:title="用户协议"/>
+            app:title="用户协议">
+            <intent android:data="https://sysu-tang.github.io/#/zh-cn/agreement/用户协议"/>
+        </Preference>
         <Preference
             app:icon="@drawable/book"
             app:key="permissionDescription"

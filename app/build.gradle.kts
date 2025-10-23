@@ -33,6 +33,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        aidl = true
     }
     sourceSets {
         getByName("main") {
@@ -82,4 +83,7 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    implementation (libs.api)
+    implementation (libs.provider)
+    api(libs.wechat.sdk.android)
 }

@@ -4,7 +4,7 @@
         <Preference
             app:icon="@drawable/account"
             app:title="@string/privacy">
-            <intent android:targetClass="com.sysu.edu.extra.Privacy"
+            <intent android:targetClass="com.sysu.edu.extra.PrivacyActivity"
                 android:targetPackage="com.sysu.edu"/>
         </Preference>
         <Preference

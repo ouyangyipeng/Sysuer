@@ -37,6 +37,13 @@
             app:summary="活动"
             app:title="@string/home"/>
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/menu_activity">
+        <EditTextPreference
+            app:icon="@drawable/qrcode"
+            app:key="qrcode"
+            app:title="@string/qrcode"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
     <PreferenceCategory app:title="@string/app">
         <rikka.material.preference.MaterialSwitchPreference
             android:summary="应用启动时自动检测更新"

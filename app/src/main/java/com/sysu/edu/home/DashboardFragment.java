@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +43,7 @@ import com.sysu.edu.api.Params;
 import com.sysu.edu.databinding.FragmentDashboardBinding;
 import com.sysu.edu.databinding.ItemCourseBinding;
 import com.sysu.edu.databinding.ItemExamBinding;
+import com.sysu.edu.extra.LaunchMiniProgram;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
@@ -91,8 +93,8 @@ public class DashboardFragment extends Fragment {
                     getTerm();
                 }
             });
-            binding.scan.setOnClickListener(v->{
-                try{
+            binding.scan.setOnClickListener(v -> {
+                try {
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI"));
                     intent.putExtra("LauncherUI.From.Scaner.Shortcut", true);
@@ -103,32 +105,24 @@ public class DashboardFragment extends Fragment {
 //                        .putExtra("LauncherUI.From.Scaner.Shortcut", true)
 //                        .setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
 //                        .setAction("android.intent.action.VIEW"));
-                }
-                catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
+                } catch (ActivityNotFoundException e) {
+                    //e.printStackTrace();
                 }
             });
-            binding.qrcode.setOnClickListener(v-> {
-                try {
-//                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                intent.setData(Uri.parse("weixin://dl/chat?username=filehelper"));
-//                intent.setPackage("com.tencent.mm");
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    //ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
-                    //intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //intent.setComponent(cmp);
-                    intent.setPackage("com.tencent.mm");
-                    Bundle bundle = new Bundle();
-                    bundle.putString("appId","wxc0770b8040166307");
-                    bundle.putString("pages","");
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
+            binding.qrcode.setOnClickListener(v -> {
+                String linking = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("qrcode", "");
+                if (linking.isEmpty()) {
+                    new LaunchMiniProgram(requireActivity()).launchMiniProgram("gh_85575b9f544e");
+                } else {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(linking)));
+                    } catch (ActivityNotFoundException e) {
+                       // Toast.makeText(requireContext(), R.string.no_app, Toast.LENGTH_LONG).show();
+                    }
                 }
-                // startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("weixin://dl/scan")));
+                // Toast.makeText(requireContext(), R.string.no_linking, Toast.LENGTH_LONG).show();
+                //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("")));
+                //
             });
             binding.agenda.setOnClickListener(view -> startActivity(new Intent(getContext(), AgendaActivity.class), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), view, "miniapp").toBundle()));
             binding.courseList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
@@ -177,8 +171,8 @@ public class DashboardFragment extends Fragment {
                                     ((JSONObject) e).put("time", ((JSONObject) e).get("startTime") + "~" + ((JSONObject) e).get("endTime"));
                                     ((JSONObject) e).put("course", "第" + ((JSONObject) e).get("startClassTimes") + "~" + ((JSONObject) e).get("endClassTimes") + "节课");
                                     String flag = (String) ((JSONObject) e).get("useflag");
-                                    if(flag.equals("TD")){
-                                        (Objects.equals(status,"before") ? beforeArray : afterArray).add((JSONObject) e);
+                                    if (flag.equals("TD")) {
+                                        (Objects.equals(status, "before") ? beforeArray : afterArray).add((JSONObject) e);
                                     }
                                     (flag.equals("TD") ? todayCourse : tomorrowCourse).add((JSONObject) e);
 //                                    addCourse(flag.equals("TD") ? todayCourse : tomorrowCourse, (String) ((JSONObject) e).get("courseName"), (String) ((JSONObject) e).get("teachingPlace"), ((JSONObject) e).get("startTime") + "~" + ((JSONObject) e).get("endTime")
@@ -188,12 +182,13 @@ public class DashboardFragment extends Fragment {
                                 binding.progress.setProgress(beforeArray.size());
                                 binding.courseList.scrollToPosition(beforeArray.size());
                                 System.out.println(afterArray);
-                                binding.nextClass.setText(Html.fromHtml(afterArray.isEmpty() ? String.format("<h4><font color=\"#6750a4\">今天没课</font></h4>下一节：<b>%s</b><br/>地点：<b>自习室</b><br/>时间：<b>自主安排</b>",tomorrowCourse.get(0).getString("courseName")) : String.format("<h4><font color=\"#6750a4\">%s</font></h4>地点：<b>%s</b><br/>时间：<b>%s</b><br/>日期：<b>%s</b>", todayCourse.get(beforeArray.size()).getString("courseName"), todayCourse.get(beforeArray.size()).getString("teachingPlace"), todayCourse.get(beforeArray.size()).getString("time"), todayCourse.get(beforeArray.size()).getString("teachingDate")),Html.FROM_HTML_MODE_COMPACT));
+                                binding.nextClass.setText(Html.fromHtml(afterArray.isEmpty() ? String.format("<h4><font color=\"#6750a4\">今天没课</font></h4>下一节：<b>%s</b><br/>地点：<b>自习室</b><br/>时间：<b>自主安排</b>", tomorrowCourse.get(0).getString("courseName")) : String.format("<h4><font color=\"#6750a4\">%s</font></h4>地点：<b>%s</b><br/>时间：<b>%s</b><br/>日期：<b>%s</b>", todayCourse.get(beforeArray.size()).getString("courseName"), todayCourse.get(beforeArray.size()).getString("teachingPlace"), todayCourse.get(beforeArray.size()).getString("time"), todayCourse.get(beforeArray.size()).getString("teachingDate")), Html.FROM_HTML_MODE_COMPACT));
                                 binding.toggle.check(R.id.today);
                                 break;
                             case 2:
                                 class k {
                                     public int k;
+
                                     public k(int k) {
                                         this.k = k;
                                     }
@@ -338,6 +333,7 @@ class CourseAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         super();
         this.context = context;
     }
+
     public void set(ArrayList<JSONObject> d) {
         clear();
         data.addAll(d);
@@ -385,6 +381,7 @@ class CourseAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 class ExamAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context context;
     LinkedList<JSONObject> data = new LinkedList<>();
+
     public ExamAdp(Context context) {
         super();
         this.context = context;

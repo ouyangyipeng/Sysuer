@@ -12,7 +12,9 @@
             <action android:name="android.intent.action.MAIN" />
         </intent>
     </queries>
-
+    <queries>
+        <package android:name="com.tencent.mm" />
+    </queries>
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -76,7 +78,7 @@
             android:exported="true"
             android:theme="@style/Theme.中大儿" />
         <activity
-            android:name=".extra.Privacy"
+            android:name=".extra.PrivacyActivity"
             android:exported="true" />
         <activity
             android:name=".extra.SettingActivity"
@@ -117,6 +119,9 @@
             android:exported="false" />
         <activity
             android:name=".academic.ClassroomQueryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".stuwork.StuJob"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
@@ -176,6 +181,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application>
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="com.sysu.edu.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        </application>
 
 </manifest>

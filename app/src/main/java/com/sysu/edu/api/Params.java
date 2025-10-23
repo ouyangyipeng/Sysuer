@@ -24,7 +24,6 @@ public class Params {
 
     static Calendar c=Calendar.getInstance();
     public Params(Activity context) {
-
         this.context = context;
         sharedPreferences = context.getSharedPreferences("privacy", Context.MODE_PRIVATE);
     }

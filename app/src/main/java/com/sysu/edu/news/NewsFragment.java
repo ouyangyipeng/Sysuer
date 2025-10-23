@@ -43,7 +43,6 @@ import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,7 +53,7 @@ public class NewsFragment extends Fragment {
     String cookie;
     int position;
     RecyclerViewScrollBinding binding;
-    OkHttpClient http = new OkHttpClient.Builder().authenticator((route, response) -> {
+    OkHttpClient http = new OkHttpClient.Builder()/*.authenticator((route, response) -> {
 //                System.out.println("Authenticating for response: " + response);
 //                System.out.println("Challenges: " + response.challenges());
                 String credential = Credentials.basic("tangxb6", "Tang@1245");
@@ -62,7 +61,7 @@ public class NewsFragment extends Fragment {
                 return response.request().newBuilder()
                         .header("Authorization", credential)
                         .build();
-            }).build();
+            })*/.build();
     Handler handler;
     int page=1;
     Runnable run;

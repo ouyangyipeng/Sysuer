@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.sysu.edu.databinding.ActivityPrivacyBinding;
 
-public class Privacy extends AppCompatActivity {
+public class PrivacyActivity extends AppCompatActivity {
 
 
     @Override
@@ -15,7 +15,6 @@ public class Privacy extends AppCompatActivity {
         ActivityPrivacyBinding binding = ActivityPrivacyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.tool.setNavigationOnClickListener(e -> finishAfterTransition());
-
     }
 
 }

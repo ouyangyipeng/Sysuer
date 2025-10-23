@@ -130,19 +130,15 @@ public class AcademyNotification extends AppCompatActivity {
                                     text.setMovementMethod(LinkMovementMethod.getInstance());
                                     CharSequence str = text.getText();
                                     if (str instanceof Spannable) {
-                                        int end = str.length();
                                         Spannable sp = (Spannable) text.getText();
-                                        URLSpan[] urls = sp.getSpans(0, end, URLSpan.class);
                                         SpannableStringBuilder style = new SpannableStringBuilder(str);
                                         style.clearSpans();
-                                        for (URLSpan url : urls) {
-                                            MyClickSpan myURLSpan;
+                                        for (URLSpan url : sp.getSpans(0, str.length(), URLSpan.class)) {
                                             try {
-                                                myURLSpan = new MyClickSpan(url.getURL());
+                                                style.setSpan(new MyClickSpan(url.getURL()), sp.getSpanStart(url), sp.getSpanEnd(url), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                             } catch (MalformedURLException e) {
                                                 throw new RuntimeException(e);
                                             }
-                                            style.setSpan(myURLSpan, sp.getSpanStart(url), sp.getSpanEnd(url), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                         }
                                         text.setText(style);
                                     }
