@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -32,7 +31,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CET extends AppCompatActivity {
+public class CETActivity extends AppCompatActivity {
 
     ActivityListBinding binding;
     Params params;
@@ -64,7 +63,7 @@ public class CET extends AppCompatActivity {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == -1) {
-                    Toast.makeText(CET.this, getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
+                    params.toast(getString(R.string.no_wifi_warning));
                 }else {
                     JSONObject response = JSONObject.parseObject((String) msg.obj);
                     if (response != null && response.getInteger("code").equals(200)) {
@@ -78,7 +77,7 @@ public class CET extends AppCompatActivity {
                                 for(int i=0;i<keyName.length;i++){
                                     values.add(((JSONObject)a).getString(new String[]{"examYear","thePastOrNextHalfYearName","languageLevel","stuNum","stuName","writtenExaminationTime","writtenExaminationNumber","writtenExaminationTotalScore","hearingScore","readingScore","comprehensiveScore","writingScore","oralExamTime","oralExamNumber","oralExamAchievement","schoolName","collegeName","professionName","grade","stuClassName","writtenExaminationSubject","writtenExaminationApplyNumber","writtenExaminationApplySchool","writtenExaminationApplyCampus","whetherMissingTest","whetherViolation","violationType","whetherHearingObstacle","oralExamSubject","oralExamApplyNumber","oralExamApplySchool","oralExamApplyCampus"}[i]));
                                 }
-                                fr.add(CET.this,String.valueOf(order),List.of(keyName), values);
+                                fr.add(CETActivity.this,String.valueOf(order),List.of(keyName), values);
                             });
                             if(total/10>page-1){
                                 getExchange();
@@ -86,8 +85,8 @@ public class CET extends AppCompatActivity {
                         }
                     }
                     else {
-                        Toast.makeText(CET.this, getString(R.string.login_warning), Toast.LENGTH_LONG).show();
-                        launch.launch(new Intent(CET.this, LoginActivity.class));
+                        params.toast(getString(R.string.login_warning));
+                        launch.launch(new Intent(CETActivity.this, LoginActivity.class));
                     }
                 }
             }

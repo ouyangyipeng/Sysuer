@@ -1,8 +1,9 @@
 package com.sysu.edu.api;
 
 public class TargetUrl {
-    public static String JWXT = "https://jwxt.sysu.edu.cn/";
-    public static String PORTAL = "https://portal.sysu.edu.cn/";
-    public static String PAY = "https://pay.sysu.edu.cn/";
+    public static final String JWXT = "https://jwxt.sysu.edu.cn/jwxt/yd/index/#/Home";
+    public static final String PORTAL = "https://portal.sysu.edu.cn/";
+    public static final String PAY = "https://pay.sysu.edu.cn/#/pay/unpaid-fee";
+    public static final String LOGIN = "https://cas.sysu.edu.cn/esc-sso/login/page?isLogin=fail";
     //static String CAS = "https://cas.sysu.edu.cn/cas/login";
 }

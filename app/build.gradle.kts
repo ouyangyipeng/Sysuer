@@ -75,7 +75,6 @@ dependencies {
     implementation(libs.dev.material){
         exclude("dev.rikka.rikkax.appcompat","appcompat")
     }
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

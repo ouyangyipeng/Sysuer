@@ -14,8 +14,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.sysu.edu.R;
 import com.sysu.edu.academic.Pager2Adapter;
+import com.sysu.edu.api.TargetUrl;
 import com.sysu.edu.databinding.ActivityLoginBinding;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,9 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         binding.pager2.setAdapter(new Pager2Adapter(this).add(new LoginWebFragment()).add(new LoginFragment()));
         binding.tool.setNavigationOnClickListener(v->finishAfterTransition());
         model.setTarget(getIntent().getStringExtra("url")==null ?"https://jwxt.sysu.edu.cn/jwxt/yd/index/#/Home":getIntent().getStringExtra("url"));
-        model.setUrl("https://cas.sysu.edu.cn/esc-sso/login/page?isLogin=fail");
+        model.setUrl(TargetUrl.LOGIN);
         binding.tool.getMenu().add("确认").setIcon(R.drawable.submit).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener(menuItem -> {
-            web.loadUrl("https://portal.sysu.edu.cn/newClient/#/newPortal/index");
+            web.loadUrl(Objects.requireNonNull(getIntent().getStringExtra("url")));
             return false;
         });
         new TabLayoutMediator(binding.options, binding.pager2, (tab, i) -> tab.setText(new String[]{"网页登录","密码登录"}[i])).attach();

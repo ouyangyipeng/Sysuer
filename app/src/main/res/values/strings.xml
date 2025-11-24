@@ -160,5 +160,8 @@
     <string name="web_login">网页登录</string>
     <string name="font_size">字体大小</string>
     <string name="student_job">勤工俭学</string>
-    <string name="close">关闭</string>
+    <!-- Strings used for fragments for navigation -->
+<string name="close">关闭</string>
+    <string name="search">查询</string>
+    <string name="exam_week">考试周</string>
 </resources>

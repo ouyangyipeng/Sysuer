@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sysu.edu.api.TargetUrl;
+
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -27,7 +29,6 @@ public class LoginWebFragment extends Fragment {
         WebView web = new WebView(requireContext());
         LoginViewModel model = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         model.getUrl().observe(getViewLifecycleOwner(), web::loadUrl);
-        //System.out.println(CookieManager.getInstance().getCookie("https://portal.sysu.edu.cn/#/index"));
         web.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -42,6 +43,9 @@ public class LoginWebFragment extends Fragment {
                 if(Pattern.compile(Objects.requireNonNull(model.getTarget().getValue())).matcher(url).find()){
                     model.setCookie(CookieManager.getInstance().getCookie(url));
                     model.setLogin(true);
+                }
+                if(Pattern.compile(TargetUrl.LOGIN).matcher(url).find()){
+                    model.setLogin(false);
                 }
                 //web.evaluateJavascript("var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};", s -> {});
             }

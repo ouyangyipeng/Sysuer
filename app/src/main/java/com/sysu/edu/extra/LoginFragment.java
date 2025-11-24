@@ -24,6 +24,7 @@ public class LoginFragment extends Fragment {
         model = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         model.getPassword().observe(getViewLifecycleOwner(), binding.password::setText);
         model.getAccount().observe(getViewLifecycleOwner(), binding.username::setText);
+        model.getLogin().observe(getViewLifecycleOwner(),binding.loginButton::setEnabled);
 //        model.getLogin().observe(getViewLifecycleOwner(), a -> {
 //            if(!a){
 ////                binding.loginButton.setEnabled(true);
@@ -35,13 +36,11 @@ public class LoginFragment extends Fragment {
 //            Glide.with(requireContext()).load(new GlideUrl("https://cas.sysu.edu.cn/cas/captcha.jsp", new LazyHeaders.Builder().addHeader("Cookie", Objects.requireNonNull(model.getSessionId().getValue())).build())).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into((ImageView) v);
 //        });
         binding.loginButton.setOnClickListener(v -> {
-            binding.loginButton.setEnabled(false);
             String username = String.valueOf(binding.username.getText());
             String password = String.valueOf(binding.password.getText());
             if (!username.isEmpty() && !password.isEmpty()) {
+                //binding.loginButton.setEnabled(false);
                model.setUrl(String.format("javascript:(function(){var component=document.querySelector('.para-widget-account-psw');var data=component[Object.keys(component).filter(k => k.startsWith('jQuery') && k.endsWith('2'))[0]].widget_accountPsw;data.loginModel.dataField.username='%s';data.loginModel.dataField.password='%s';data.passwordInputVal='password';data.$loginBtn.click()})()", username, password));
-            } else {
-                binding.loginButton.setEnabled(true);
             }
         });
         return binding.getRoot();

@@ -24,11 +24,12 @@ import com.sysu.edu.R;
 import com.sysu.edu.academic.AcademyNotification;
 import com.sysu.edu.academic.AgendaActivity;
 import com.sysu.edu.academic.BrowserActivity;
-import com.sysu.edu.academic.CET;
+import com.sysu.edu.academic.CETActivity;
 import com.sysu.edu.academic.CalendarActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.CourseCompletion;
 import com.sysu.edu.academic.CourseSelection;
+import com.sysu.edu.academic.ExamActivity;
 import com.sysu.edu.academic.Grade;
 import com.sysu.edu.academic.MajorInfo;
 import com.sysu.edu.academic.RegisterInfo;
@@ -61,7 +62,6 @@ public class ServiceFragment extends Fragment {
             String[] titles = new String[]{"学业","学工", a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study), a(R.string.life), "AI"};
             String[][] items = new String[][]{
                     {a(R.string.school_roll), a(R.string.cet), a(R.string.register_info), a(R.string.school_work_warning),a(R.string.course_completion)},
-
                     {"勤工俭学"},
                     {"资讯门户", "校园集市","教务通知"//,"学校活动"
                     },
@@ -76,7 +76,7 @@ public class ServiceFragment extends Fragment {
             View.OnClickListener[][] actions = new View.OnClickListener[][]{
                     {
                             newActivity(SchoolRoll.class),
-                            newActivity(CET.class),
+                            newActivity(CETActivity.class),
                             newActivity(RegisterInfo.class),
                             newActivity(SchoolWorkWarning.class),
                             newActivity(CourseCompletion.class)
@@ -118,7 +118,7 @@ public class ServiceFragment extends Fragment {
                             null,
                             newActivity(CourseSelection.class),
                             newActivity(AgendaActivity.class),
-                            null,
+                            newActivity(ExamActivity.class),
                             newActivity(CalendarActivity.class),
                             newActivity(ClassroomQueryActivity.class),
                             newActivity(Grade.class),

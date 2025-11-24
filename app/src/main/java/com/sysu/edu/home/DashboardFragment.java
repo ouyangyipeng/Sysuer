@@ -46,6 +46,7 @@ import com.sysu.edu.databinding.ItemCourseBinding;
 import com.sysu.edu.databinding.ItemExamBinding;
 import com.sysu.edu.extra.LaunchMiniProgram;
 import com.sysu.edu.extra.LoginActivity;
+import com.sysu.edu.preference.Language;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -122,9 +123,6 @@ public class DashboardFragment extends Fragment {
                        // Toast.makeText(requireContext(), R.string.no_app, Toast.LENGTH_LONG).show();
                     }
                 }
-                // Toast.makeText(requireContext(), R.string.no_linking, Toast.LENGTH_LONG).show();
-                //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("")));
-                //
             });
             binding.agenda.setOnClickListener(view -> startActivity(new Intent(getContext(), AgendaActivity.class), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), view, "miniapp").toBundle()));
             binding.courseList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
@@ -252,6 +250,7 @@ public class DashboardFragment extends Fragment {
     void getTerm() {
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
                 .header("Cookie", cookie)
+                .header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .header("Referer", "https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/").build()
         ).enqueue(new Callback() {
             @Override
@@ -274,6 +273,7 @@ public class DashboardFragment extends Fragment {
     public void getTodayCourses(String term) {
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/timetable-search/classTableInfo/queryTodayStudentClassTable?academicYear=" + term)
                 .header("Cookie", cookie)
+                .header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -306,6 +306,7 @@ public class DashboardFragment extends Fragment {
     public void getExams(String term) {
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/examination-manage/classroomResource/queryStuEaxmInfo?code=jwxsd_ksxxck")
                 .header("Cookie", cookie)
+                .header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .header("Referer", "https://jwxt.sysu.edu.cn/jwxt/mk/")
                 .post(RequestBody.create(String.format("{\"acadYear\":\"%s\",\"examWeekId\":\"1928284621349085186\",\"examWeekName\":\"18-19周期末考\",\"examDate\":\"\"}", term), MediaType.parse("application/json")))
                 .build()).enqueue(new Callback() {
