@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                System.out.println(msg.obj);
+                //System.out.println(msg.obj);
                 if (msg.what == -1) {
                     params.toast(R.string.no_wifi_warning);
                 } else {
@@ -177,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         PackageManager pm = getPackageManager();
         pm.setComponentEnabledSetting(new ComponentName(this, SettingActivity.class), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         //WorkManager.getInstance(this).enqueue(new OneTimeWorkRequest.Builder(ClassIsland.class).build());
+        new ClassIsland(this).doWork();
     }
 
     public ActivityResultLauncher<Intent> launch() {

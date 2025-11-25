@@ -124,7 +124,7 @@ public class AcademyNotification extends AppCompatActivity {
                                     response.getJSONObject("data").getJSONArray("list").forEach(a -> ((NewsFragment) adp.getItem(msg.what)).add(AcademyNotification.this, (JSONObject) a));
                                     break;
                                 case 2:
-                                    System.out.println(response);
+                                    //System.out.println(response);
                                     dialog.setMessage(Html.fromHtml(response.getString("data"), Html.FROM_HTML_MODE_COMPACT));
                                     dialog.show();
                                     TextView text = Objects.requireNonNull(dialog.findViewById(android.R.id.message));

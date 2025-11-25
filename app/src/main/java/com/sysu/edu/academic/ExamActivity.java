@@ -36,17 +36,14 @@ import okhttp3.Response;
 
 public class ExamActivity extends AppCompatActivity {
 
-    ActivityExamBinding binding;
     OkHttpClient http = new OkHttpClient.Builder().build();
     Params params;
     Handler handler;
-    ActivityResultLauncher<Intent> launch;
-    ArrayList<JSONObject> examWeekInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityExamBinding.inflate(getLayoutInflater());
+        ActivityExamBinding binding = ActivityExamBinding.inflate(getLayoutInflater());
         params = new Params(this);
         ExamViewModel model = new ViewModelProvider(this).get(ExamViewModel.class);
         model.getTermList().observe(this, terms -> binding.terms.setSimpleItems(terms.toArray(new String[]{})));
@@ -61,35 +58,36 @@ public class ExamActivity extends AppCompatActivity {
             if (model.getTerm().getValue() == null || model.getExamWeekId().getValue() == null) {
                 Snackbar.make(view, "请选择考试周", Snackbar.LENGTH_LONG)
                         .setAnchorView(R.id.fab).show();
-            } else {Snackbar.make(view, "查询中...", Snackbar.LENGTH_LONG)
-                    .setAnchorView(R.id.fab).show();
+            } else {
+                Snackbar.make(view, "查询中...", Snackbar.LENGTH_LONG)
+                        .setAnchorView(R.id.fab).show();
                 getResult(model.getTerm().getValue(), model.getExamWeekId().getValue());
             }
         });
         binding.terms.setOnItemClickListener((adapterView, view, i, l) -> model.setTerm(String.valueOf(binding.terms.getText())));
         binding.examWeeks.setOnItemClickListener((adapterView, view, i, l) -> {
-            model.setExamWeekId(examWeekInfo.get(i).getString("examWeekId"));
-            binding.date.setText(String.format("%s~%s", examWeekInfo.get(i).getString("startDate"), examWeekInfo.get(i).getString("endDate")));
+            model.setExamWeekId(Objects.requireNonNull(model.getExamWeekInfo().getValue()).get(i).getString("examWeekId"));
+            binding.date.setText(String.format("%s~%s", model.getExamWeekInfo().getValue().get(i).getString("startDate"), model.getExamWeekInfo().getValue().get(i).getString("endDate")));
             model.setExamWeek(Objects.requireNonNull(model.getExamWeekList().getValue()).get(i));
         });
-        launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+        ActivityResultLauncher<Intent> launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             if (o.getResultCode() == RESULT_OK) {
                 getTerms();
             }
         });
-        model.getExamResult().observe(this, result ->{
+        model.getExamResult().observe(this, result -> {
             ((StaggeredFragment) binding.examFragment.getFragment()).clear();
-                JSONArray.parse(result).forEach(a -> ((JSONObject) a).getJSONObject("timetable").forEach((time, detail) -> {
-                    if (detail != null) {
-                        ArrayList<String> values = new ArrayList<>();
-                        ((JSONArray) detail).forEach(o -> {
-                            for (String i : new String[]{"examSubjectName", "classroomNumber", "durationTime", "examDate", "acadYear"}) {
-                                values.add(((JSONObject) o).getString(i));
-                            }
-                        });
-                        ((StaggeredFragment) binding.examFragment.getFragment()).add(this, time, List.of("科目", "考场", "时长", "日期", "学年"), values);
-                    }
-                }));
+            JSONArray.parse(result).forEach(a -> ((JSONObject) a).getJSONObject("timetable").forEach((time, detail) -> {
+                if (detail != null) {
+                    ArrayList<String> values = new ArrayList<>();
+                    ((JSONArray) detail).forEach(o -> {
+                        for (String i : new String[]{"examSubjectName", "classroomNumber", "durationTime", "examDate", "acadYear"}) {
+                            values.add(((JSONObject) o).getString(i));
+                        }
+                    });
+                    ((StaggeredFragment) binding.examFragment.getFragment()).add(this, time, List.of("科目", "考场", "时长", "日期", "学年"), values);
+                }
+            }));
         });
         handler = new Handler(getMainLooper()) {
             @Override
@@ -97,28 +95,33 @@ public class ExamActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 if (msg.what == -1) {
                     params.toast(R.string.no_wifi_warning);
-                    //launch.launch(new Intent(ExamActivity.this, LoginActivity.class).putExtra("url", TargetUrl.JWXT));
                 } else {
                     JSONObject response = JSON.parseObject((String) msg.obj);
                     if (response.getInteger("code").equals(200)) {
-                        if (msg.what == 1) {
-                            ArrayList<String> terms = new ArrayList<>();
-                            response.getJSONArray("data").forEach(item -> terms.add(((JSONObject) item).getString("acadYearSemester")));
-                            model.setTermList(terms);
-                            getTerm();
-                        } else if (msg.what == 2) {
-                            model.setTerm(response.getJSONObject("data").getString("acadYearSemester"));
-                        } else if (msg.what == 3) {
-                            ArrayList<String> examWeeks = new ArrayList<>();
-                            examWeekInfo = new ArrayList<>();
-                            response.getJSONArray("data").forEach(item -> {
-                                examWeeks.add(((JSONObject) item).getString("examWeekName"));
-                                examWeekInfo.add((JSONObject)item);
-                            });
-                            model.setExamWeekList(examWeeks);
-                            //binding.examWeek.setText(response.getJSONObject("data").getString("examWeekName"),false);
-                        } else if (msg.what == 4) {
-                            model.setExamResult(response.getJSONArray("data").toJSONString());
+                        switch (msg.what) {
+                            case 1:
+                                ArrayList<String> terms = new ArrayList<>();
+                                response.getJSONArray("data").forEach(item -> terms.add(((JSONObject) item).getString("acadYearSemester")));
+                                model.setTermList(terms);
+                                getTerm();
+                                break;
+                            case 2:
+                                model.setTerm(response.getJSONObject("data").getString("acadYearSemester"));
+                                break;
+                            case 3:
+                                ArrayList<String> examWeeks = new ArrayList<>();
+                                ArrayList<JSONObject> examWeekInfo = new ArrayList<>();
+                                response.getJSONArray("data").forEach(item -> {
+                                    examWeeks.add(((JSONObject) item).getString("examWeekName"));
+                                    examWeekInfo.add((JSONObject) item);
+                                });
+                                model.setExamWeekInfo(examWeekInfo);
+                                model.setExamWeekList(examWeeks);
+                                //binding.examWeek.setText(response.getJSONObject("data").getString("examWeekName"),false);
+                                break;
+                            case 4:
+                                model.setExamResult(response.getJSONArray("data").toJSONString());
+                                break;
                         }
                     } else if (response.getInteger("code").equals(53000007)) {
                         params.toast(R.string.login_warning);
@@ -228,6 +231,5 @@ public class ExamActivity extends AppCompatActivity {
                     }
                 }
         );
-
     }
 }

@@ -46,7 +46,6 @@ import com.sysu.edu.databinding.ItemCourseBinding;
 import com.sysu.edu.databinding.ItemExamBinding;
 import com.sysu.edu.extra.LaunchMiniProgram;
 import com.sysu.edu.extra.LoginActivity;
-import com.sysu.edu.preference.Language;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -76,12 +75,8 @@ public class DashboardFragment extends Fragment {
     ArrayList<JSONObject> tomorrowCourse = new ArrayList<>();
     LinkedList<JSONObject> thisWeekExams = new LinkedList<>();
     LinkedList<JSONObject> nextWeekExams = new LinkedList<>();
-    ActivityResultLauncher<Intent> launch;
     Params params;
-    RecyclerView examList;
-    ExamAdp examAdp;
     FragmentDashboardBinding binding;
-    CourseAdp courseAdp;
     OkHttpClient http = new OkHttpClient.Builder().build();
 
     @Nullable
@@ -89,8 +84,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (binding == null) {
             binding = FragmentDashboardBinding.inflate(inflater);
-            examList = binding.examList;
-            launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+            ActivityResultLauncher<Intent> launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
                 if (o.getResultCode() == Activity.RESULT_OK) {
                     cookie = params.getCookie();
                     getTerm();
@@ -104,10 +98,6 @@ public class DashboardFragment extends Fragment {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setAction("android.intent.action.VIEW");
                     startActivity(intent);
-//                startActivity(new Intent(Intent.ACTION_VIEW).setComponent(new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI"))
-//                        .putExtra("LauncherUI.From.Scaner.Shortcut", true)
-//                        .setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
-//                        .setAction("android.intent.action.VIEW"));
                 } catch (ActivityNotFoundException e) {
                     //e.printStackTrace();
                 }
@@ -127,8 +117,8 @@ public class DashboardFragment extends Fragment {
             binding.agenda.setOnClickListener(view -> startActivity(new Intent(getContext(), AgendaActivity.class), ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), view, "miniapp").toBundle()));
             binding.courseList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
             binding.courseList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-            examList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
-            examList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            binding.examList.addItemDecoration(new DividerItemDecoration(requireContext(), 0));
+            binding.examList.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -138,10 +128,11 @@ public class DashboardFragment extends Fragment {
             });
             params = new Params(requireActivity());
             cookie = params.getCookie();
-            courseAdp = new CourseAdp(requireActivity());
+
+            CourseAdp courseAdp = new CourseAdp(requireActivity());
             binding.courseList.setAdapter(courseAdp);
-            examAdp = new ExamAdp(requireActivity());
-            examList.setAdapter(examAdp);
+            ExamAdp examAdp = new ExamAdp(requireActivity());
+            binding.examList.setAdapter(examAdp);
             binding.toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
                 if (group.getCheckedButtonId() == checkedId) {
                     courseAdp.set(checkedId == R.id.today ? todayCourse : tomorrowCourse);
@@ -181,7 +172,7 @@ public class DashboardFragment extends Fragment {
                                 binding.progress.setMax(todayCourse.size());
                                 binding.progress.setProgress(beforeArray.size());
                                 binding.courseList.scrollToPosition(beforeArray.size());
-                                System.out.println(afterArray);
+                                //System.out.println(afterArray);
                                 binding.nextClass.setText(Html.fromHtml(afterArray.isEmpty() ? String.format("<h4><font color=\"#6750a4\">今天没课</font></h4>下一节：<b>%s</b><br/>地点：<b>自习室</b><br/>时间：<b>自主安排</b>", tomorrowCourse.get(0).getString("courseName")) : String.format("<h4><font color=\"#6750a4\">%s</font></h4>地点：<b>%s</b><br/>时间：<b>%s</b><br/>日期：<b>%s</b>", todayCourse.get(beforeArray.size()).getString("courseName"), todayCourse.get(beforeArray.size()).getString("teachingPlace"), todayCourse.get(beforeArray.size()).getString("time"), todayCourse.get(beforeArray.size()).getString("teachingDate")), Html.FROM_HTML_MODE_COMPACT));
                                 binding.toggle.check(R.id.today);
                                 break;
@@ -250,7 +241,7 @@ public class DashboardFragment extends Fragment {
     void getTerm() {
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
                 .header("Cookie", cookie)
-                .header("Accept-Language", Language.getLanguageCode(requireContext()))
+                //.header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .header("Referer", "https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/").build()
         ).enqueue(new Callback() {
             @Override
@@ -273,7 +264,7 @@ public class DashboardFragment extends Fragment {
     public void getTodayCourses(String term) {
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/timetable-search/classTableInfo/queryTodayStudentClassTable?academicYear=" + term)
                 .header("Cookie", cookie)
-                .header("Accept-Language", Language.getLanguageCode(requireContext()))
+                //.header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -306,7 +297,7 @@ public class DashboardFragment extends Fragment {
     public void getExams(String term) {
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/examination-manage/classroomResource/queryStuEaxmInfo?code=jwxsd_ksxxck")
                 .header("Cookie", cookie)
-                .header("Accept-Language", Language.getLanguageCode(requireContext()))
+                //.header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .header("Referer", "https://jwxt.sysu.edu.cn/jwxt/mk/")
                 .post(RequestBody.create(String.format("{\"acadYear\":\"%s\",\"examWeekId\":\"1928284621349085186\",\"examWeekName\":\"18-19周期末考\",\"examDate\":\"\"}", term), MediaType.parse("application/json")))
                 .build()).enqueue(new Callback() {

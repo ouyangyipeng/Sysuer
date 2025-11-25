@@ -3,12 +3,15 @@ package com.sysu.edu.academic;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.alibaba.fastjson2.JSONObject;
+
 import java.util.ArrayList;
 
 public class ExamViewModel extends ViewModel {
     MutableLiveData<ArrayList<String>> termList = new MutableLiveData<>();
     MutableLiveData<String> term = new MutableLiveData<>();
     MutableLiveData<ArrayList<String>> examWeekList = new MutableLiveData<>();
+    MutableLiveData<ArrayList<JSONObject>> examWeekInfo = new MutableLiveData<>();
     MutableLiveData<String> examWeek = new MutableLiveData<>();
     MutableLiveData<String> examResult = new MutableLiveData<>();
     MutableLiveData<String> examWeekId = new MutableLiveData<>();
@@ -61,5 +64,13 @@ public class ExamViewModel extends ViewModel {
 
     public void setExamWeekId(String examWeekId) {
         getExamWeekId().setValue(examWeekId);
+    }
+
+    public MutableLiveData<ArrayList<JSONObject>> getExamWeekInfo() {
+        return examWeekInfo;
+    }
+
+    public void setExamWeekInfo(ArrayList<JSONObject> examWeekInfo) {
+        getExamWeekInfo().setValue(examWeekInfo);
     }
 }

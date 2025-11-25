@@ -149,7 +149,7 @@ public class CourseSelectionFragment extends Fragment{
                 @Override
                 public void handleMessage(@NonNull Message msg) {
                     JSONObject response = JSONObject.parseObject((String) msg.obj);
-                    System.out.println(response);
+                    //System.out.println(response);
                     if (response != null && response.getInteger("code").equals(200)) {
                         switch (msg.what) {
                             case -1:

@@ -65,7 +65,7 @@ public class SchoolWorkWarning extends AppCompatActivity {
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
-                System.out.println(msg.obj);
+                //System.out.println(msg.obj);
                 if (msg.what == -1) {
                     Toast.makeText(SchoolWorkWarning.this, getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
                 }else {

@@ -51,7 +51,7 @@ public class AboutActivity extends AppCompatActivity {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                System.out.println(msg.obj);
+                //System.out.println(msg.obj);
                 if(msg.what==-1){
                     params.toast(R.string.no_wifi_warning);
                 }else{

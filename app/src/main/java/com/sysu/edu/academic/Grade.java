@@ -131,7 +131,7 @@ public class Grade extends AppCompatActivity {
                         }
                         case 4: {
                             JSONObject pull = dataString.getJSONObject("data");
-                            System.out.println(pull);
+                            //System.out.println(pull);
                             String totalRank = pull.getJSONArray("compulsorySelectTotal").getJSONObject(0).getString("rank");
                             String totalPoint = pull.getJSONArray("compulsorySelectTotal").getJSONObject(0).getString("vegPoint");
                             String totalCredit = pull.getJSONArray("compulsorySelectTotal").getJSONObject(0).getString("totalCredit");
