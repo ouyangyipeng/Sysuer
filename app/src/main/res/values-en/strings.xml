@@ -167,4 +167,6 @@
     <string name="from_to">From %s to %s</string>
     <string name="finished">Done</string>
     <string name="school_affair_notice">School Affair Notice</string>
+    <string name="add_todo">Add todo</string>
+    <string name="study_platform">Study Platform</string>
 </resources>
