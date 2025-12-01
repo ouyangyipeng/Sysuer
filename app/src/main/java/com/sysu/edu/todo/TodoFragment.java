@@ -80,7 +80,7 @@ class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             binding.title.setPaintFlags(isChecked ? binding.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : binding.title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             binding.description.setPaintFlags(isChecked ? binding.description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : binding.description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             binding.getRoot().setAlpha(isChecked ? 0.5f : 1f);
-            binding.menu.setEnabled(isChecked);
+            binding.menu.setEnabled(!isChecked);
         });
         //binding.dueDate.setText(item.get("due_date"));
     }

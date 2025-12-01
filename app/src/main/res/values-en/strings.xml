@@ -169,4 +169,14 @@
     <string name="school_affair_notice">School Affair Notice</string>
     <string name="add_todo">Add todo</string>
     <string name="study_platform">Study Platform</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="cancel">Cancel</string>
+    <string name="homework">Homework</string>
+    <string name="meeting">Meeting</string>
+    <string name="sports">Sports</string>
+    <string name="volunteer">Volunteer</string>
+    <string name="other">Other</string>
+    <string name="ddl">Deadline</string>
+    <string name="remind">Remind</string>
 </resources>

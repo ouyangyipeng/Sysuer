@@ -15,13 +15,16 @@ public class TodoList {
 
     public TodoList(Context context){
         db = context.openOrCreateDatabase("todo.db", Context.MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, due_date DATETIME, done_date DATETIME, creat_time DATETIME DEFAULT CURRENT_TIMESTAMP, updat_time DATETIME DEFAULT CURRENT_TIMESTAMP, status INTEGER DEFAULT 0, priority INTEGER DEFAULT 0, todo_type INTEGER DEFAULT 0,subtask TEXT,attachment TEXT,subject TEXT, position TEXT,color TEXT,label TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, due_date DATETIME, done_date DATETIME, creat_time DATETIME DEFAULT CURRENT_TIMESTAMP, updat_time DATETIME DEFAULT CURRENT_TIMESTAMP, status INTEGER DEFAULT 0, priority INTEGER DEFAULT 0, todo_type INTEGER DEFAULT 0,subtask TEXT,attachment TEXT,subject TEXT, location TEXT,color TEXT,label TEXT,ddl DATETIME DEFAULT CURRENT_TIMESTAMP);");
     }
 
     public void close(){
         db.close();
     }
 
+    public void delete(){
+        db.delete("todos", "id  = ?", new String[]{"1"});
+    }
     public void add(){
         ContentValues value = new ContentValues();
         value.put("title", "标题");
@@ -33,11 +36,12 @@ public class TodoList {
         value.put("subtask", "['子任务1','子任务2']");
         value.put("attachment", "0");
         value.put("subject", "大学英语");
-        value.put("position", "教学楼A座");
+        value.put("location", "教学楼A座");
         value.put("color", "red");
         value.put("label", "#标签");
         db.insert("todos", null, value);
     }
+
 
     public SQLiteDatabase getDatabase() {
         return db;

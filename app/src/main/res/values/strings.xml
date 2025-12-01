@@ -168,4 +168,14 @@
     <string name="school_affair_notice">院系通知</string>
     <string name="add_todo">添加待办</string>
     <string name="study_platform">学习平台</string>
+    <string name="title">标题</string>
+    <string name="description">描述</string>
+    <string name="cancel">取消</string>
+    <string name="homework">作业</string>
+    <string name="meeting">会议</string>
+    <string name="sports">运动</string>
+    <string name="volunteer">志愿</string>
+    <string name="other">其他</string>
+    <string name="ddl">截止日期</string>
+    <string name="remind">提醒</string>
 </resources>
