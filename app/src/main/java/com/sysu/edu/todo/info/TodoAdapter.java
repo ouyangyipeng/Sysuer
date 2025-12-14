@@ -41,9 +41,7 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             ((TodoActivity)context).showDialog();
         });
         binding.check.setChecked(item.getStatus().getValue() != null && item.getStatus().getValue() == 1);
-        binding.check.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            item.setStatus(isChecked ? TodoInfo.DONE : TodoInfo.TODO);
-        });
+        binding.check.setOnCheckedChangeListener((buttonView, isChecked) -> item.setStatus(isChecked ? TodoInfo.DONE : TodoInfo.TODO));
         item.getStatus().observe((TodoActivity)context, status -> {
             boolean isChecked = status != null && status.equals(TodoInfo.DONE);
             binding.check.setChecked(isChecked);
