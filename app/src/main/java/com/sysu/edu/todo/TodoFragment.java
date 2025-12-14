@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.sysu.edu.databinding.FragmentTodoBinding;
@@ -29,12 +28,12 @@ public class TodoFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        adp = getAdapter(requireContext());
+        getAdapter(requireContext());
         binding.recyclerView.setAdapter(adp);
         binding.recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         //adp.add(new TodoInfo().setTitle("title"));
-        TodoViewModel viewModel = new ViewModelProvider(requireActivity()).get(TodoViewModel.class);
-        viewModel.getTodoItem().observe(getViewLifecycleOwner(), adp::add);
+        //TodoViewModel viewModel = new ViewModelProvider(requireActivity()).get(TodoViewModel.class);
+        //viewModel.getTodoItem().observe(getViewLifecycleOwner(), adp::add);
         super.onViewCreated(view, savedInstanceState);
     }
 

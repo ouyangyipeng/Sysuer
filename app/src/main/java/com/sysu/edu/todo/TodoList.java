@@ -3,16 +3,15 @@ package com.sysu.edu.todo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.icu.text.SimpleDateFormat;
+
+import androidx.annotation.NonNull;
 
 import com.sysu.edu.R;
 import com.sysu.edu.todo.info.TodoInfo;
 
-import java.util.Date;
-import java.util.Locale;
-
 public class TodoList {
 
+    private static ContentValues value = new ContentValues();
     private final SQLiteDatabase db;
     private final Context context;
 
@@ -28,7 +27,6 @@ public class TodoList {
     public void close() {
         db.close();
     }
-
 
     public void addType() {
         db.beginTransaction();
@@ -47,11 +45,25 @@ public class TodoList {
         db.endTransaction();
     }
 
-    public void delete() {
-        db.delete("todos", "id  = ?", new String[]{"1"});
+    @NonNull
+    private static ContentValues setContentValues(TodoInfo todoInfo) {
+        value.clear();
+        value.put("title", todoInfo.getTitle().getValue());
+        value.put("description", todoInfo.getDescription().getValue());
+        value.put("due_date", todoInfo.getDueDate().getValue());
+        value.put("status", todoInfo.getStatus().getValue());
+        value.put("priority", todoInfo.getPriority().getValue());
+        value.put("todo_type", todoInfo.getType().getValue());
+        value.put("subtask", todoInfo.getSubtask().getValue());
+        value.put("attachment", todoInfo.getAttachment().getValue());
+        value.put("subject", todoInfo.getSubject().getValue());
+        value.put("location", todoInfo.getLocation().getValue());
+        value.put("color", todoInfo.getColor().getValue());
+        value.put("label", todoInfo.getLabel().getValue());
+        return value;
     }
 
-    public void add() {
+    /*public void add() {
         ContentValues value = new ContentValues();
         value.put("title", "标题");
         value.put("description", "描述");
@@ -66,23 +78,20 @@ public class TodoList {
         value.put("color", "red");
         value.put("label", "#标签");
         db.insert("todos", null, value);
+    }*/
+
+    public void delete(String id) {
+        db.delete("todos", "id  = ?", new String[]{id});
     }
 
     public void add(TodoInfo todoInfo) {
-        ContentValues value = new ContentValues();
-        value.put("title", todoInfo.getTitle().getValue());
-        value.put("description", todoInfo.getDescription().getValue());
-        value.put("due_date", todoInfo.getDueDate().getValue());
-        value.put("status", todoInfo.getStatus().getValue());
-        value.put("priority", todoInfo.getPriority().getValue());
-        value.put("todo_type", todoInfo.getType().getValue());
-        value.put("subtask", todoInfo.getSubtask().getValue());
-        value.put("attachment", todoInfo.getAttachment().getValue());
-        value.put("subject", todoInfo.getSubject().getValue());
-        value.put("location", todoInfo.getLocation().getValue());
-        value.put("color", todoInfo.getColor().getValue());
-        value.put("label", todoInfo.getLabel().getValue());
+        value = setContentValues(todoInfo);
         db.insert("todos", null, value);
+    }
+
+    public void update(TodoInfo todoInfo) {
+        value = setContentValues(todoInfo);
+        db.update("todos", value, "id = ?", new String[]{String.valueOf(todoInfo.getId().getValue())});
     }
 
     public SQLiteDatabase getDatabase() {

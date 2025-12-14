@@ -8,7 +8,7 @@
     "script": "var script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};"
   },
   {
-    "title": "速通视频",
+    "title": "心理健康视频速通",
     "description": "在线教学平台，视频一键通关",
     "matches": [
       "lms.sysu.edu.cn/mod/fsresource/view.php"
@@ -17,7 +17,7 @@
   },
   {
     "title": "美化",
-    "description": "在线教学平台，视频一键通关",
+    "description": "隐藏底部导航栏",
     "matches": [
       "www.sysu.edu.cn"
     ],

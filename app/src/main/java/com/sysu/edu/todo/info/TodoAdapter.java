@@ -35,14 +35,18 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         TodoInfo item = data.get(position);
         binding.title.setText(item.getTitle().getValue());
         binding.description.setText(item.getDescription().getValue());
-        //binding.dueDate.setText(item.getDueDate());
-
+       //binding.dueDate.setText(item.getDueDate());
         binding.getRoot().setOnClickListener(v -> {
             ((TodoActivity)context).initDialog(item);
             ((TodoActivity)context).showDialog();
         });
         binding.check.setChecked(item.getStatus().getValue() != null && item.getStatus().getValue() == 1);
         binding.check.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            item.setStatus(isChecked ? TodoInfo.DONE : TodoInfo.TODO);
+        });
+        item.getStatus().observe((TodoActivity)context, status -> {
+            boolean isChecked = status != null && status.equals(TodoInfo.DONE);
+            binding.check.setChecked(isChecked);
             binding.title.setPaintFlags(isChecked ? binding.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : binding.title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             binding.description.setPaintFlags(isChecked ? binding.description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : binding.description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             binding.getRoot().setAlpha(isChecked ? 0.5f : 1f);
@@ -50,6 +54,7 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         });
         //binding.dueDate.setText(item.get("due_date"));
     }
+
 
     public TodoInfo getTodoInfoAt(int position){
         return data.get(position);
@@ -64,6 +69,9 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         notifyItemRangeRemoved(0, tmp);
     }
 
+    public void refreshAt(int position){
+        notifyItemChanged(position);
+    }
     @Override
     public int getItemCount() {
         return data.size();
