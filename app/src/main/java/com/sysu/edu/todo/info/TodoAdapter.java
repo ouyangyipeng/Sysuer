@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sysu.edu.databinding.ItemTodoBinding;
 import com.sysu.edu.todo.TodoActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     Context context;
@@ -49,10 +52,11 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             binding.description.setPaintFlags(isChecked ? binding.description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : binding.description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             binding.getRoot().setAlpha(isChecked ? 0.5f : 1f);
             binding.menu.setEnabled(!isChecked);
+            item.setDoneDate(isChecked ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()) : null);
+            ((TodoActivity) context).updateTodo(item);
         });
         //binding.dueDate.setText(item.get("due_date"));
     }
-
 
     public TodoInfo getTodoInfoAt(int position){
         return data.get(position);
@@ -73,5 +77,10 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return 1;
     }
 }

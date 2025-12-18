@@ -7,7 +7,7 @@ public class TodoInfo {
     MutableLiveData<String> description;
     MutableLiveData<String> dueDate;
     MutableLiveData<String> ddlDate;
-    MutableLiveData<String> time;
+    MutableLiveData<String> dueTime;
     MutableLiveData<String> remindTime;
     MutableLiveData<String> type;
     MutableLiveData<String> location;
@@ -18,7 +18,7 @@ public class TodoInfo {
     MutableLiveData<String> doneDate;
     MutableLiveData<Integer> status;
     MutableLiveData<String> color;
-    MutableLiveData<String> label;
+    MutableLiveData<String> tag;
     public final static Integer ADD = 0;
     public final static Integer VIEW = 1;
     public final static Integer TODO = 0;
@@ -28,23 +28,24 @@ public class TodoInfo {
     int function = ADD;
 
     public TodoInfo() {
-        title = new MutableLiveData<>("");
-        description = new MutableLiveData<>("");
-        dueDate = new MutableLiveData<>("");
-        ddlDate = new MutableLiveData<>("");
-        time = new MutableLiveData<>("");
+        title = new MutableLiveData<>();
+        description = new MutableLiveData<>();
+        dueDate = new MutableLiveData<>();
+        ddlDate = new MutableLiveData<>();
+        dueTime = new MutableLiveData<>();
         priority = new MutableLiveData<>(0);
-        remindTime = new MutableLiveData<>("");
+        remindTime = new MutableLiveData<>();
         type = new MutableLiveData<>();
-        location = new MutableLiveData<>("");
+        location = new MutableLiveData<>();
         subject = new MutableLiveData<>();
-        subtask = new MutableLiveData<>("");
-        attachment = new MutableLiveData<>("");
-        doneDate = new MutableLiveData<>("");
+        subtask = new MutableLiveData<>();
+        attachment = new MutableLiveData<>();
+        doneDate = new MutableLiveData<>();
         status = new MutableLiveData<>(0);
-        color = new MutableLiveData<>("");
-        label = new MutableLiveData<>("");
+        color = new MutableLiveData<>();
+        tag = new MutableLiveData<>();
         id = new MutableLiveData<>(0);
+        reset();
     }
 
     public int getFunction(){
@@ -61,12 +62,12 @@ public class TodoInfo {
         this.ddlDate.setValue(ddlDate);
     }
 
-    public MutableLiveData<String> getTime() {
-        return time;
+    public MutableLiveData<String> getDueTime() {
+        return dueTime;
     }
 
-    public void setTime(String time) {
-        this.time.setValue(time);
+    public void setDueTime(String dueTime) {
+        this.dueTime.setValue(dueTime);
     }
 
     public MutableLiveData<String> getRemindTime() {
@@ -164,12 +165,12 @@ public class TodoInfo {
         this.color.setValue(color);
     }
 
-    public MutableLiveData<String> getLabel() {
-        return label;
+    public MutableLiveData<String> getTag() {
+        return tag;
     }
 
-    public void setLabel(String label) {
-        this.label.setValue(label);
+    public void setTag(String tag) {
+        this.tag.setValue(tag);
     }
 
     public MutableLiveData<String> getDoneDate() {
@@ -191,7 +192,7 @@ public class TodoInfo {
         setDescription("");
         setDueDate("");
         setDdlDate("");
-        setTime("");
+        setDueTime("");
         setPriority(0);
         setRemindTime("");
         setType("");
@@ -202,7 +203,7 @@ public class TodoInfo {
         setDoneDate("");
         setStatus(0);
         setColor("");
-        setLabel("");
+        setTag("");
         function = ADD;
     }
     public void copyFrom(TodoInfo todoInfo){
@@ -210,7 +211,7 @@ public class TodoInfo {
         description.setValue(todoInfo.getDescription().getValue());
         dueDate.setValue(todoInfo.getDueDate().getValue());
         ddlDate.setValue(todoInfo.getDdlDate().getValue());
-        time.setValue(todoInfo.getTime().getValue());
+        dueTime.setValue(todoInfo.getDueTime().getValue());
         priority.setValue(todoInfo.getPriority().getValue());
         remindTime.setValue(todoInfo.getRemindTime().getValue());
         type.setValue(todoInfo.getType().getValue());
@@ -221,7 +222,7 @@ public class TodoInfo {
         doneDate.setValue(todoInfo.getDoneDate().getValue());
         status.setValue(todoInfo.getStatus().getValue());
         color.setValue(todoInfo.getColor().getValue());
-        label.setValue(todoInfo.getLabel().getValue());
+        tag.setValue(todoInfo.getTag().getValue());
         id.setValue(todoInfo.getId().getValue());
         function = todoInfo.getFunction();
     }

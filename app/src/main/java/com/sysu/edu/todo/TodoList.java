@@ -3,46 +3,25 @@ package com.sysu.edu.todo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
 import com.sysu.edu.R;
 import com.sysu.edu.todo.info.TodoInfo;
 
-public class TodoList {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class TodoList extends SQLiteOpenHelper {
 
     private static ContentValues value = new ContentValues();
-    private final SQLiteDatabase db;
     private final Context context;
 
-    public TodoList(Context context) {
+    public TodoList(Context context, int version) {
+        super(context, "todo.db", null, version);
         this.context = context;
-        db = context.openOrCreateDatabase("todo.db", Context.MODE_PRIVATE, null);
-        //db.execSQL("Drop table if exists types");
-        db.execSQL("CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, due_date DATETIME, done_date DATETIME, creat_time DATETIME DEFAULT CURRENT_TIMESTAMP, updat_time DATETIME DEFAULT CURRENT_TIMESTAMP, status INTEGER DEFAULT 0, priority INTEGER DEFAULT 0, todo_type String,subtask TEXT,attachment TEXT,subject TEXT, location TEXT,color TEXT,label TEXT,ddl DATETIME DEFAULT CURRENT_TIMESTAMP);");
-        db.execSQL("CREATE TABLE IF NOT EXISTS types (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
-        db.execSQL("CREATE TABLE IF NOT EXISTS subjects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
-    }
-
-    public void close() {
-        db.close();
-    }
-
-    public void addType() {
-        db.beginTransaction();
-        ContentValues value = new ContentValues();
-        for (String type : context.getResources().getStringArray(R.array.todo_base_type)) {
-            value.put("name", type);
-
-            try {
-                db.insertWithOnConflict("types", null, value, SQLiteDatabase.CONFLICT_ABORT);
-            } catch (Exception ignored) {
-
-            }
-            value.clear();
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
     }
 
     @NonNull
@@ -59,8 +38,44 @@ public class TodoList {
         value.put("subject", todoInfo.getSubject().getValue());
         value.put("location", todoInfo.getLocation().getValue());
         value.put("color", todoInfo.getColor().getValue());
-        value.put("label", todoInfo.getLabel().getValue());
+        value.put("label", todoInfo.getTag().getValue());
+        value.put("due_time", todoInfo.getDueTime().getValue());
+        value.put("remind_time", todoInfo.getRemindTime().getValue());
+        value.put("done_datetime", todoInfo.getDoneDate().getValue());
+        value.put("update_datetime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
         return value;
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        //db = context.openOrCreateDatabase("todo.db", Context.MODE_PRIVATE, null);
+        //db.execSQL("Drop table if exists types");
+        db.execSQL("CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, due_date DATETIME,due_time DATETIME, done_datetime DATETIME, create_datetime DATETIME DEFAULT CURRENT_TIMESTAMP, update_datetime DATETIME DEFAULT CURRENT_TIMESTAMP, status INTEGER DEFAULT 0, priority INTEGER DEFAULT 0, todo_type TEXT,subtask TEXT,attachment TEXT,subject TEXT, location TEXT,color TEXT,label TEXT,ddl DATETIME,remind_time TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS types (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS subjects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS tags (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS subjects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, color TEXT);");
+        addType();
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+    }
+
+    public void addType() {
+        getWritableDatabase().beginTransaction();
+        ContentValues value = new ContentValues();
+        for (String type : context.getResources().getStringArray(R.array.todo_base_type)) {
+            value.put("name", type);
+            try {
+                getWritableDatabase().insertWithOnConflict("types", null, value, SQLiteDatabase.CONFLICT_ABORT);
+            } catch (Exception ignored) {
+            }
+            value.clear();
+        }
+        getWritableDatabase().setTransactionSuccessful();
+        getWritableDatabase().endTransaction();
+        close();
     }
 
     /*public void add() {
@@ -81,21 +96,23 @@ public class TodoList {
     }*/
 
     public void delete(String id) {
-        db.delete("todos", "id  = ?", new String[]{id});
+        getWritableDatabase().delete("todos", "id  = ?", new String[]{id});
+        close();
     }
 
-    public void add(TodoInfo todoInfo) {
+    public void delete(TodoInfo todoInfo) {
+        delete(String.valueOf(todoInfo.getId().getValue()));
+    }
+
+    public void addTodo(TodoInfo todoInfo) {
         value = setContentValues(todoInfo);
-        db.insert("todos", null, value);
+        getWritableDatabase().insert("todos", null, value);
+        close();
     }
 
-    public void update(TodoInfo todoInfo) {
+    public void updateTodo(TodoInfo todoInfo) {
         value = setContentValues(todoInfo);
-        db.update("todos", value, "id = ?", new String[]{String.valueOf(todoInfo.getId().getValue())});
+        getWritableDatabase().update("todos", value, "id = ?", new String[]{String.valueOf(todoInfo.getId().getValue())});
+        close();
     }
-
-    public SQLiteDatabase getDatabase() {
-        return db;
-    }
-
 }

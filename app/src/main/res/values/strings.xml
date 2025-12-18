@@ -197,4 +197,5 @@
     <string name="one_day">1天</string>
     <string name="five_mins">5分钟</string>
     <string name="custom_remind_title">提前时间（分钟）</string>
+    <string name="tag">标签</string>
 </resources>

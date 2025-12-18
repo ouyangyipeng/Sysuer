@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,10 +26,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.sysu.edu.R;
 import com.sysu.edu.databinding.ActivityTodoBinding;
+import com.sysu.edu.databinding.DialogEditTextBinding;
 import com.sysu.edu.databinding.DialogTodoBinding;
-import com.sysu.edu.databinding.ItemEditTextBinding;
 import com.sysu.edu.databinding.ItemFilterChipBinding;
 import com.sysu.edu.databinding.ItemPreferenceBinding;
+import com.sysu.edu.todo.info.TitleAdapter;
 import com.sysu.edu.todo.info.TodoAdapter;
 import com.sysu.edu.todo.info.TodoInfo;
 
@@ -46,10 +48,10 @@ public class TodoActivity extends AppCompatActivity {
     TodoList todoDB;
     int toAddCode = 0;
     TodoViewModel viewModel;
-    TodoAdapter adp;
     DialogTodoBinding dialogBinding;
     ArrayList<String> types;
     ArrayList<String> subjects;
+    ArrayList<String> tags;
     AlertDialog todoDialog;
     TodoInfo todoInfo;
 
@@ -60,8 +62,7 @@ public class TodoActivity extends AppCompatActivity {
         dialogBinding = DialogTodoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         viewModel = new ViewModelProvider(this).get(TodoViewModel.class);
-        adp = ((TodoFragment) binding.fragmentTodo.getFragment()).getAdapter(this);
-        todoDB = new TodoList(this);
+        todoDB = new TodoList(this, 5);
         binding.tool.setNavigationOnClickListener(view -> supportFinishAfterTransition());
         dialogBinding.prioritySlider.addOnChangeListener((slider, value, fromUser) -> todoInfo.setPriority((int) value));
         todoDialog = new MaterialAlertDialogBuilder(this)
@@ -70,37 +71,39 @@ public class TodoActivity extends AppCompatActivity {
                     todoInfo.setTitle(Objects.requireNonNull(dialogBinding.title.getText()).toString());
                     todoInfo.setDescription(Objects.requireNonNull(dialogBinding.description.getText()).toString());
                     if (todoInfo.getFunction() == TodoInfo.ADD) {
-                        todoDB.add(todoInfo);
+                        todoDB.addTodo(todoInfo);
                     } else if (todoInfo.getFunction() == TodoInfo.VIEW) {
-                        todoDB.update(todoInfo);
+                        todoDB.updateTodo(todoInfo);
                     }
-                    refresh();
+                    refresh(binding.fragmentTodo.getFragment());
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .setNeutralButton(R.string.delete, (dialog13, which) -> {
                 })
                 .create();
-        ItemEditTextBinding itemEditTextBinding = ItemEditTextBinding.inflate(getLayoutInflater());
+        DialogEditTextBinding itemEditTextBinding = DialogEditTextBinding.inflate(getLayoutInflater());
         itemEditTextBinding.getRoot().setHint(R.string.type);
         AlertDialog todo_add_dialog = new MaterialAlertDialogBuilder(this)
                 .setView(itemEditTextBinding.getRoot())
                 .setPositiveButton(R.string.add, (dialog, which) -> {
                     Editable toAdd = itemEditTextBinding.edit.getText();
                     if (toAdd != null && !toAdd.toString().isEmpty()) {
-                        ArrayList<String> array = List.of(types, subjects).get(toAddCode);
-                        ChipGroup chipGroup = (new ChipGroup[]{dialogBinding.todoType, dialogBinding.subject}[toAddCode]);
+                        ArrayList<String> array = List.of(types, subjects, tags).get(toAddCode);
+                        ChipGroup chipGroup = (new ChipGroup[]{dialogBinding.todoType, dialogBinding.subject, dialogBinding.tag}[toAddCode]);
                         if (!array.contains(toAdd.toString())) {
                             array.add(toAdd.toString());
                             createFilterChip(toAdd.toString(), chipGroup, toAddCode);
                         }
                         ContentValues values = new ContentValues();
                         values.put("name", toAdd.toString());
-                        todoDB.getDatabase().insertOrThrow(new String[]{"types", "subjects"}[toAddCode], null, values);
+                        todoDB.getWritableDatabase().insertOrThrow(new String[]{"types", "subjects", "tags"}[toAddCode], null, values);
                         ((Chip) chipGroup.getChildAt(array.indexOf(toAdd.toString()) + 1)).setChecked(true);
                         if (toAddCode == 0) {
                             todoInfo.setType(toAdd.toString());
-                        } else {
+                        } else if (toAddCode == 1) {
                             todoInfo.setSubject(toAdd.toString());
+                        } else if (toAddCode == 2) {
+                            todoInfo.setTag(toAdd.toString());
                         }
                     }
                 })
@@ -135,8 +138,9 @@ public class TodoActivity extends AppCompatActivity {
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setTitleText(R.string.date).build();
         MaterialDatePicker<Long> ddlPicker = MaterialDatePicker.Builder.datePicker().setTitleText(R.string.date).build();
         MaterialTimePicker timePicker = new MaterialTimePicker.Builder().build();
-        IntStream.range(0, 2).forEach(i -> List.of(dialogBinding.todoTypeAdd, dialogBinding.todoSubjectAdd).get(i).setOnClickListener(view -> {
+        IntStream.range(0, 3).forEach(i -> List.of(dialogBinding.todoTypeAdd, dialogBinding.todoSubjectAdd, dialogBinding.todoTagAdd).get(i).setOnClickListener(view -> {
             toAddCode = i;
+            itemEditTextBinding.getRoot().setHint(new int[]{R.string.type, R.string.subject, R.string.tag}[i]);
             todo_add_dialog.show();
         }));
         ArrayList<PopupMenu> popupMenuArrayList = new ArrayList<>();
@@ -156,7 +160,6 @@ public class TodoActivity extends AppCompatActivity {
             });
             switch (i) {
                 case 0:
-                    //todoInfo.getDueDate().observe(this, v -> itemPreferenceBinding.itemContent.setText(v == null ? "无" : v));
                     datePicker.addOnPositiveButtonClickListener(selection -> todoInfo.setDueDate(dateString.format(selection)));
                     for (int j = 0; j < 3; j++) {
                         int finalJ = j;
@@ -190,7 +193,6 @@ public class TodoActivity extends AppCompatActivity {
                         ddlPicker.show(getSupportFragmentManager(), "ddl_picker");
                         return true;
                     });
-                    //todoInfo.getDdlDate().observe(this, v -> itemPreferenceBinding.itemContent.setText(v == null ? "无" : v));
                     ddlPicker.addOnPositiveButtonClickListener(selection -> todoInfo.getDdlDate().setValue(dateString.format(selection)));
                     none.setOnMenuItemClickListener(item -> {
                         todoInfo.getDdlDate().setValue(null);
@@ -198,18 +200,17 @@ public class TodoActivity extends AppCompatActivity {
                     });
                     break;
                 case 1:
-                    //todoInfo.getTime().observe(this, v -> itemPreferenceBinding.itemContent.setText(v == null ? "无" : v));
-                    for (int j = 0; j < 4; j++) {
-                        menu.add(0, Menu.NONE, Menu.NONE, new int[]{R.string.morning, R.string.noon, R.string.afternoon, R.string.evening}[j]).setOnMenuItemClickListener(item -> {
+                   /* for (int j = 0; j < 4; j++) {
+                        menu.add(0, Menu.NONE, Menu.NONE, new int[]{}[j]).setOnMenuItemClickListener(item -> {
                             todoInfo.setTime(String.valueOf(item.getTitle()));
                             return true;
                         });
-                    }
+                    }*/
                     menu.add(1, Menu.NONE, Menu.NONE, R.string.select).setOnMenuItemClickListener(item -> {
                         timePicker.show(getSupportFragmentManager(), "time_picker");
                         return true;
                     });
-                    timePicker.addOnPositiveButtonClickListener(selection -> todoInfo.setTime(String.format(Locale.getDefault(), "%02d:%02d", timePicker.getHour(), timePicker.getMinute())));
+                    timePicker.addOnPositiveButtonClickListener(selection -> todoInfo.setDueTime(String.format(Locale.getDefault(), "%02d:%02d", timePicker.getHour(), timePicker.getMinute())));
                     break;
                 case 2:
                     for (int j = 0; j < 6; j++) {
@@ -222,7 +223,6 @@ public class TodoActivity extends AppCompatActivity {
                         remindDialog.show();
                         return true;
                     });
-                    //todoInfo.getRemindTime().observe(this, v -> itemPreferenceBinding.itemContent.setText(v == null ? "无" : v + "前"));
                     break;
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -234,61 +234,82 @@ public class TodoActivity extends AppCompatActivity {
             dialogBinding.times.addView(itemPreferenceBinding.getRoot());
         }
         dialogBinding.check.setOnCheckedChangeListener((buttonView, isChecked) -> todoInfo.setStatus(isChecked ? TodoInfo.DONE : TodoInfo.TODO));
-        todoDB.addType();
         getTypes();
         getSubjects();
+        getTags();
         types.forEach(s -> createFilterChip(s, dialogBinding.todoType, 0));
         subjects.forEach(s -> createFilterChip(s, dialogBinding.subject, 1));
+        tags.forEach(s -> createFilterChip(s, dialogBinding.tag, 2));
         initDialog();
-        refresh();
+        refresh(binding.fragmentTodo.getFragment());
+    }
+    public void updateTodo(TodoInfo todoInfo) {
+        todoDB.updateTodo(todoInfo);
     }
 
-    private void refresh() {
-        adp.clear();
+    private void refresh(TodoFragment f) {
+        f.getConcatAdapter().getAdapters().forEach(adp -> f.getConcatAdapter().removeAdapter(adp));
+        // f.getConcatAdapter().
+        // titleAdp.addTitle("0");
         try {
-            Cursor cursor = todoDB.getDatabase().query("todos", null, null, null, null, null, "due_date");
+            TodoAdapter todoAdapter = new TodoAdapter(this);
+            TitleAdapter titleAdapter = new TitleAdapter(this);
+            Cursor cursor = todoDB.getWritableDatabase().query("todos", null, null, null, null, null, "due_date");
             while (cursor.moveToNext()) {
                 TodoInfo todoDetail = new TodoInfo();
+                int priority = cursor.getInt(cursor.getColumnIndexOrThrow("priority"));
+                String dueDate = cursor.getString(cursor.getColumnIndexOrThrow("due_date"));
                 todoDetail.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
                 todoDetail.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
                 todoDetail.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
-                todoDetail.setDueDate(cursor.getString(cursor.getColumnIndexOrThrow("due_date")));
-                todoDetail.setPriority(cursor.getInt(cursor.getColumnIndexOrThrow("priority")));
+                todoDetail.setDueDate(dueDate);
+                todoDetail.setPriority(priority);
                 todoDetail.setType(cursor.getString(cursor.getColumnIndexOrThrow("todo_type")));
                 todoDetail.setLocation(cursor.getString(cursor.getColumnIndexOrThrow("location")));
                 todoDetail.setSubject(cursor.getString(cursor.getColumnIndexOrThrow("subject")));
                 todoDetail.setColor(cursor.getString(cursor.getColumnIndexOrThrow("color")));
-                todoDetail.setLabel(cursor.getString(cursor.getColumnIndexOrThrow("label")));
+                todoDetail.setTag(cursor.getString(cursor.getColumnIndexOrThrow("label")));
                 todoDetail.setDdlDate(cursor.getString(cursor.getColumnIndexOrThrow("ddl")));
                 todoDetail.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow("status")));
                 todoDetail.setSubtask(cursor.getString(cursor.getColumnIndexOrThrow("subtask")));
                 todoDetail.setAttachment(cursor.getString(cursor.getColumnIndexOrThrow("attachment")));
-                todoDetail.setDoneDate(cursor.getString(cursor.getColumnIndexOrThrow("done_date")));
+                todoDetail.setDoneDate(cursor.getString(cursor.getColumnIndexOrThrow("done_datetime")));
                 todoDetail.setFunction(TodoInfo.VIEW);
-                adp.add(todoDetail);
-                //viewModel.setTodoItem(new HashMap<>(Map.of("title", title, "description", description, "dueDate", dueDate)));
+                //todoDetail.setDueTime(cursor.getString(cursor.getColumnIndexOrThrow("due_time")));
+                //todoDetail.getStatus().observe(this, status -> {todoDB.updateTodo(todoDetail);});
+
+                if (!titleAdapter.getTitle().equals(dueDate)) {
+                    titleAdapter = new TitleAdapter(this);
+                    f.getConcatAdapter().addAdapter(titleAdapter);
+                    titleAdapter.setTitle(dueDate);
+                    todoAdapter = new TodoAdapter(this);
+                    f.getConcatAdapter().addAdapter(todoAdapter);
+                }
+                todoAdapter.add(todoDetail);
+                f.getConcatAdapter().notifyItemRangeInserted(f.getConcatAdapter().getItemCount() - 1, 1);
             }
             cursor.close();
-        } catch (Exception ignored) {
+            todoDB.close();
+        } catch (Exception e) {
+            Log.e("TodoActivity", "refresh: ", e);
         }
     }
 
     void getTypes() {
         types = new ArrayList<>();
         try {
-            Cursor cursor = todoDB.getDatabase().query("types", null, null, null, null, null, null);
+            Cursor cursor = todoDB.getWritableDatabase().query("types", null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 types.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
             }
             cursor.close();
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 
     void getSubjects() {
         subjects = new ArrayList<>();
         try {
-            Cursor cursor = todoDB.getDatabase().query("subjects", null, null, null, null, null, null);
+            Cursor cursor = todoDB.getWritableDatabase().query("subjects", null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 subjects.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
             }
@@ -301,7 +322,6 @@ public class TodoActivity extends AppCompatActivity {
         ItemFilterChipBinding chip = ItemFilterChipBinding.inflate(getLayoutInflater(), view, false);
         chip.getRoot().setText(s);
         chip.getRoot().setOnLongClickListener(v -> {
-
             if (((Chip) v).isChecked()) {
                 switch (toAddCode) {
                     case 0:
@@ -310,14 +330,29 @@ public class TodoActivity extends AppCompatActivity {
                     case 1:
                         todoInfo.setSubject(null);
                         break;
+                    case 2:
+                        todoInfo.setTag(null);
+                        break;
                 }
             }
             view.removeView(chip.getRoot());
-            List.of(types, subjects).get(toAddCode).remove(s);
-            todoDB.getDatabase().delete(new String[]{"types", "subjects"}[toAddCode], "name=?", new String[]{s});
+            List.of(types, subjects, tags).get(toAddCode).remove(s);
+            todoDB.getWritableDatabase().delete(new String[]{"types", "subjects", "tags"}[toAddCode], "name=?", new String[]{s});
             return true;
         });
         view.addView(chip.getRoot(), view.getChildCount() - 1);
+    }
+
+    void getTags() {
+        tags = new ArrayList<>();
+        try {
+            Cursor cursor = todoDB.getWritableDatabase().query("tags", null, null, null, null, null, null);
+            while (cursor.moveToNext()) {
+                tags.add(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+            }
+            cursor.close();
+        } catch (Exception ignored) {
+        }
     }
 
     public void initDialog(TodoInfo todoInfo) {
@@ -329,36 +364,58 @@ public class TodoActivity extends AppCompatActivity {
         todoInfo.getTitle().observe(this, dialogBinding.title::setText);
         todoInfo.getDescription().observe(this, dialogBinding.description::setText);
         todoInfo.getPriority().observe(this, integer -> {
-            int priority = integer == null ? 0 : integer;
+            int priority = checkValid(integer) ? integer : 0;
             dialogBinding.prioritySlider.setValue(priority);
             dialogBinding.priorityValue.setText(new String[]{"无", "不重要且不紧急", "不重要但紧急", "重要但不紧急", "重要且紧急"}[priority]);
         });
         todoInfo.getType().observe(this, s -> {
-            if (s != null) {
+            if (checkValid(s)) {
                 if (!types.contains(s)) {
                     createFilterChip(s, dialogBinding.todoType, 0);
                     types.add(s);
                 }
+            } else {
+                return;
             }
             ((Chip) dialogBinding.todoType.getChildAt(types.indexOf(todoInfo.getType().getValue()) + 1)).setChecked(true);
         });
         todoInfo.getSubject().observe(this, s -> {
-            if (s != null) {
+            if (checkValid(s)) {
                 if (!subjects.contains(s)) {
                     createFilterChip(s, dialogBinding.subject, 1);
                     subjects.add(s);
                 }
+            } else {
+                return;
             }
-            ((Chip) dialogBinding.subject.getChildAt(subjects.indexOf(s) + 1)).setChecked(true);
+            ((Chip) dialogBinding.subject.getChildAt(subjects.indexOf(todoInfo.getSubject().getValue()) + 1)).setChecked(true);
+        });
+        todoInfo.getTag().observe(this, s -> {
+            if (checkValid(s)) {
+                if (!tags.contains(s)) {
+                    createFilterChip(s, dialogBinding.tag, 2);
+                    tags.add(s);
+                }
+            }
+            ((Chip) dialogBinding.tag.getChildAt(tags.indexOf(s) + 1)).setChecked(true);
         });
         todoInfo.getStatus().observe(this, integer -> dialogBinding.check.setChecked(integer != null && Objects.equals(integer, TodoInfo.DONE)));
-        todoInfo.getDueDate().observe(this, ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(0)).itemContent::setText);
-        todoInfo.getRemindTime().observe(this, ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(2)).itemContent::setText);
-        todoInfo.getDdlDate().observe(this, ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(3)).itemContent::setText);
+        todoInfo.getDueDate().observe(this, i -> ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(0)).itemContent.setText(checkValid(i) ? i : getString(R.string.none)));
+        todoInfo.getDueTime().observe(this, i -> ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(1)).itemContent.setText(checkValid(i) ? i : getString(R.string.none)));
+        todoInfo.getRemindTime().observe(this, i -> ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(2)).itemContent.setText(checkValid(i) ? i : getString(R.string.none)));
+        todoInfo.getDdlDate().observe(this, i -> ItemPreferenceBinding.bind(dialogBinding.times.getChildAt(3)).itemContent.setText(checkValid(i) ? i : getString(R.string.none)));
     }
 
     public void showDialog() {
         todoDialog.show();
+    }
+
+    boolean checkValid(String string) {
+        return string != null && !string.isEmpty();
+    }
+
+    boolean checkValid(Integer integer) {
+        return integer != null && integer != -1;
     }
 }
 

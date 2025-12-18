@@ -150,6 +150,11 @@ public class DashboardFragment extends Fragment {
             handler = new Handler(Looper.getMainLooper()) {
                 @Override
                 public void handleMessage(@NonNull Message msg) {
+                    if (msg.what == -1) {
+                        Toast.makeText(requireActivity(), getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
+                        binding.nextClass.setText(R.string.no_wifi_warning);
+                        return;
+                    }
                     JSONObject response = JSON.parseObject((String) msg.obj);
                     if (response.get("code").equals(200)) {
                         switch (msg.what) {
@@ -186,7 +191,7 @@ public class DashboardFragment extends Fragment {
                                     LinkedList<JSONObject> exams = List.of(thisWeekExams, nextWeekExams).get(i);
                                     JSONObject timetable = e.getJSONObject("timetable");
                                     TreeMap<Integer, JSONArray> sortedTimetable = new TreeMap<>();
-                                    timetable.forEach((s,t) -> {
+                                    timetable.forEach((s, t) -> {
                                         if (t != null) {
                                             sortedTimetable.put(Integer.parseInt(s), (JSONArray) t);
                                         }
@@ -207,10 +212,6 @@ public class DashboardFragment extends Fragment {
                                 getTodayCourses(term);
                                 getExams(term);
                                 break;
-                            case -1: {
-                                Toast.makeText(requireActivity(), getString(R.string.no_wifi_warning), Toast.LENGTH_LONG).show();
-                                break;
-                            }
                         }
                     } else {
                         launch.launch(new Intent(getContext(), LoginActivity.class).putExtra("url", TargetUrl.JWXT));
@@ -225,7 +226,6 @@ public class DashboardFragment extends Fragment {
     void getTerm() {
         http.newCall(new Request.Builder().url("https://jwxt.sysu.edu.cn/jwxt/base-info/acadyearterm/showNewAcadlist")
                 .header("Cookie", cookie)
-                //.header("Accept-Language", Language.getLanguageCode(requireContext()))
                 .header("Referer", "https://jwxt.sysu.edu.cn/jwxt//yd/classSchedule/").build()
         ).enqueue(new Callback() {
             @Override
@@ -333,6 +333,7 @@ class CourseAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ItemCourseBinding binding = ItemCourseBinding.bind(holder.itemView);
         BiConsumer<Integer, String> a = (id, s) -> ((TextView) holder.itemView.findViewById(id)).setText(data.get(position).getString(s));
         holder.itemView.setOnClickListener(v -> ((MainActivity) context).launch().launch(new Intent(context, CourseDetail.class).putExtra("code", data.get(position).getString("courseNum")).putExtra("class", data.get(position).getString("classesNum")), ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder.itemView, "miniapp")));
         a.accept(R.id.course_title, "courseName");
@@ -345,9 +346,9 @@ class CourseAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurfaceDim, colorSurfaceDim, true);
         context.getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, colorSurface, true);
         boolean isBefore = Objects.equals(data.get(position).getString("status"), "before");
-        ((TextView) holder.itemView.findViewById(R.id.course_title)).setTextAppearance(isBefore ? com.google.android.material.R.style.TextAppearance_Material3_BodyMedium : com.google.android.material.R.style.TextAppearance_Material3_TitleMedium_Emphasized);
+        binding.courseTitle.setTextAppearance(isBefore ? com.google.android.material.R.style.TextAppearance_Material3_TitleMedium : com.google.android.material.R.style.TextAppearance_Material3_TitleMedium_Emphasized);
         ((GradientDrawable) ((RippleDrawable) holder.itemView.getBackground()).getDrawable(1)).setColor(Objects.equals(data.get(position).getString("status"), "in") ? colorSurfaceDim.data : isBefore ? 0x0 : colorSurface.data);
-        holder.itemView.findViewById(R.id.item).setAlpha(isBefore ? 0.64f : 1.0f);
+        binding.item.setAlpha(isBefore ? 0.64f : 1.0f);
     }
 
     @Override
@@ -392,7 +393,6 @@ class ExamAdp extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         JSONObject examData = data.get(position);
         int startClassTimes = examData.getIntValue("startClassTimes");
         int endClassTimes = examData.getIntValue("endClassTimes");
-
         binding.examName.setText(examData.getString("examSubjectName"));
         binding.examLocation.setText(examData.getString("classroomNumber"));
         binding.examDate.setText(examData.getString("examDate"));
