@@ -31,15 +31,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:drawableStart="@drawable/time"
-            android:drawablePadding="4dp"
             android:gravity="center_vertical"
             android:text="@string/time"
             android:textAppearance="?attr/textAppearanceBodyMedium"/>
-        <com.google.android.material.textview.MaterialTextView
+        <!--<com.google.android.material.textview.MaterialTextView
             android:id="@+id/end_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,7 +73,7 @@
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
             android:text="@string/total_for_evaluation"
-            android:textAppearance="?attr/textAppearanceBodyMedium"/>
+            android:textAppearance="?attr/textAppearanceBodyMedium"/>-->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

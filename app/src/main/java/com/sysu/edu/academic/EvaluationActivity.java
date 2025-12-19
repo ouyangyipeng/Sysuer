@@ -1,9 +1,13 @@
 package com.sysu.edu.academic;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.sysu.edu.R;
 import com.sysu.edu.databinding.ActivityEvaluationBinding;
@@ -17,7 +21,13 @@ public class EvaluationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityEvaluationBinding binding = ActivityEvaluationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.toolbar.setNavigationOnClickListener(v -> supportFinishAfterTransition());
-        ((NavHostFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragment))).getNavController();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        //binding.toolbar.setNavigationOnClickListener(v -> supportFinishAfterTransition());
+        NavController navController = ((NavHostFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragment))).getNavController();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder().setFallbackOnNavigateUpListener(() -> {
+            supportFinishAfterTransition();
+            return true;
+        }).build();
+        NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration);
     }
 }

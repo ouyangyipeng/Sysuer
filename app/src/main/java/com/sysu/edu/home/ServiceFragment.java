@@ -29,6 +29,7 @@ import com.sysu.edu.academic.CalendarActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.CourseCompletion;
 import com.sysu.edu.academic.CourseSelection;
+import com.sysu.edu.academic.EvaluationActivity;
 import com.sysu.edu.academic.ExamActivity;
 import com.sysu.edu.academic.Grade;
 import com.sysu.edu.academic.MajorInfo;
@@ -116,7 +117,7 @@ public class ServiceFragment extends Fragment {
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                     },//官媒
-                    {//newActivity(EvaluationActivity.class),
+                    {       newActivity(EvaluationActivity.class),
                             null,
                             newActivity(CourseSelection.class),
                             newActivity(AgendaActivity.class),

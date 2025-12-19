@@ -73,6 +73,7 @@
         <activity
             android:name=".academic.SchoolRoll"
             android:configChanges="uiMode|orientation|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true" />
         <activity
             android:name=".academic.CourseQuery"
@@ -119,6 +120,9 @@
             android:exported="false" />
         <activity
             android:name=".academic.EvaluationActivity"
+
+            android:configChanges="uiMode|orientation|screenSize"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true" />
         <activity
             android:name=".academic.AgendaActivity"

@@ -26,7 +26,6 @@ import com.sysu.edu.databinding.RecyclerViewScrollBinding;
 import com.sysu.edu.extra.LoginActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -38,7 +37,6 @@ public class EvaluationCourseFragment extends Fragment {
     Params params;
     Handler handler;
     ActivityResultLauncher<Intent> launch;
-    ArrayList<JSONObject> evaluations = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,21 +46,28 @@ public class EvaluationCourseFragment extends Fragment {
         binding.getRoot().setLayoutManager(sgm);
         EvaluationCategoryFragment.CategoryAdapter adp = new EvaluationCategoryFragment.CategoryAdapter(requireContext());
         binding.getRoot().setAdapter(adp);
+        adp.setKeys(new String[]{"kcmc", "skjsmc", "kcdlmc", "kkyxmc", "bjmc","kcdm","xnxqmc"});
+        adp.setValues(new String[]{"%s", "教师：%s", "课程类型：%s", "开课院系：%s", "教学班号：%s","课程代码：%s","学期：%s"});
+        adp.setParams(new String[]{"rwid", "wjid","sxz","pjrdm","bpdm","kcdm","rwh"});
+        adp.setNavigation(R.id.from_course_to_evaluation);
+        String type = requireArguments().getString("firstwjid");
+        String rwid = requireArguments().getString("rwid");
+        String account = requireArguments().getString("pjrdm");
+        if (type!=null && rwid !=null && account !=null) {
+            getEvaluation(type, rwid, account);
+        }
         launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
             if (o.getResultCode() == Activity.RESULT_OK) {
-                getEvaluation();
+                getEvaluation(type, rwid, account);
             }
         });
-
-        getEvaluation();
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == 1) {
                     JSONObject data = JSON.parseObject((String) msg.obj);
                     if (data.get("code").equals("200")) {
-                        data.getJSONObject("result").getJSONArray("list").forEach(e -> evaluations.add((JSONObject) e));
-                        adp.set(evaluations);
+                        data.getJSONObject("result").getJSONArray("list").forEach(e -> adp.add((JSONObject) e));
                     } else {
                         launch.launch(new Intent(requireContext(), LoginActivity.class));
                     }
@@ -74,8 +79,9 @@ public class EvaluationCourseFragment extends Fragment {
         };
         return binding.getRoot();
     }
-    public void getEvaluation() {
-        new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://pjxt.sysu.edu.cn/personnelEvaluation/listObtainPersonnelEvaluationTasks?pageNum=1&pageSize=10")
+
+    public void getEvaluation(String wjid, String rwid, String account) {
+        new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://pjxt.sysu.edu.cn/personnelEvaluation/listEcaluationRalationshipEnriry?pjrdm=" + account + "&wjid=" + wjid + "&pageNum=1&pageSize=20&rwid=" + rwid)
                 .header("Cookie", params.getCookie())
                 //.addHeader("Cookie", "JSESSIONID=F547A1B2729098E0B101716397DC48DC;INCO=9b1595d95278e78f17d51a5f35287020;")
                 // .post(RequestBody.create("{\"acadYear\":\"2024-2\",\"examWeekId\":\"1864116471884476417\",\"examWeekName\":\"18-19周期末考\",\"examDate\":\"\"}", MediaType.parse("application/json")))

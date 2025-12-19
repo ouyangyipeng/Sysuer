@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -45,42 +44,53 @@ public class EvaluationCategoryFragment extends Fragment {
     Params params;
     Handler handler;
     ActivityResultLauncher<Intent> launch;
-    ArrayList<JSONObject> evaluations = new ArrayList<>();
+    RecyclerViewScrollBinding binding;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerViewScrollBinding binding = RecyclerViewScrollBinding.inflate(inflater, container, false);
-        params = new Params(requireActivity());
-        StaggeredGridLayoutManager sgm = new StaggeredGridLayoutManager(params.getColumn(), 1);
-        binding.getRoot().setLayoutManager(sgm);
-        CategoryAdapter adp = new CategoryAdapter(requireContext());
-        binding.getRoot().setAdapter(adp);
-        launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
-            if (o.getResultCode() == Activity.RESULT_OK) {
-                getEvaluation();
-            }
-        });
 
-        getEvaluation();
-        handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                if (msg.what == 1) {
-                    JSONObject data = JSON.parseObject((String) msg.obj);
-                    if (data.get("code").equals("200")) {
-                        data.getJSONObject("result").getJSONArray("list").forEach(e -> evaluations.add((JSONObject) e));
-                        adp.set(evaluations);
-                    } else {
-                        launch.launch(new Intent(requireContext(), LoginActivity.class));
-                    }
-                } else if (msg.what == -1) {
-                    params.toast(R.string.no_wifi_warning);
-                    Snackbar.make(binding.getRoot(), "去登录", Snackbar.LENGTH_LONG).setAction("登录", v -> launch.launch(new Intent(requireContext(), LoginActivity.class).putExtra("url", "https://pjxt.sysu.edu.cn"))).show();
+        if (binding == null) {
+            binding = RecyclerViewScrollBinding.inflate(inflater, container, false);
+            params = new Params(requireActivity());
+            StaggeredGridLayoutManager sgm = new StaggeredGridLayoutManager(params.getColumn(), 1);
+            binding.getRoot().setLayoutManager(sgm);
+            CategoryAdapter adp = new CategoryAdapter(requireContext());
+            adp.setKeys(new String[]{"rwmc", "rwkssj", "rwjssj", "pjsl", "ypsl"});
+            adp.setValues(new String[]{"%s", "起始时间：%s", "结束时间：%s", "总评数：%s", "已评数：%s"});
+            adp.setParams(new String[]{"rwid", "firstwjid","pjrdm"});
+            adp.setNavigation(R.id.from_category_to_course);
+            binding.getRoot().setAdapter(adp);
+            launch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {
+                if (o.getResultCode() == Activity.RESULT_OK) {
+                    getEvaluation();
                 }
-            }
-        };
+            });
+            getEvaluation();
+            handler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    if (msg.what == 1) {
+                        JSONObject data = JSON.parseObject((String) msg.obj);
+                        if (data.get("code").equals("200")) {
+                            data.getJSONObject("result").getJSONArray("list").forEach(e -> adp.add((JSONObject) e));
+                        } else {
+                            launch.launch(new Intent(requireContext(), LoginActivity.class));
+                        }
+                    } else if (msg.what == -1) {
+                        params.toast(R.string.no_wifi_warning);
+                        Snackbar.make(binding.getRoot(), "去登录", Snackbar.LENGTH_LONG).setAction("登录", v -> launch.launch(new Intent(requireContext(), LoginActivity.class).putExtra("url", "https://pjxt.sysu.edu.cn"))).show();
+                    }
+                }
+            };
+        }
         return binding.getRoot();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     public void getEvaluation() {
         new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://pjxt.sysu.edu.cn/personnelEvaluation/listObtainPersonnelEvaluationTasks?pageNum=1&pageSize=10")
                 .header("Cookie", params.getCookie())
@@ -107,18 +117,25 @@ public class EvaluationCategoryFragment extends Fragment {
     public static class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Context context;
         ArrayList<JSONObject> data = new ArrayList<>();
+        String[] keys;
+        String[] values;
+        String[] params;
+        int nav;
 
         public CategoryAdapter(Context context) {
             super();
             this.context = context;
         }
 
-        public void set(ArrayList<JSONObject> mData) {
+        /*public void set(ArrayList<JSONObject> mData) {
             clear();
             data.addAll(mData);
             notifyItemRangeInserted(0, mData.size());
+        }*/
+        public void add(JSONObject e) {
+            data.add(e);
+            notifyItemInserted(data.size() - 1);
         }
-
 
         public void clear() {
             int tmp = getItemCount();
@@ -133,20 +150,47 @@ public class EvaluationCategoryFragment extends Fragment {
             };
         }
 
+        public void setKeys(String[] keys) {
+            this.keys = keys;
+        }
+
+        public void setValues(String[] values) {
+            this.values = values;
+        }
+        public void setParams(String[] params) {
+            this.params = params;
+        }
+
+        public void setNavigation(int nav) {
+            this.nav = nav;
+        }
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ItemEvaluationBinding binding = ItemEvaluationBinding.bind(holder.itemView);
-            binding.open.setOnClickListener(v -> {
-                NavController navController = ((NavHostFragment) Objects.requireNonNull(((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.fragment))).getNavController();
-                navController.navigate(R.id.from_category_to_course);
-            });
+            Bundle args = new Bundle();
+            for (String param : params) {
+                args.putString(param, data.get(position).getString(param));
+            }
+            binding.open.setOnClickListener(v -> ((NavHostFragment) Objects.requireNonNull(((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.fragment))).getNavController().navigate(nav, args));
             holder.itemView.setOnClickListener(v -> {
             });
+            //String[] keys = {"rwmc", "rwkssj", "rwjssj", "pjsl", "ypsl"};
+            //[] formats = {"%s", "起始时间：%s", "结束时间：%s", "总评数：%s", "已评数：%s"};
+            binding.title.setText(String.format(values[0], data.get(position).getString(keys[0]) == null ? "" : data.get(position).getString(keys[0])));
+            StringBuilder val = new StringBuilder();
+            for (int i = 1; i < keys.length; i++) {
+                System.out.println(data.get(position));
+                val.append(String.format(values[i], data.get(position).getString(keys[i]) == null ? "" : data.get(position).getString(keys[i])));
+                val.append("\n");
+            }
+            binding.startTime.setText(val.toString().trim());
+            /*
             binding.title.setText(data.get(position).getString("rwmc"));
             binding.startTime.setText(String.format("起始时间：%s", data.get(position).getString("rwkssj")));
             binding.endTime.setText(String.format("结束时间：%s", data.get(position).getString("rwjssj")));
             binding.total.setText(String.format("总评数：%s", data.get(position).getString("pjsl")));
             binding.totalFor.setText(String.format("已评数：%s", data.get(position).getString("ypsl")));
+       */
         }
 
         @Override

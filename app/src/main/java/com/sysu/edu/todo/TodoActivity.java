@@ -280,8 +280,8 @@ public class TodoActivity extends AppCompatActivity {
 
                 if (!titleAdapter.getTitle().equals(dueDate)) {
                     titleAdapter = new TitleAdapter(this);
-                    f.getConcatAdapter().addAdapter(titleAdapter);
                     titleAdapter.setTitle(dueDate);
+                    f.getConcatAdapter().addAdapter(titleAdapter);
                     todoAdapter = new TodoAdapter(this);
                     f.getConcatAdapter().addAdapter(todoAdapter);
                 }

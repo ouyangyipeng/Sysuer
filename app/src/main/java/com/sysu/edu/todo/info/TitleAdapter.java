@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textview.MaterialTextView;
 import com.sysu.edu.databinding.ItemTitleBinding;
 
 public class TitleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context context;
     String title = "";
+    int n=0;
     public TitleAdapter(Context context){
         super();
         this.context = context;
@@ -32,13 +34,18 @@ public class TitleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return new RecyclerView.ViewHolder(ItemTitleBinding.inflate(LayoutInflater.from(context), parent, false).getRoot()){};
     }
 
+    public void setHeader(int n){
+        this.n = n;
+    }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ItemTitleBinding.bind(holder.itemView).title.setText(title);
+        MaterialTextView titleView = ItemTitleBinding.bind(holder.itemView).title;
+        titleView.setText(title);
+        titleView.setTextAppearance(new int[]{com.google.android.material.R.style.TextAppearance_Material3_TitleMedium,com.google.android.material.R.style.TextAppearance_Material3_TitleLarge_Emphasized,com.google.android.material.R.style.TextAppearance_Material3_TitleLarge}[n]);
     }
     @Override
     public int getItemCount() {
-        return 0;
+        return 1;
     }
         @Override
     public int getItemViewType(int position) {
