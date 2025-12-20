@@ -69,7 +69,7 @@ public class BrowserActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 //System.out.println(request.getUrl());
                 //webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0");
-                 view.loadUrl(String.valueOf(request.getUrl()));
+                view.loadUrl(String.valueOf(request.getUrl()));
                 return true;
             }
 
@@ -77,25 +77,28 @@ public class BrowserActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 //System.out.println(url);
                 Pattern pattern = Pattern.compile("//cas.+.sysu.edu.cn");
-                if(pattern.matcher(url).find()){
-                    web.evaluateJavascript(String.format("document.querySelector('#username').value='%s';document.querySelector('#password').value='%s';",username,password), s -> {
+                if (pattern.matcher(url).find()) {
+//                    web.evaluateJavascript(String.format("document.querySelector('#username').value='%s';document.querySelector('#password').value='%s';",username,password), s -> {
+//                    });
+                    web.evaluateJavascript(String.format("(function(){var component=document.querySelector('.para-widget-account-psw');var data=component[Object.keys(component).filter(k => k.startsWith('jQuery') && k.endsWith('2'))[0]].widget_accountPsw;data.loginModel.dataField.username='%s';data.loginModel.dataField.password='%s';data.passwordInputVal='password';data.$loginBtn.click()})()", username, password), s -> {
                     });
                 }
                 super.onPageFinished(view, url);
             }
+
             @Override
             public void onLoadResource(WebView view, String url) {
+
                 view.evaluateJavascript("document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1024px, initial-scale=' + (document.documentElement.clientWidth / 1024));", null);
             }
         });
         binding.tool.setOnMenuItemClickListener(menuItem -> {
-            if(menuItem.getItemId()==R.id.js){
+            if (menuItem.getItemId() == R.id.js) {
                 String url = web.getUrl();
-                url = url==null?"":url;
+                url = url == null ? "" : url;
                 ArrayList<JSONObject> j = js.searchJS(url);
-                new MaterialAlertDialogBuilder(BrowserActivity.this).setTitle("脚本").setItems(js.getTitles(j), (dialogInterface, i) -> {
-                    web.evaluateJavascript(j.get(i).getString("script"), s -> {
-                    });}).create().show();
+                new MaterialAlertDialogBuilder(BrowserActivity.this).setTitle("脚本").setItems(js.getTitles(j), (dialogInterface, i) -> web.evaluateJavascript(j.get(i).getString("script"), s -> {
+                })).create().show();
             }
             return false;
         });
@@ -136,8 +139,8 @@ public class BrowserActivity extends AppCompatActivity {
         webSettings.setLoadsImagesAutomatically(true);
         webSettings.setDefaultTextEncodingName("utf-8");
         web.loadUrl(url);
-
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && web.canGoBack()) {
@@ -148,8 +151,9 @@ public class BrowserActivity extends AppCompatActivity {
     }
 
     protected void onDestroy() {
-        if (web != null) {web.stopLoading();
-            ((ViewGroup)web.getParent()).removeView(web);
+        if (web != null) {
+            web.stopLoading();
+            ((ViewGroup) web.getParent()).removeView(web);
             web.destroy();
             web = null;
         }

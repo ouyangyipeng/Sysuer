@@ -1,5 +1,6 @@
 package com.sysu.edu.home;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -28,7 +30,6 @@ import com.sysu.edu.academic.CETActivity;
 import com.sysu.edu.academic.CalendarActivity;
 import com.sysu.edu.academic.ClassroomQueryActivity;
 import com.sysu.edu.academic.CourseCompletion;
-import com.sysu.edu.academic.CourseSelection;
 import com.sysu.edu.academic.EvaluationActivity;
 import com.sysu.edu.academic.ExamActivity;
 import com.sysu.edu.academic.Grade;
@@ -38,6 +39,7 @@ import com.sysu.edu.academic.SchoolWorkWarning;
 import com.sysu.edu.academic.TrainingSchedule;
 import com.sysu.edu.databinding.FragmentServiceBinding;
 import com.sysu.edu.databinding.ItemServiceBoxBinding;
+import com.sysu.edu.extra.LaunchMiniProgram;
 import com.sysu.edu.life.Pay;
 import com.sysu.edu.life.SchoolBus;
 import com.sysu.edu.news.News;
@@ -59,7 +61,7 @@ public class ServiceFragment extends Fragment {
             fragment = binding.getRoot();
             launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), o -> {});
             service_container = binding.serviceContainer;
-            String[] titles = new String[]{a(R.string.academy),a(R.string.study),a(R.string.student_affair),a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official_media), a(R.string.academy), a(R.string.study_platform), a(R.string.life), "AI"};
+            String[] titles = new String[]{a(R.string.academy),a(R.string.study),a(R.string.student_affair),a(R.string.news), a(R.string.system), a(R.string.official_website), a(R.string.official), a(R.string.academy), a(R.string.study_platform), a(R.string.life), "AI"};
             String[][] items = new String[][]{
                     {a(R.string.school_enroll), a(R.string.cet), a(R.string.register_info), a(R.string.school_work_warning),a(R.string.course_completion)},
                     {a(R.string.todo)},
@@ -70,7 +72,7 @@ public class ServiceFragment extends Fragment {
                     {"中山大学官网", "本科招生", "研究生招生", "人才招聘", "百年校庆", "博物馆", "图书馆", "校友会", "公务电子邮件系统"},
                     {a(R.string.qrcode), a(R.string.wework), "中大招生"},
                     {a(R.string.evaluation), a(R.string.course_selection), a(R.string.agenda), a(R.string.exam), a(R.string.calendar), a(R.string.self_study_room), a(R.string.score), a(R.string.course), a(R.string.personal_development_plan), a(R.string.trainType), a(R.string.major_info)},
-                    {"SeeLight", "雨课堂", "课堂派", "在线教学平台", "中国大学（慕课）"},
+                    {"SeeLight", "雨课堂", "课堂派", "在线教学平台", "中国大学（慕课）","WeLearn"},
                     {"校园地图", a(R.string.school_bus), "逸仙通行", "校医院", "宿舍报修", "水电费", "缴费大厅"},
                     {"Deepseek", "逸闻", "学工君"}
             };
@@ -112,14 +114,23 @@ public class ServiceFragment extends Fragment {
                             browse("https://mail.sysu.edu.cn/"),
                     },//官网
                     {
-                            v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
-                            v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
+                            v -> {
+                                String linking = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("qrcode", "");
+                                if (linking.isEmpty()) {
+                                    new LaunchMiniProgram(requireActivity()).launchMiniProgram("gh_85575b9f544e");
+                                } else {
+                                    try {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(linking)));
+                                    } catch (ActivityNotFoundException e) {
+                                        // Toast.makeText(requireContext(), R.string.no_app, Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            },
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                             v -> startActivity(Objects.requireNonNull(requireActivity().getPackageManager().getLaunchIntentForPackage("com.tencent.wework")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)),
                     },//官媒
                     {       newActivity(EvaluationActivity.class),
-                            null,
-                            newActivity(CourseSelection.class),
+                           /* newActivity(CourseSelection.class),*/null,
                             newActivity(AgendaActivity.class),
                             newActivity(ExamActivity.class),
                             newActivity(CalendarActivity.class),
@@ -137,13 +148,14 @@ public class ServiceFragment extends Fragment {
                             browse("https://www.ketangpai.com/"),
                             browse("https://lms.sysu.edu.cn/"),
                             browse("https://www.icourse163.org/"),
+                            browse("https://welearn.sflep.com/index.aspx")
                     },//学习
                     {null,
                             newActivity(SchoolBus.class),
                             null,
                             null,
                             null,
-                            null,
+                            browse("https://zhny.sysu.edu.cn/h5/#/"),
                             newActivity(Pay.class),
                     },//生活
                     {

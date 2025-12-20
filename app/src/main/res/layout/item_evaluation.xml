@@ -14,16 +14,19 @@
         android:orientation="vertical">
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
+            style = "@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="0dp"
             android:layout_marginEnd="16dp"
+            android:drawablePadding="16dp"
+            android:gravity="center"
+            app:drawableStartCompat="@drawable/window"
             android:text="@string/evaluation"
             android:textAppearance="?attr/textAppearanceTitleLarge"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="?android:attr/listDivider" />
         <com.google.android.material.textview.MaterialTextView
