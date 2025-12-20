@@ -126,12 +126,6 @@ public class EvaluationCategoryFragment extends Fragment {
             super();
             this.context = context;
         }
-
-        /*public void set(ArrayList<JSONObject> mData) {
-            clear();
-            data.addAll(mData);
-            notifyItemRangeInserted(0, mData.size());
-        }*/
         public void add(JSONObject e) {
             data.add(e);
             notifyItemInserted(data.size() - 1);
@@ -174,23 +168,14 @@ public class EvaluationCategoryFragment extends Fragment {
             binding.open.setOnClickListener(v -> ((NavHostFragment) Objects.requireNonNull(((AppCompatActivity) context).getSupportFragmentManager().findFragmentById(R.id.fragment))).getNavController().navigate(nav, args));
             holder.itemView.setOnClickListener(v -> {
             });
-            //String[] keys = {"rwmc", "rwkssj", "rwjssj", "pjsl", "ypsl"};
-            //[] formats = {"%s", "起始时间：%s", "结束时间：%s", "总评数：%s", "已评数：%s"};
             binding.title.setText(String.format(values[0], data.get(position).getString(keys[0]) == null ? "" : data.get(position).getString(keys[0])));
             StringBuilder val = new StringBuilder();
             for (int i = 1; i < keys.length; i++) {
-                System.out.println(data.get(position));
                 val.append(String.format(values[i], data.get(position).getString(keys[i]) == null ? "" : data.get(position).getString(keys[i])));
                 val.append("\n");
             }
             binding.startTime.setText(val.toString().trim());
-            /*
-            binding.title.setText(data.get(position).getString("rwmc"));
-            binding.startTime.setText(String.format("起始时间：%s", data.get(position).getString("rwkssj")));
-            binding.endTime.setText(String.format("结束时间：%s", data.get(position).getString("rwjssj")));
-            binding.total.setText(String.format("总评数：%s", data.get(position).getString("pjsl")));
-            binding.totalFor.setText(String.format("已评数：%s", data.get(position).getString("ypsl")));
-       */
+
         }
 
         @Override

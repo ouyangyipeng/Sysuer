@@ -162,7 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:layout_weight="1"
-            android:text="@string/submit"
+            android:text="@string/confirm"
             android:transitionName="miniapp"
             app:icon="@drawable/submit"/>
         <com.google.android.material.button.MaterialButton

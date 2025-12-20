@@ -4,6 +4,7 @@
     app:startDestination="@id/category">
         <fragment
             android:id="@+id/category"
+
             android:name="com.sysu.edu.academic.EvaluationCategoryFragment">
             <action
                 android:id="@+id/from_category_to_course"

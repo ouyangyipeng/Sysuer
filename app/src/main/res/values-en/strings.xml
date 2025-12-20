@@ -134,7 +134,7 @@
     <string name="section">Class</string>
     <string name="special">Special Course</string>
     <string name="school">School</string>
-    <string name="submit">YES</string>
+    <string name="confirm">YES</string>
     <string name="course_query">Course Query</string>
     <string name="week">Week</string>
     <string name="add_filter">Advanced Filter</string>
@@ -185,4 +185,23 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="next_week">Next Week</string>
     <string name="select">Choose</string>
+    <string name="one_day">1 day</string>
+    <string name="five_mins">5 mins</string>
+    <string name="custom_remind_title">Advance Time (min)</string>
+    <string name="tag">Tag</string>
+    <string name="save">Save</string>
+    <string name="submit">Submit</string>
+    <string name="morning">Morning</string>
+    <string name="noon">Noon</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="evening">Evening</string>
+    <string name="fiveteen_mins">15 mins</string>
+    <string name="half_hour">30 mins</string>
+    <string name="one_hour">1 hour</string>
+    <string name="custom">Custom</string>
+    <string name="none">None</string>
+    <string name="on_time">On Time</string>
+    <string name="please_enter_content">Please enter the content</string>
+    <string name="save_successfully">Save successfully</string>
+    <string name="save_fail">Fail to Save</string>
 </resources>

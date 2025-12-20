@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/floating_toolbar"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
+        android:id="@+id/floating_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view">
+
+        <!-- floating toolbar sample content -->
+        <com.google.android.material.overflow.OverflowLinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/save"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/save"
+                android:text="@string/save"
+                app:icon="@drawable/save"
+                app:layout_overflowIcon="@drawable/save"
+                app:layout_overflowText="@string/save" />
+
+            <Button
+                android:id="@+id/reset"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/reset"
+                android:text="@string/reset"
+                app:icon="@drawable/reset"
+                app:layout_overflowIcon="@drawable/reset"
+                app:layout_overflowText="@string/reset" />
+            <Button
+                android:id="@+id/submit"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/confirm"
+                android:text="@string/confirm"
+                app:icon="@drawable/submit"
+                app:layout_overflowIcon="@drawable/submit"
+                app:layout_overflowText="@string/confirm" />
+        </com.google.android.material.overflow.OverflowLinearLayout>
+
+    </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

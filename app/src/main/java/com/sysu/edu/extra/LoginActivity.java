@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.tool.setNavigationOnClickListener(v->finishAfterTransition());
         model.setTarget(getIntent().getStringExtra("url")==null ?"https://jwxt.sysu.edu.cn/jwxt/yd/index/#/Home":getIntent().getStringExtra("url"));
         model.setUrl(TargetUrl.LOGIN);
-        binding.tool.getMenu().add(R.string.submit).setIcon(R.drawable.submit).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener(menuItem -> {
+        binding.tool.getMenu().add(R.string.confirm).setIcon(R.drawable.submit).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener(menuItem -> {
             web.loadUrl(Objects.requireNonNull(getIntent().getStringExtra("url")));
             return false;
         });

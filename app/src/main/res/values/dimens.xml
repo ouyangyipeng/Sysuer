@@ -3,5 +3,8 @@
 
 
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_low">4dp</dimen>
+    <dimen name="padding_zero">0dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
 </resources>

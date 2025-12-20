@@ -105,7 +105,7 @@ public class AcademyNotification extends AppCompatActivity {
         adp.add(f1);
         adp.add(f2);
         binding.pager.setAdapter(adp);
-        dialog = new MaterialAlertDialogBuilder(this).setMessage("").setPositiveButton(R.string.submit, (dialogInterface, i) -> {
+        dialog = new MaterialAlertDialogBuilder(this).setMessage("").setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
         }).create();
         new TabLayoutMediator(binding.tabs, binding.pager, (tab, position) -> tab.setText(new int[]{R.string.academic_affair_notice, R.string.school_affair_notice}[position])).attach();
         handler = new Handler(Looper.getMainLooper()) {

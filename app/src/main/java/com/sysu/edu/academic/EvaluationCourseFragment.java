@@ -46,9 +46,9 @@ public class EvaluationCourseFragment extends Fragment {
         binding.getRoot().setLayoutManager(sgm);
         EvaluationCategoryFragment.CategoryAdapter adp = new EvaluationCategoryFragment.CategoryAdapter(requireContext());
         binding.getRoot().setAdapter(adp);
-        adp.setKeys(new String[]{"kcmc", "skjsmc", "kcdlmc", "kkyxmc", "bjmc","kcdm","xnxqmc"});
-        adp.setValues(new String[]{"%s", "教师：%s", "课程类型：%s", "开课院系：%s", "教学班号：%s","课程代码：%s","学期：%s"});
-        adp.setParams(new String[]{"rwid", "wjid","sxz","pjrdm","bpdm","kcdm","rwh"});
+        adp.setKeys(new String[]{"kcmc", "skjsmc", "kcdlmc", "kkyxmc", "bjmc","kcdm","xnxqmc","lsjgzt"});
+        adp.setValues(new String[]{"%s", "教师：%s", "课程类型：%s", "开课院系：%s", "教学班号：%s","课程代码：%s","学期：%s","评价状态：%s（0为待评价、2为已评价、3为已保存）"});
+        adp.setParams(new String[]{"rwid", "wjid","sxz","pjrdm","bpdm","kcdm","rwh","lsjgzt","bpmc"});
         adp.setNavigation(R.id.from_course_to_evaluation);
         String type = requireArguments().getString("firstwjid");
         String rwid = requireArguments().getString("rwid");

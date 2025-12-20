@@ -67,7 +67,7 @@ public class TodoActivity extends AppCompatActivity {
         dialogBinding.prioritySlider.addOnChangeListener((slider, value, fromUser) -> todoInfo.setPriority((int) value));
         todoDialog = new MaterialAlertDialogBuilder(this)
                 .setView(dialogBinding.getRoot())
-                .setPositiveButton(R.string.submit, (dialog1, which) -> {
+                .setPositiveButton(R.string.confirm, (dialog1, which) -> {
                     todoInfo.setTitle(Objects.requireNonNull(dialogBinding.title.getText()).toString());
                     todoInfo.setDescription(Objects.requireNonNull(dialogBinding.description.getText()).toString());
                     if (todoInfo.getFunction() == TodoInfo.ADD) {
@@ -115,7 +115,7 @@ public class TodoActivity extends AppCompatActivity {
         AlertDialog remindDialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.custom_remind_title)
                 .setView(numberPicker)
-                .setPositiveButton(R.string.submit, (dialog, which) -> todoInfo.setRemindTime(String.format(Locale.getDefault(), "%02d%s", numberPicker.getValue(), getString(R.string.minute))))
+                .setPositiveButton(R.string.confirm, (dialog, which) -> todoInfo.setRemindTime(String.format(Locale.getDefault(), "%02d%s", numberPicker.getValue(), getString(R.string.minute))))
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         for (AlertDialog dialog : new AlertDialog[]{todoDialog, todo_add_dialog, remindDialog}) {
