@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SYSUER</string>
-    <string name="menu_account">Me</string>
-    <string name="menu_service">Service</string>
-    <string name="menu_activity">Activity</string>
+    <string name="account">Me</string>
+    <string name="service">Service</string>
+    <string name="activity">Activity</string>
     <string name="course">Course</string>
     <string name="location">Location</string>
     <string name="time">Time</string>
@@ -195,7 +195,7 @@
     <string name="noon">Noon</string>
     <string name="afternoon">Afternoon</string>
     <string name="evening">Evening</string>
-    <string name="fiveteen_mins">15 mins</string>
+    <string name="fifteen_mins">15 mins</string>
     <string name="half_hour">30 mins</string>
     <string name="one_hour">1 hour</string>
     <string name="custom">Custom</string>
@@ -209,4 +209,7 @@
     <string name="official">Official</string>
     <string name="fill">Fill</string>
     <string name="assistant">Assistant</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="next_class">Next Class</string>
+    <string name="shortcut">Shortcut</string>
 </resources>

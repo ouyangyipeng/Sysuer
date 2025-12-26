@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">中大儿</string>
-    <string name="menu_account">我的</string>
-    <string name="menu_service">服务</string>
-    <string name="menu_activity">活动</string>
+    <string name="account">我的</string>
+    <string name="service">服务</string>
+    <string name="activity">活动</string>
     <string name="course">课程</string>
     <string name="location">位置</string>
     <string name="time">时间</string>
@@ -188,7 +188,7 @@
     <string name="noon">中午</string>
     <string name="afternoon">下午</string>
     <string name="evening">晚上</string>
-    <string name="fiveteen_mins">15分钟</string>
+    <string name="fifteen_mins">15分钟</string>
     <string name="half_hour">30分钟</string>
     <string name="one_hour">1小时</string>
     <string name="custom">自定义</string>
@@ -208,4 +208,7 @@
     <string name="official">官方</string>
     <string name="fill">填充</string>
     <string name="assistant">助教</string>
+    <string name="dashboard">面板</string>
+    <string name="next_class">下一节课</string>
+    <string name="shortcut">快捷方式</string>
 </resources>

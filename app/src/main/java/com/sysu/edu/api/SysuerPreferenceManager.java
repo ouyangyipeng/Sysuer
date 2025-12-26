@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SysuerPreferenceManager extends ViewModel {
     private final static String Theme = "theme";
     private final static String Home = "home";
@@ -14,6 +17,8 @@ public class SysuerPreferenceManager extends ViewModel {
     private final static String IsFirstLaunch = "launch";
     private final static String IsAgree = "agree";
     private final MutableLiveData<Boolean> isAgreeLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Set<String>> dashboardLiveData = new MutableLiveData<>();
+
     private SharedPreferences pm;
 
     public void setPM(SharedPreferences oldPM) {
@@ -33,6 +38,18 @@ public class SysuerPreferenceManager extends ViewModel {
         return getString(Theme, "2");
     }
 
+    private Set<String> getSet(String key) {
+        return pm.getStringSet(key, new HashSet<>());
+    }
+    public Set<String> getDashboard() {
+        return getSet("dashboard");
+    }
+    public MutableLiveData<Set<String>> getDashboardLiveData() {
+        return dashboardLiveData;
+    }
+    public void setDashboardLiveData(Set<String> dashboard){
+        dashboardLiveData.setValue(dashboard);
+    }
     public String getHome() {
         return getString(Home, "2");
     }
@@ -44,7 +61,7 @@ public class SysuerPreferenceManager extends ViewModel {
         return getString(Qrcode, "");
     }
     public boolean getIsAgree(){
-        return getBoolean(IsAgree, false);
+        return !getBoolean(IsAgree, false);
     }
 
     public void setIsAgree(boolean isAgree){
@@ -70,4 +87,8 @@ public class SysuerPreferenceManager extends ViewModel {
         isAgreeLiveData.setValue(isAgree);
     }
 
+    public void initLiveData(){
+        isAgreeLiveData.setValue(getIsAgree());
+        dashboardLiveData.setValue(getDashboard());
+    }
 }

@@ -1,8 +1,8 @@
 <resources>
     <string-array name="home" >
-        <item>@string/menu_activity</item>
-        <item>@string/menu_service</item>
-        <item>@string/menu_account</item>
+        <item>@string/activity</item>
+        <item>@string/service</item>
+        <item>@string/account</item>
     </string-array>
     <string-array name="sponsors">
         <item>Alipay</item>

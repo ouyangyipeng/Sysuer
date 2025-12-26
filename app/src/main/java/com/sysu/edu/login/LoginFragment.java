@@ -24,7 +24,7 @@ public class LoginFragment extends Fragment {
         model = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         model.getPassword().observe(getViewLifecycleOwner(), binding.password::setText);
         model.getAccount().observe(getViewLifecycleOwner(), binding.username::setText);
-        model.getLogin().observe(getViewLifecycleOwner(),binding.loginButton::setEnabled);
+        model.getLogin().observe(getViewLifecycleOwner(), b -> binding.loginButton.setEnabled(!b));
 //        model.getLogin().observe(getViewLifecycleOwner(), a -> {
 //            if(!a){
 ////                binding.loginButton.setEnabled(true);
@@ -39,8 +39,9 @@ public class LoginFragment extends Fragment {
             String username = String.valueOf(binding.username.getText());
             String password = String.valueOf(binding.password.getText());
             if (!username.isEmpty() && !password.isEmpty()) {
-                //binding.loginButton.setEnabled(false);
-               model.setUrl(String.format("javascript:(function(){var component=document.querySelector('.para-widget-account-psw');var data=component[Object.keys(component).filter(k => k.startsWith('jQuery') && k.endsWith('2'))[0]].widget_accountPsw;data.loginModel.dataField.username='%s';data.loginModel.dataField.password='%s';data.passwordInputVal='password';data.$loginBtn.click()})()", username, password));
+                model.setAccount(username);
+                model.setPassword(password);
+                model.setUrl(String.format("javascript:(function(){var component=document.querySelector('.para-widget-account-psw');var data=component[Object.keys(component).filter(k => k.startsWith('jQuery') && k.endsWith('2'))[0]].widget_accountPsw;data.loginModel.dataField.username='%s';data.loginModel.dataField.password='%s';data.passwordInputVal='password';data.$loginBtn.click()})()", username, password));
             }
         });
         return binding.getRoot();

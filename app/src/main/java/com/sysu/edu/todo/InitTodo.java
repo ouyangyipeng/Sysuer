@@ -203,7 +203,7 @@ public class InitTodo {
                     break;
                 case 2: // remind
                     for (int j = 0; j < 6; j++) {
-                        menu.add(0, Menu.NONE, Menu.NONE, new int[]{R.string.on_time, R.string.five_mins, R.string.fiveteen_mins, R.string.half_hour, R.string.one_hour, R.string.one_day}[j])
+                        menu.add(0, Menu.NONE, Menu.NONE, new int[]{R.string.on_time, R.string.five_mins, R.string.fifteen_mins, R.string.half_hour, R.string.one_hour, R.string.one_day}[j])
                                 .setOnMenuItemClickListener(item -> {
                                     itemPreferenceBinding.itemContent.setText(item.getTitle());
                                     return true;

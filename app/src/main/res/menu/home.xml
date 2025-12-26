@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_activity"
         android:icon="@drawable/forum"
-        android:title="@string/menu_activity" />
+        android:title="@string/dashboard" />
 
     <item
         android:id="@+id/navigation_service"
         android:icon="@drawable/dashboard"
-        android:title="@string/menu_service" />
+        android:title="@string/service" />
 
     <item
         android:id="@+id/navigation_account"
         android:icon="@drawable/account"
-        android:title="@string/menu_account" />
+        android:title="@string/account" />
 
 </menu>

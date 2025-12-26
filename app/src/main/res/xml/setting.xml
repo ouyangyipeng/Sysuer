@@ -6,62 +6,83 @@
             app:entryValues="@array/value"
             app:icon="@drawable/theme"
             app:key="theme"
-            app:summary="@string/follow_system"
-            app:title="@string/theme"/>
+            app:defaultValue="2"
+            app:title="@string/theme" />
         <com.sysu.edu.preference.Preference
             app:entries="@array/theme"
             app:entryValues="@array/value"
             app:icon="@drawable/color"
             app:key="icon_theme"
-            app:summary="@string/follow_system"
-            app:title="@string/icon_theme"/>
+
+            app:defaultValue="2"
+            app:title="@string/icon_theme" />
         <com.sysu.edu.preference.Preference
             app:entries="@array/language"
             app:entryValues="@array/value"
+            app:defaultValue="2"
             app:key="language"
             app:icon="@drawable/language"
-            app:summary="@string/follow_system"
-            app:title="@string/language"/>
+            app:title="@string/language" />
         <com.sysu.edu.preference.Preference
             app:entries="@array/font_size"
             app:entryValues="@array/font_value"
             app:icon="@drawable/font"
-            app:key="fontSize"
             app:isPreferenceVisible="false"
+            app:key="fontSize"
             app:summary="@string/follow_system"
-            app:title="@string/font_size"/>
+            app:title="@string/font_size" />
         <com.sysu.edu.preference.Preference
+            app:defaultValue="0"
             app:entryValues="@array/value"
+            app:icon="@drawable/home"
             app:entries="@array/home"
             app:key="home"
-            app:icon="@drawable/home"
-            app:summary="活动"
-            app:title="@string/home"/>
+            app:title="@string/home" />
     </PreferenceCategory>
-    <PreferenceCategory app:title="@string/menu_activity">
+    <PreferenceCategory app:title="@string/dashboard">
         <EditTextPreference
             app:icon="@drawable/qrcode"
             app:key="qrcode"
             app:title="@string/qrcode"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
+
+        <MultiSelectListPreference
+            app:defaultValue="@array/dashboard_values"
+            app:entries="@array/dashboard"
+            app:entryValues="@array/dashboard_values"
+            app:icon="@drawable/window"
+            app:key="dashboard"
+            app:positiveButtonText="@string/confirm"
+            app:summary="@string/custom"
+            app:title="@string/dashboard" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/login">
+        <com.sysu.edu.preference.Preference
+            app:defaultValue="2"
+            app:entries="@array/login_way"
+            app:entryValues="@array/login_value"
+            app:icon="@drawable/account"
+            app:key="login"
+            app:title="@string/login" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/app">
         <rikka.material.preference.MaterialSwitchPreference
             android:summary="应用启动时自动检测更新"
             app:defaultValue="true"
             app:icon="@drawable/refresh"
             app:key="update"
-            app:title="@string/launch_update"/>
+            app:title="@string/launch_update" />
         <Preference
             app:icon="@drawable/info"
             app:title="@string/about">
-            <intent android:action="android.intent.action.VIEW"
+            <intent
+                android:action="android.intent.action.VIEW"
                 android:targetClass="com.sysu.edu.extra.AboutActivity"
-                android:targetPackage="com.sysu.edu">
-            </intent>
+                android:targetPackage="com.sysu.edu" />
         </Preference>
         <Preference
             app:icon="@drawable/help"
-            app:title="@string/help"/>
+            app:title="@string/help" />
     </PreferenceCategory>
 </PreferenceScreen>

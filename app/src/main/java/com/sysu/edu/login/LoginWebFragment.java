@@ -60,6 +60,7 @@ public class LoginWebFragment extends Fragment {
                         model.setLogin(true);
                     }, 1500);
                 }
+                model.setLogin(false);
                 //ar script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(script);script.onload=function(){eruda.init()};", s -> {});
             }
 //            @Override
@@ -70,10 +71,10 @@ public class LoginWebFragment extends Fragment {
             @Override
             public void onLoadResource(WebView view, String url) {
                 super.onLoadResource(view, url);
-                if (Pattern.compile("/api/sso/cas/login?pattern=student-login$").matcher(url).find()) {
-                    model.setCookie(CookieManager.getInstance().getCookie(view.getUrl()));
-                    model.setLogin(true);
-                }
+//                if (Pattern.compile("/api/sso/cas/login?pattern=student-login$").matcher(url).find()) {
+//                    model.setCookie(CookieManager.getInstance().getCookie(view.getUrl()));
+//                    model.setLogin(true);
+//                }
                 //System.out.println(url);
             }
         });

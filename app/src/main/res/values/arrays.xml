@@ -15,9 +15,9 @@
         <item>@string/follow_system</item>
     </string-array>
     <string-array name="home" >
-        <item>@string/menu_activity</item>
-        <item>@string/menu_service</item>
-        <item>@string/menu_account</item>
+        <item>@string/dashboard</item>
+        <item>@string/service</item>
+        <item>@string/account</item>
     </string-array>
     <string-array name="sponsors">
         <item>支付宝</item>
@@ -98,5 +98,33 @@
         <item>运动</item>
         <item>志愿</item>
         <item>其他</item>
+    </string-array>
+    <string-array name="dashboard">
+        <item>@string/shortcut</item>
+        <item>@string/next_class</item>
+        <item>@string/time</item>
+        <item>@string/agenda</item>
+        <item>@string/exam</item>
+        <item>@string/todo</item>
+    </string-array>
+    <string-array name="dashboard_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="login_way">
+        <item>仅提示</item>
+        <item>仅主页提示</item>
+        <item>手动登录</item>
+        <item>无感登录</item>
+    </string-array>
+    <string-array name="login_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>

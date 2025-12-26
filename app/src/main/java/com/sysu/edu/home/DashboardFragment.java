@@ -56,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -232,6 +233,7 @@ public class DashboardFragment extends Fragment {
                     getTerm();
                 }
             });
+            spm.initLiveData();
             TodoFragment todoFragment = new TodoFragment();
             getParentFragmentManager().beginTransaction().add(R.id.todo_list, todoFragment).commit();
             InitTodo initTodo = new InitTodo(requireActivity(), todoFragment);
@@ -245,6 +247,13 @@ public class DashboardFragment extends Fragment {
                 }
             });
             binding.toggle3.check(R.id.filter_todo);
+            spm.getDashboardLiveData().observe(getViewLifecycleOwner(), s -> {
+                HashSet<String> visible = new HashSet<>(List.of("0", "1", "2", "3", "4", "5"));
+                if (!s.isEmpty()) {
+                    visible.removeAll(s);
+                }
+                visible.forEach(i -> List.of(binding.shortcutGroup, binding.nextClassCard, binding.timeCard, binding.courseGroup, binding.examGroup, binding.todoGroup).get(Integer.parseInt(i)).setVisibility(View.GONE));
+            });
         }
         return binding.getRoot();
     }
